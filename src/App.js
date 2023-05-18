@@ -16,10 +16,9 @@ function App() {
           click here to listening
         </a>
         <div>
-          <iframe width="100%" height="166" allow="autoplay"
-            src="https://soundcloud.com/andrew_rise/podcast-247-dj-rise-2904?si=e47af6d3abd0496dbaa385a4f8071fdf&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
-          />
-        </div>
+        <iframe width="100%" height="166" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1495867741&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+        <div style={{fontSize: '10px', color: '#cccccc', lineBreak: 'anywhere', wordBreak: 'normal', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', fontFamily: 'Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif', fontWeight: '100'}}>
+        <a href="https://soundcloud.com/andrew_rise" title="Andrew_Rise" target="_blank" style={{color: '#cccccc', textDecoration: 'none'}}>Andrew_Rise</a> · <a href="https://soundcloud.com/andrew_rise/podcast-247-dj-rise-2904" title="Podcast 247 DJ Rise 29/04" target="_blank" style={{color: '#cccccc', textDecoration: 'none'}}>Podcast 247 DJ Rise 29/04</a></div></div>
       </header>
       <main>
       <div className="app-link">
