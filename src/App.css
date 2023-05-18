@@ -10,8 +10,6 @@
   color: white;
 }
 
-
-
 .app-header {
   display: flex;
   flex-direction: column;
@@ -22,8 +20,16 @@
 }
 
 .app-link {
+  padding: calc(5px + 1vmin);
+  margin: calc(1px + 1vmin);
+}
+.app-link a,
+.app-header a {
   color: #00a5d3;
   text-decoration: none;
-  padding: 0 0 0 0;
-  margin: 0.5rem 0.1rem 0.5rem 0.1rem;
+}
+.app-link a:hover,
+.app-header a:hover {
+  color: #037392;
+  border-bottom: 1px solid #037392;
 }

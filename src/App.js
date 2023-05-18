@@ -17,26 +17,22 @@ function App() {
         </a>
       </header>
       <main>
-      <div>
+      <div className="app-link">
           <a
-            className="app-link"
             href="mailto:andrewrisedj@gmail.com"
             target="_blank"
             rel="noopener noreferrer"
             >Gmail</a>
         </div>
-
-        <div>
+        <div className="app-link">
           <a
-            className="app-link"
             href="https://soundcloud.com/andrew_rise"
             target="_blank"
             rel="noopener noreferrer"
             >SoundCloud</a>
         </div>
-        <div>
+        <div className="app-link">
           <a
-            className="app-link"
             href="https://www.facebook.com/andrewrisedj/"
             target="_blank"
             rel="noopener noreferrer"
