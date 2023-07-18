@@ -1,65 +1,75 @@
-import { useEffect } from 'react';
-import './App.css';
+import { Container, Typography, Link, Box, Grid } from '@mui/material';
 
 function App() {
-  useEffect(() => {
-    // Check if the 'visited' cookie is set
-    if (document.cookie.split('; ').find(row => row.startsWith('visited='))) {
-        return;
-    }
-
-    // If the 'visited' cookie isn't set, show an alert
-    alert('Welcome! This is your first visit to this page.');
-
-    // Set the 'visited' cookie to true for a year
-    var oneYearFromNow = new Date();
-    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-    document.cookie = 'visited=true; expires=' + oneYearFromNow.toUTCString() + '; path=/';
-  }, []);  // Passing an empty array as the second argument to useEffect makes it run on mount
-
   return (
-    <div className="app">
-      <header className="app-header">
-        <p>
-          Gentle Harmony is Everywhere.
-        </p>
-        <a
-          className="app-link"
-          href="https://on.soundcloud.com/DU5at"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          click here to listening
-        </a>
-        <div>
-        <iframe width="100%" height="166" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1567746709&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
-        <div style={{fontSize: '10px', color: '#cccccc', lineBreak: 'anywhere', wordBreak: 'normal', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', fontFamily: 'Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif', fontWeight: '100'}}>
-        <a href="https://soundcloud.com/andrew_rise" title="RISE DJ" target="_blank" style={{color: '#cccccc', textDecoration: 'none'}}>RISE DJ</a> · <a href="https://soundcloud.com/andrew_rise/dj-rise-gentle-groovy-deep-house-71723" title="DJ RISE Gentle Groovy Deep House #001 7/17/23" target="_blank" style={{color: '#cccccc', textDecoration: 'none'}}>Gentle Groovy Deep House #001 7/17/23</a></div></div>
-      </header>
-      <main>
-      <div className="app-link">
-          <a
-            href="mailto:andrewrisedj@gmail.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Gmail</a>
-        </div>
-        <div className="app-link">
-          <a
-            href="https://soundcloud.com/andrew_rise"
-            target="_blank"
-            rel="noopener noreferrer"
-            >SoundCloud</a>
-        </div>
-        <div className="app-link">
-          <a
-            href="https://www.facebook.com/andrewrisedj/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >Facebook</a>
-        </div>
-      </main>
-    </div>
+    <Container 
+    maxWidth={false}
+    sx={{
+      textAlign: 'center', 
+      backgroundColor: '#282c34',
+      minHeight: '100vh',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      padding: '0',
+      fontSize: 'calc(10px + 2vmin)',
+    }}>
+      <Box sx={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Box sx={{ mb: 3 }}>
+          <Typography sx={{
+            fontSize: 'calc(10px + 2vmin)',
+          }} variant="h4">Gentle Harmony is Everywhere.</Typography>
+          <Link href="https://on.soundcloud.com/DU5at" target="_blank" rel="noopener noreferrer" sx={{ color: '#00a5d3' }}>
+            Click here to listening
+          </Link>
+        </Box>
+          <Grid item xs={12}>
+            <Box>
+              <iframe 
+                width="100%" 
+                height="166" 
+                scrolling="no" 
+                frameBorder="no" 
+                allow="autoplay" 
+                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1567746709&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              />
+            </Box>
+            <Box sx={{
+              padding: '5.25% 0 0 0',
+            }}>
+              <iframe 
+                src="https://player.vimeo.com/video/846386343?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
+                frameBorder="0" 
+                style={{width:'100%', height: '100%',}}
+                allow="autoplay; fullscreen; picture-in-picture" 
+                allowFullScreen 
+                title="DJ RISE Gentle Groovy Deep House #001"
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                }} 
+              />
+            </Box>
+          </Grid>
+        <Grid container spacing={3} direction="column" alignItems="center">
+          <Grid item xs={12}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Link href="mailto:andrewrisedj@gmail.com" target="_blank" rel="noopener noreferrer" sx={{ color: '#00a5d3', textDecoration: 'none', ':hover': { color: '#037392', textDecoration: 'underline' } }}>Gmail</Link>
+              <Link href="https://soundcloud.com/andrew_rise" target="_blank" rel="noopener noreferrer" sx={{ color: '#00a5d3', textDecoration: 'none', ':hover': { color: '#037392', textDecoration: 'underline' } }}>SoundCloud</Link>
+              <Link href="https://www.facebook.com/andrewrisedj/" target="_blank" rel="noopener noreferrer" sx={{ color: '#00a5d3', textDecoration: 'none', ':hover': { color: '#037392', textDecoration: 'underline' } }}>Facebook</Link>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </Container>
   );
 }
 
