@@ -118,6 +118,7 @@ const Form = () => {
                 label="Name"
                 variant="outlined"
                 fullWidth
+                required
                 value={values.name}
                 onChange={handleChange}
                 sx={{ backgroundColor: '#857f7b', '&:hover': { backgroundColor: '#827165' }}}
@@ -130,6 +131,7 @@ const Form = () => {
                 type="email"
                 variant="outlined"
                 fullWidth
+                required
                 value={values.email}
                 onChange={handleChange}
                 sx={{ backgroundColor: '#857f7b', '&:hover': { backgroundColor: '#827165' }}}
@@ -142,6 +144,7 @@ const Form = () => {
                   labelId="event-type-label"
                   id="event-type"
                   name="eventType"
+                  required
                   value={values.eventType}
                   onChange={handleSelectChange}
                   label="Event Type"
@@ -159,8 +162,9 @@ const Form = () => {
                 label="Event Date"
                 inputFormat="MM/dd/yyyy"
                 value={values.date}
+                
                 onChange={handleDateChange}
-                TextField={(params) => <TextField {...params} fullWidth variant="outlined" sx={{ backgroundColor: '#827165', '&:hover': { backgroundColor: '#827165' }}} />}
+                TextField={(params) => <TextField {...params} fullWidth required variant="outlined" sx={{ backgroundColor: '#827165', '&:hover': { backgroundColor: '#827165' }}} />}
               />
             </Grid>
             <Grid item xs={12}>
@@ -171,6 +175,7 @@ const Form = () => {
                 rows={4}
                 variant="outlined"
                 fullWidth
+                required
                 value={values.message}
                 onChange={handleChange}
                 placeholder={values.eventType === 'other' ? "Describe here your event, please" : ""}
