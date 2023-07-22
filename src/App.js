@@ -39,13 +39,9 @@ function App() {
                 sx={{
                   fontSize: 'calc(10px + 2vmin)',
                 }}
-                variant="h4">Gentle Harmony is Everywhere.</Typography>
-              <Link href="https://on.soundcloud.com/DU5at" target="_blank" mt={10} mr={10} rel="noopener noreferrer" sx={{ color: '#00a5d3' }}>
-                Click here to listen
-              </Link>
-              <Link href="https://www.youtube.com/@DJRISE-arisedj" target="_blank" mt={10} rel="noopener noreferrer" sx={{ color: '#00a5d3' }}>
-                Click here to watch more
-              </Link>
+                variant="h4">
+                  Gentle Harmony is Everywhere.
+                </Typography>
             </Box>
             <Box 
               sx={{
