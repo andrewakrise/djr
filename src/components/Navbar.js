@@ -5,6 +5,7 @@ const Navbar = () => {
     <Box
       sx={{
         display: 'flex',
+        position: 'static',
         flexDirection: 'row',
         gap: 'calc(10px + 2vmin)',
         alignItems: 'center',
