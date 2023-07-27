@@ -10,33 +10,6 @@ const Navbar = () => {
             justifyContent: { xs: 'center' },
             fontSize: 'calc(10px + 2vmin)',
             mb: { xs: 2 },
-            mr: { xs: 1 },
-          }}
-        >
-          <Link
-            href="mailto:andrewrisedj@gmail.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
-            }}
-          >
-            Gmail
-          </Link>
-        </Box>
-      </Grid>
-      <Grid item xs={6} sm={3} md={2}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2 },
             mr: { xs: 2 },
           }}
         >
@@ -93,7 +66,7 @@ const Navbar = () => {
           }}
         >
           <Link
-            href="https://www.instagram.com/andrew_rise/"
+            href="https://www.instagram.com/andrewrisedj/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
@@ -119,7 +92,7 @@ const Navbar = () => {
           }}
         >
           <Link
-            href="https://www.youtube.com/@DJRISE-arisedj/"
+            href="https://www.youtube.com/@risedj/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
@@ -161,6 +134,33 @@ const Navbar = () => {
           </Link>
         </Box>
       </Grid>
+      <Grid item xs={6} sm={3} md={2}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: { xs: 'center' },
+            fontSize: 'calc(10px + 2vmin)',
+            mb: { xs: 2}
+          }}
+        >
+          <Link
+            href="https://www.mixcloud.com/andrewrisedj/"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              color: '#282c34',
+              textDecoration: 'none',
+              ':hover': {
+                color: '#037392',
+                textDecoration: 'underline'
+              }
+            }}
+          >
+            Mixcloud
+          </Link>
+        </Box>
+      </Grid>
+
     </Grid>
   );
 };
