@@ -40,7 +40,27 @@ function App() {
                   fontSize: 'calc(10px + 2vmin)',
                 }}
                 variant="h4">
-                  Gentle Harmony is Everywhere.
+                  DJ & Mood Creator
+                </Typography>
+            </Box>
+            <Box sx={{ mb: 4, fontSize: 'calc(8px + 1.2vmin)' }}>
+              <Typography 
+                mb={2}
+                sx={{
+                  fontSize: 'calc(10px + 2vmin)',
+                }}
+                variant="h4">
+                  Elevating Moods with Music.
+                </Typography>
+            </Box>
+            <Box sx={{ mb: 4, fontSize: 'calc(8px + 1.2vmin)' }}>
+              <Typography 
+                mb={2}
+                sx={{
+                  fontSize: 'calc(10px + 2vmin)',
+                }}
+                variant="h4">
+                  Bringing Harmony to Your Event
                 </Typography>
             </Box>
             <Box 
