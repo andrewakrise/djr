@@ -55,8 +55,8 @@ function App() {
                 scrolling="no" 
                 frameBorder="no" 
                 allow="autoplay" 
-                style={{width:'calc(100px + 55vmin)', height: 'calc(5px + 25vmin)'}}
-                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1567746709&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+                style={{width:'calc(100px + 55vmin)', height: 'calc(5px + 15vmin)', minHeight: '100px', maxHeight: '200px'}}
+                src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1589920903&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
               />
             </Box>
             <Box 
@@ -69,7 +69,7 @@ function App() {
               }}
             >
               <iframe 
-                src="https://www.youtube.com/embed/_r3PjLWbThA" 
+                src="https://www.youtube.com/embed/oN9OIOZGkCo"
                 scrolling="no" 
                 frameBorder="no" 
                 style={{width:'calc(100px + 55vmin)', height: 'calc(10px + 40vmin)'}}
