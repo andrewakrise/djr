@@ -1,61 +1,13 @@
 import { useState } from 'react';
-import { Container, Typography, Link, Box, Grid, Button } from '@mui/material';
+import { Container, Typography, Link, Box, Button } from '@mui/material';
 import Form from './components/Form';
 import Navbar from './components/Navbar';
-import sunsetPartyPoster from './assets/sunset-party.jpg';
-
-function EventPoster() {
-  const mapsURL = "https://goo.gl/maps/Zim9xmhjUHFNn8zJ8";
-  const ticketsURL = "https://www.eventbrite.com/e/sunset-electronic-industrial-garden-open-air-tickets-701008604607";
-
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 2,
-        padding: 3,
-        mb: 4,
-      }}
-    >
-      <img 
-        src={sunsetPartyPoster}
-        alt="Event Poster" 
-        style={{width: '100%', height: 'auto', borderRadius: '8px'}}
-      />
-      
-      <Typography variant="h5" component="div" sx={{ mt: 2, color: 'black', fontSize: 'calc(8px + 1.2vmin)' }}>
-        Sunset Electronic Party at Industrial Garden
-      </Typography>
-      
-      <Typography sx={{ mt: 1, mb: 2, color: 'black', fontSize: 'calc(5px + 1.2vmin)' }}>
-        Step into serenity within the urban pulse. 
-        Unearth enchanting musical gardens woven into 
-        industrial echoes, where the rhythm of electronic 
-        music sets your soul free. Immerse in melody, 
-        witness industrial spaces transform through tunes. 
-      </Typography>
-      
-      <Link href={mapsURL} target="_blank" rel="noopener noreferrer">
-        <Button variant="contained" color="primary">
-          View on Google Maps
-        </Button>
-      </Link>
-
-      <Link href={ticketsURL} target="_blank" rel="noopener noreferrer" sx={{ mt: 2 }}>
-        <Button variant="contained" color="secondary">
-          Get Tickets
-        </Button>
-      </Link>
-    </Box>
-  );
-}
+import Events from './components/Events';
+import EventPreview from './components/EventPreview';
 
 function App() {
   const [showForm, setShowForm] = useState(false);
+  const [showFullEvents, setShowFullEvents] = useState(false);
 
   return (
     <>
@@ -120,7 +72,19 @@ function App() {
                 height:'calc(100px + 55vmin)%'
               }}
             >
-              <EventPoster />
+              {showFullEvents ? (
+                <>
+                  <Box sx={{ width: 'calc(100px + 55vmin)', height: 'calc(100px + 55vmin)%' }}>
+                    <Events />
+                  </Box>
+                  <Button onClick={() => setShowFullEvents(false)}>Hide Events</Button>
+                </>
+              ) : (
+                <>
+                  <EventPreview onClick={() => setShowFullEvents(true)} />
+                  <Button onClick={() => setShowFullEvents(true)}>Show All Events</Button>
+                </>
+              )}
             </Box>
             <Box 
               sx={{

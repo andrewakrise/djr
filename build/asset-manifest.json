@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.e6c13ad2.css",
-    "main.js": "/static/js/main.b84678e1.js",
+    "main.js": "/static/js/main.ffa3c48f.js",
     "static/media/sunset-party.jpg": "/static/media/sunset-party.67ac51f20e59926097fb.jpg",
     "index.html": "/index.html",
     "main.e6c13ad2.css.map": "/static/css/main.e6c13ad2.css.map",
-    "main.b84678e1.js.map": "/static/js/main.b84678e1.js.map"
+    "main.ffa3c48f.js.map": "/static/js/main.ffa3c48f.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.b84678e1.js"
+    "static/js/main.ffa3c48f.js"
   ]
 }
