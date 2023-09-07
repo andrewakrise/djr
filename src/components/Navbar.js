@@ -14,7 +14,7 @@ const Navbar = () => {
           }}
         >
           <Link
-            href="https://soundcloud.com/andrew_rise"
+            href="https://soundcloud.com/risedjs"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
