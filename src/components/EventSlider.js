@@ -1,7 +1,7 @@
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Event from './Event';
+import Event from "./Event";
 
 function EventSlider({ events, isPreview = false }) {
   const settings = {
@@ -9,7 +9,8 @@ function EventSlider({ events, isPreview = false }) {
     infinite: true,
     speed: 500,
     slidesToShow: isPreview ? 2 : 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    initialSlide: 0,
   };
 
   return (
