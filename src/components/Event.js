@@ -1,6 +1,6 @@
 import { Box, Typography, Link, Button } from '@mui/material';
 
-function Event({ poster, title, description, mapsURL, ticketsURL }) {
+function Event({ poster, title, description, mapsURL, ticketsURL, listenOn }) {
   return (
     <Box
       sx={{
@@ -39,6 +39,12 @@ function Event({ poster, title, description, mapsURL, ticketsURL }) {
           Get Tickets
         </Button>
       </Link>)}
+      {listenOn.length > 0 && (<Link href={listenOn} target="_blank" rel="noopener noreferrer" sx={{ mt: 2 }}>
+        <Button variant="contained" color="secondary">
+          To Listen On
+        </Button>
+      </Link>)}
+
     </Box>
   );
 }
