@@ -21,7 +21,7 @@ function EventThumbnail({ poster, title }) {
         style={{
           width: "100%",
           height: "calc(150px + 15vmin)",
-          objectFit: "fill",
+          objectFit: "contain",
         }}
       />
       <Typography
@@ -48,7 +48,7 @@ export default function EventPreview({ onClick }) {
       sx={{
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-evenly",
+        justifyContent: "center",
         alignItems: "center",
         overflowX: "auto",
         gap: "12px",

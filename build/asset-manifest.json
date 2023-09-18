@@ -1,21 +1,21 @@
 {
   "files": {
     "main.css": "/static/css/main.8489d24c.css",
-    "main.js": "/static/js/main.abc8e90c.js",
+    "main.js": "/static/js/main.7d7eafd5.js",
     "static/media/sep-16.jpg": "/static/media/sep-16.444f78d95e7226576f6f.jpg",
+    "static/media/vcyp-sep-30.jpg": "/static/media/vcyp-sep-30.cd923ab3dfba2e46c9a8.jpg",
     "static/media/recordworkz-sep-18.jpg": "/static/media/recordworkz-sep-18.c5f35245adeb14bd1f4a.jpg",
     "static/media/sunset-party.jpg": "/static/media/sunset-party.67ac51f20e59926097fb.jpg",
-    "static/media/upcoming-event.png": "/static/media/upcoming-event.625de850a880d41409a2.png",
     "static/media/slick.svg": "/static/media/slick.2630a3e3eab21c607e21.svg",
     "static/media/slick.eot": "/static/media/slick.a4e97f5a2a64f0ab1323.eot",
     "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "index.html": "/index.html",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "main.8489d24c.css.map": "/static/css/main.8489d24c.css.map",
-    "main.abc8e90c.js.map": "/static/js/main.abc8e90c.js.map"
+    "main.7d7eafd5.js.map": "/static/js/main.7d7eafd5.js.map"
   },
   "entrypoints": [
     "static/css/main.8489d24c.css",
-    "static/js/main.abc8e90c.js"
+    "static/js/main.7d7eafd5.js"
   ]
 }

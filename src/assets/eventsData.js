@@ -1,7 +1,7 @@
 import sunsetPartyPoster from "../assets/sunset-party.jpg";
 import madgrill from "../assets/sep-16.jpg";
 import recordworkz from "../assets/recordworkz-sep-18.jpg";
-import upcomingEvent from "../assets/upcoming-event.png";
+import vanCruise from "../assets/vcyp-sep-30.jpg";
 
 const eventData = [
   // {
@@ -43,11 +43,11 @@ const eventData = [
   },
   {
     date: new Date("2023-09-30T19:30:00"),
-    poster: upcomingEvent,
-    title: "Upcoming Event Soon...",
-    description: "The event's info will be provided soon.",
-    mapsURL: "",
-    ticketsURL: "",
+    poster: vanCruise,
+    title: "VANCOUVERS BIGGEST YACHT PARTY",
+    description: "Vancouver's Biggest Yacht Party on September 30th! Get ready for an unforgettable night of excitement aboard the abitibi yacht.",
+    mapsURL: "https://maps.app.goo.gl/WuvfRSMLp2ryNdWv5",
+    ticketsURL: "https://www.eventbrite.com/e/glowwave-a-radiant-yacht-party-experience-tickets-703778720097?aff=oddtdtcreator",
     listenOn: "",
   },
 ];
