@@ -1,6 +1,7 @@
 import sunsetPartyPoster from "../assets/sunset-party.jpg";
 import madgrill from "../assets/sep-16.jpg";
 import recordworkz from "../assets/recordworkz-sep-18.jpg";
+import recordworkzOct23 from "../assets/recordworkz.png";
 import vanCruise from "../assets/vcyp-sep-30.jpg";
 import bsideRadio from "../assets/bside-radio-fri-oct-27th.jpeg";
 
@@ -67,7 +68,7 @@ const eventData = [
   },
   {
     date: new Date("2023-10-23T20:00:00"),
-    poster: recordworkz,
+    poster: recordworkzOct23,
     title: "RWR Open Deck Night",
     description: "Available on Streama, Radio.net and MyTuner Radio.",
     mapsURL: "",
