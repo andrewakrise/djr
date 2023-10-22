@@ -65,6 +65,15 @@ const eventData = [
     ticketsURL: "",
     listenOn: "https://www.twitch.tv/bsidedotradio",
   },
+  {
+    date: new Date("2023-10-23T20:00:00"),
+    poster: recordworkz,
+    title: "RWR Open Deck Night",
+    description: "Available on Streama, Radio.net and MyTuner Radio.",
+    mapsURL: "",
+    ticketsURL: "",
+    listenOn: "https://radio.recordworkz.com/",
+  },
 ];
 
 export default eventData;

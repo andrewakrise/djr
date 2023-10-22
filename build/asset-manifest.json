@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.8489d24c.css",
-    "main.js": "/static/js/main.71312baa.js",
+    "main.js": "/static/js/main.f4f01046.js",
     "static/media/sep-16.jpg": "/static/media/sep-16.444f78d95e7226576f6f.jpg",
     "static/media/vcyp-sep-30.jpg": "/static/media/vcyp-sep-30.cd923ab3dfba2e46c9a8.jpg",
     "static/media/recordworkz-sep-18.jpg": "/static/media/recordworkz-sep-18.c5f35245adeb14bd1f4a.jpg",
@@ -13,10 +13,10 @@
     "index.html": "/index.html",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "main.8489d24c.css.map": "/static/css/main.8489d24c.css.map",
-    "main.71312baa.js.map": "/static/js/main.71312baa.js.map"
+    "main.f4f01046.js.map": "/static/js/main.f4f01046.js.map"
   },
   "entrypoints": [
     "static/css/main.8489d24c.css",
-    "static/js/main.71312baa.js"
+    "static/js/main.f4f01046.js"
   ]
 }
