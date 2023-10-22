@@ -63,7 +63,7 @@ const eventData = [
     Sḵwx̱wú7mesh (Squamish), and Sel̓íl̓witulh (Tsleil-Waututh) Nations. Vancouver, BC.`,
     mapsURL: "",
     ticketsURL: "",
-    listenOn: "https://thebeaumontstudios.com/bside-radio/",
+    listenOn: "https://www.twitch.tv/bsidedotradio",
   },
 ];
 
