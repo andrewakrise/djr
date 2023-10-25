@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.8489d24c.css",
-    "main.js": "/static/js/main.d615fdd3.js",
-    "static/media/recordworkz.png": "/static/media/recordworkz.497308fd5192318a3085.png",
+    "main.js": "/static/js/main.de484633.js",
     "static/media/sep-16.jpg": "/static/media/sep-16.444f78d95e7226576f6f.jpg",
     "static/media/vcyp-sep-30.jpg": "/static/media/vcyp-sep-30.cd923ab3dfba2e46c9a8.jpg",
+    "static/media/recordworkz-oct-23.jpg": "/static/media/recordworkz-oct-23.3e46fa8bb24bff3ca0a2.jpg",
     "static/media/recordworkz-sep-18.jpg": "/static/media/recordworkz-sep-18.c5f35245adeb14bd1f4a.jpg",
     "static/media/sunset-party.jpg": "/static/media/sunset-party.67ac51f20e59926097fb.jpg",
     "static/media/bside-radio-fri-oct-27th.jpeg": "/static/media/bside-radio-fri-oct-27th.d0229d80bb26cc056505.jpeg",
@@ -14,10 +14,10 @@
     "index.html": "/index.html",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "main.8489d24c.css.map": "/static/css/main.8489d24c.css.map",
-    "main.d615fdd3.js.map": "/static/js/main.d615fdd3.js.map"
+    "main.de484633.js.map": "/static/js/main.de484633.js.map"
   },
   "entrypoints": [
     "static/css/main.8489d24c.css",
-    "static/js/main.d615fdd3.js"
+    "static/js/main.de484633.js"
   ]
 }
