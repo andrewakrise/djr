@@ -1,7 +1,7 @@
 import sunsetPartyPoster from "../assets/sunset-party.jpg";
 import madgrill from "../assets/sep-16.jpg";
 import recordworkz from "../assets/recordworkz-sep-18.jpg";
-import recordworkzOct23 from "../assets/recordworkz.png";
+import recordworkzOct23 from "../assets/recordworkz-oct-23.jpg";
 import vanCruise from "../assets/vcyp-sep-30.jpg";
 import bsideRadio from "../assets/bside-radio-fri-oct-27th.jpeg";
 
