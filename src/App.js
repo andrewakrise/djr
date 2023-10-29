@@ -120,6 +120,26 @@ function App() {
             }}
           >
             <iframe
+              src="https://player.twitch.tv/?video=1962035730&parent=www.djsrise.com"
+              frameBorder="0"
+              allowFullScreen="true"
+              scrolling="no"
+              style={{
+                width: "calc(100px + 55vmin)",
+                height: "calc(10px + 40vmin)",
+              }}
+            ></iframe>
+          </Box>
+          <Box
+            sx={{
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              height: "100%",
+              paddingTop: "6.25%",
+            }}
+          >
+            <iframe
               src="https://www.youtube.com/embed/oN9OIOZGkCo"
               scrolling="no"
               frameBorder="no"
@@ -132,26 +152,7 @@ function App() {
               title="YouTube video player"
             />
           </Box>
-          <Box
-            sx={{
-              position: "relative",
-              overflow: "hidden",
-              width: "100%",
-              height: "100%",
-              paddingTop: "6.25%",
-            }}
-          >
-            <iframe
-              src="https://player.twitch.tv/?video=1962035730&parent=www.djsrise.com"
-              frameBorder="0"
-              allowFullScreen="true"
-              scrolling="no"
-              style={{
-                width: "calc(100px + 55vmin)",
-                height: "calc(10px + 40vmin)",
-              }}
-            ></iframe>
-          </Box>
+
           <Box
             sx={{
               direction: "column",
