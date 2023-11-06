@@ -120,14 +120,16 @@ function App() {
             }}
           >
             <iframe
-              src="https://player.twitch.tv/?video=1962035730&parent=www.djsrise.com"
-              frameBorder="0"
-              allowFullScreen="true"
+              src="https://www.youtube.com/embed/Z3lx21Icy-4?si=VJerniCnMg4CpGAQ"
               scrolling="no"
+              allowFullScreen="true"
+              frameBorder="no"
               style={{
                 width: "calc(100px + 55vmin)",
                 height: "calc(10px + 40vmin)",
               }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              title="YouTube video player"
             ></iframe>
           </Box>
           <Box
@@ -142,13 +144,13 @@ function App() {
             <iframe
               src="https://www.youtube.com/embed/oN9OIOZGkCo"
               scrolling="no"
+              allowFullScreen="true"
               frameBorder="no"
               style={{
                 width: "calc(100px + 55vmin)",
                 height: "calc(10px + 40vmin)",
               }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
               title="YouTube video player"
             />
           </Box>
