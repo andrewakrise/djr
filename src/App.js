@@ -122,7 +122,7 @@ function App() {
             <iframe
               src="https://www.youtube.com/embed/Z3lx21Icy-4?si=VJerniCnMg4CpGAQ"
               scrolling="no"
-              allowFullScreen="true"
+              allowFullScreen={true}
               frameBorder="no"
               style={{
                 width: "calc(100px + 55vmin)",
@@ -144,7 +144,7 @@ function App() {
             <iframe
               src="https://www.youtube.com/embed/oN9OIOZGkCo"
               scrolling="no"
-              allowFullScreen="true"
+              allowFullScreen={true}
               frameBorder="no"
               style={{
                 width: "calc(100px + 55vmin)",

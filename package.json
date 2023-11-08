@@ -23,7 +23,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "dev": "env-cmd -f .env.development react-scripts start",
+    "local": "env-cmd -f .env.local react-scripts start"
   },
   "repository": {
     "type": "git",
@@ -50,6 +52,8 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^5.0.0"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "gh-pages": "^5.0.0",
+    "env-cmd": "^10.1.0"
   }
 }
