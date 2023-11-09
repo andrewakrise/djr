@@ -5,6 +5,8 @@
   "description": "djr",
   "main": "index.js",
   "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "express": "^4.18.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.1",
@@ -26,7 +28,7 @@
     "deploy": "gh-pages -d build",
     "dev": "env-cmd -f .env.development react-scripts start",
     "local": "env-cmd -f .env.local react-scripts start",
-    "heroku-postbuild": "env-cmd -f .env.production npm run build"
+    "heroku-postbuild": "env-cmd -f .env.development npm run build"
   },
   "repository": {
     "type": "git",
