@@ -101,8 +101,6 @@ const Form = () => {
           }-${values.date.getDate()}`
         : null,
     };
-    console.log("sendData:", sendData);
-    console.log("values:", values);
     const result = await sendEventBookingEmail({ sendData });
     if (result.data) {
       setSuccessMessage("Email successfully sent!");
