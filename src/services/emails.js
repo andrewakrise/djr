@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const emailsApi = createApi({
-  reducerPath: "invitation",
+  reducerPath: "send-emails",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.REACT_APP_BACKEND_URL}/send-email/`,
     prepareHeaders: (headers) => {
@@ -13,7 +13,7 @@ const emailsApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Invitation"],
+  tagTypes: ["SendEmails"],
   endpoints: (builder) => ({
     sendBookEventEmail: builder.mutation({
       query: ({ sendData }) => ({
