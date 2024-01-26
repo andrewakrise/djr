@@ -86,7 +86,7 @@ function VideoLinkList() {
       </Box>
     );
   if (isError) return <div>Error loading video links yet.</div>;
-  console.log(videoLinks);
+
   return (
     <Box
       sx={{
@@ -94,7 +94,8 @@ function VideoLinkList() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        padding: "1rem 0",
+        margin: "1rem 0",
       }}
     >
       <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>

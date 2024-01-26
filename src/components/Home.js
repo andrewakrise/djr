@@ -3,8 +3,8 @@ import { Container, Typography, Box, Button } from "@mui/material";
 import { useGetAllVideoLinksQuery } from "../services/video";
 import Form from "./Form";
 import Navbar from "./Navbar";
-import Events from "./Events";
-import EventPreview from "./EventPreview";
+import Events from "./events/Events";
+import EventPreview from "./events/EventPreview";
 
 function HomePage() {
   const [showForm, setShowForm] = useState(false);

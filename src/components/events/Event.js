@@ -1,6 +1,8 @@
 import { Box, Typography, Link, Button } from "@mui/material";
 
-function Event({ poster, title, description, mapsURL, ticketsURL, listenOn }) {
+function Event({ event }) {
+  const { imageUrl, title, description, location, ticketUrl } = event;
+
   return (
     <Box
       sx={{
@@ -15,7 +17,7 @@ function Event({ poster, title, description, mapsURL, ticketsURL, listenOn }) {
       }}
     >
       <img
-        src={poster}
+        src={imageUrl || ""}
         alt="Event Poster"
         style={{ width: "100%", height: "auto", borderRadius: "8px" }}
       />
@@ -25,44 +27,32 @@ function Event({ poster, title, description, mapsURL, ticketsURL, listenOn }) {
         component="div"
         sx={{ mt: 2, color: "black", fontSize: "calc(8px + 1.2vmin)" }}
       >
-        {title}
+        {title || ""}
       </Typography>
 
       <Typography
         sx={{ mt: 1, mb: 2, color: "black", fontSize: "calc(5px + 1.2vmin)" }}
       >
-        {description}
+        {description || ""}
       </Typography>
 
-      {mapsURL.length > 0 && (
-        <Link href={mapsURL} target="_blank" rel="noopener noreferrer">
+      {location && (
+        <Link href={location} target="_blank" rel="noopener noreferrer">
           <Button variant="contained" color="primary">
             View on Google Maps
           </Button>
         </Link>
       )}
 
-      {ticketsURL.length > 0 && (
+      {ticketUrl && (
         <Link
-          href={ticketsURL}
+          href={ticketUrl}
           target="_blank"
           rel="noopener noreferrer"
           sx={{ mt: 2 }}
         >
           <Button variant="contained" color="secondary">
             Get Tickets
-          </Button>
-        </Link>
-      )}
-      {listenOn.length > 0 && (
-        <Link
-          href={listenOn}
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{ mt: 2 }}
-        >
-          <Button variant="contained" color="secondary">
-            To Listen On
           </Button>
         </Link>
       )}

@@ -1,0 +1,51 @@
+.
+├── DIRECTORY_DJR_FE.txt
+├── package-lock.json
+├── package.json
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo.png
+│   ├── posters
+│   └── robots.txt
+├── server.js
+└── src
+    ├── App copy.js
+    ├── App.css
+    ├── App.js
+    ├── assets
+    │   ├── bside-radio-fri-oct-27th.jpeg
+    │   ├── bside-radio-fri.JPG
+    │   ├── eventsData.js
+    │   ├── recordworkz-oct-23.jpg
+    │   ├── recordworkz-sep-18.jpg
+    │   ├── recordworkz.png
+    │   ├── sep-16.jpg
+    │   ├── sunset-party.jpg
+    │   ├── upcoming-event.png
+    │   └── vcyp-sep-30.jpg
+    ├── components
+    │   ├── AdminPage.js
+    │   ├── Event.js
+    │   ├── EventPreview.js
+    │   ├── EventSlider.js
+    │   ├── Events.js
+    │   ├── Form.js
+    │   ├── Home.js
+    │   ├── Navbar.js
+    │   └── video
+    │       ├── VideoLinkAdd.js
+    │       ├── VideoLinkDelete.js
+    │       ├── VideoLinkList.js
+    │       └── VideoLinkUpdate.js
+    ├── index.css
+    ├── index.js
+    ├── redux
+    │   └── store.js
+    └── services
+        ├── auth.js
+        ├── emails.js
+        ├── user.js
+        └── video.js
+
+9 directories, 40 files
