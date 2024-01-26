@@ -15,8 +15,8 @@ function EventSlider({ events, isPreview = false }) {
 
   return (
     <Slider {...settings}>
-      {events.map((event, index) => (
-        <Event key={index} {...event} />
+      {events?.map((event, index) => (
+        <Event key={index} event={event} />
       ))}
     </Slider>
   );

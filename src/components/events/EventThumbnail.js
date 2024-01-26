@@ -14,7 +14,7 @@ function EventThumbnail({ event }) {
       }}
     >
       <img
-        src={event?.imageUrl || ""}
+        src={event?.image?.url || ""}
         alt="Event Poster"
         style={{
           width: "100%",
