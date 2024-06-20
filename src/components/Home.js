@@ -149,6 +149,25 @@ function HomePage() {
                 minHeight: "100px",
                 maxHeight: "200px",
               }}
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1853012388&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+            />
+          </Box>
+          <Box
+            sx={{
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <iframe
+              allow="autoplay"
+              style={{
+                width: "calc(100px + 55vmin)",
+                height: "calc(5px + 15vmin)",
+                minHeight: "100px",
+                maxHeight: "200px",
+              }}
               src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1678702296&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
             />
           </Box>
@@ -182,7 +201,6 @@ function HomePage() {
             </Button>
           )}
           {showMoreVideos && renderVideoIframes(sortedVideoLinks.slice(2))}
-
           <Box
             sx={{
               direction: "column",
