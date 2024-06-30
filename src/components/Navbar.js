@@ -1,16 +1,28 @@
-import { Box, Grid, Link } from '@mui/material';
+import { Box, Grid, Link } from "@mui/material";
+import { Facebook, Instagram, YouTube } from "@mui/icons-material";
+import mixcloudIcon from "../assets/icons/mixcloud.png";
+import vimeoIcon from "../assets/icons/vimeo.png";
+import soundcloudIcon from "../assets/icons/soundcloud.png";
 
 const Navbar = () => {
   return (
-    <Grid container sx={{ p: 'calc(5px + 1vmin)', flexGrow: 1, minHeight: '100%', alignItems: 'center', justifyContent: 'center' }}>
-      <Grid item xs={6} sm={3} md={2}>
+    <Grid
+      container
+      sx={{
+        p: "calc(5px + 1vmin)",
+        flexGrow: 1,
+        minHeight: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Grid item xs={2}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2 },
-            mr: { xs: 2 },
+            display: "flex",
+            justifyContent: { xs: "center" },
+            fontSize: "calc(10px + 2vmin)",
+            mb: { xs: 1 },
           }}
         >
           <Link
@@ -18,25 +30,30 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
+              color: "#282c34",
+              textDecoration: "none",
+              ":hover": {
+                color: "#037392",
+                textDecoration: "underline",
+              },
             }}
           >
-            SoundCloud
+            <Box
+              component="img"
+              src={soundcloudIcon}
+              alt="SoundCloud"
+              sx={{ width: "auto", height: "calc(3rem + 5vmin)" }}
+            />
           </Link>
         </Box>
       </Grid>
-      <Grid item xs={6} sm={3} md={2}>
+      <Grid item xs={2}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2 }
+            display: "flex",
+            justifyContent: { xs: "center" },
+            fontSize: "calc(10px + 2vmin)",
+            mb: { xs: 1 },
           }}
         >
           <Link
@@ -44,25 +61,25 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
+              color: "#282c34",
+              textDecoration: "none",
+              ":hover": {
+                color: "#037392",
+                textDecoration: "underline",
+              },
             }}
           >
-            Facebook
+            <Facebook sx={{ width: "auto", height: "calc(2rem + 4vmin)" }} />
           </Link>
         </Box>
       </Grid>
-      <Grid item xs={6} sm={3} md={2}>
+      <Grid item xs={2}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2}
+            display: "flex",
+            justifyContent: { xs: "center" },
+            fontSize: "calc(10px + 2vmin)",
+            mb: { xs: 1 },
           }}
         >
           <Link
@@ -70,25 +87,25 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
+              color: "#282c34",
+              textDecoration: "none",
+              ":hover": {
+                color: "#037392",
+                textDecoration: "underline",
+              },
             }}
           >
-            Instagram
+            <Instagram sx={{ width: "auto", height: "calc(2rem + 4vmin)" }} />
           </Link>
         </Box>
       </Grid>
-      <Grid item xs={6} sm={3} md={2}>
+      <Grid item xs={2}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2}
+            display: "flex",
+            justifyContent: { xs: "center" },
+            fontSize: "calc(10px + 2vmin)",
+            mb: { xs: 1 },
           }}
         >
           <Link
@@ -96,25 +113,25 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
+              color: "#282c34",
+              textDecoration: "none",
+              ":hover": {
+                color: "#037392",
+                textDecoration: "underline",
+              },
             }}
           >
-            YouTube
+            <YouTube sx={{ width: "auto", height: "calc(2rem + 5vmin)" }} />
           </Link>
         </Box>
       </Grid>
-      <Grid item xs={6} sm={3} md={2}>
+      <Grid item xs={2}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2}
+            display: "flex",
+            justifyContent: { xs: "center" },
+            fontSize: "calc(10px + 2vmin)",
+            mb: { xs: 1 },
           }}
         >
           <Link
@@ -122,25 +139,30 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
+              color: "#282c34",
+              textDecoration: "none",
+              ":hover": {
+                color: "#037392",
+                textDecoration: "underline",
+              },
             }}
           >
-            Vimeo
+            <Box
+              component="img"
+              src={vimeoIcon}
+              alt="Vimeo"
+              sx={{ width: "auto", height: "calc(2rem + 4vmin)" }}
+            />
           </Link>
         </Box>
       </Grid>
-      <Grid item xs={6} sm={3} md={2}>
+      <Grid item xs={2}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: { xs: 'center' },
-            fontSize: 'calc(10px + 2vmin)',
-            mb: { xs: 2}
+            display: "flex",
+            justifyContent: { xs: "center" },
+            fontSize: "calc(10px + 2vmin)",
+            mb: { xs: 1 },
           }}
         >
           <Link
@@ -148,19 +170,23 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              color: '#282c34',
-              textDecoration: 'none',
-              ':hover': {
-                color: '#037392',
-                textDecoration: 'underline'
-              }
+              color: "#282c34",
+              textDecoration: "none",
+              ":hover": {
+                color: "#037392",
+                textDecoration: "underline",
+              },
             }}
           >
-            Mixcloud
+            <Box
+              component="img"
+              src={mixcloudIcon}
+              alt="Mixcloud"
+              sx={{ width: "auto", height: "calc(2rem + 5vmin)" }}
+            />
           </Link>
         </Box>
       </Grid>
-
     </Grid>
   );
 };
