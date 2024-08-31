@@ -51,7 +51,7 @@ const Navbar = () => {
           }}
         >
           <Link
-            href="https://www.instagram.com/risedjs/"
+            href="https://www.instagram.com/vandjrise/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
