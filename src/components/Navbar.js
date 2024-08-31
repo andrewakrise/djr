@@ -1,8 +1,7 @@
 import { Box, Grid, Link } from "@mui/material";
-import { Facebook, Instagram, YouTube } from "@mui/icons-material";
+import { Facebook, Instagram } from "@mui/icons-material";
 import mixcloudIcon from "../assets/icons/mixcloud.png";
 import vimeoIcon from "../assets/icons/vimeo.png";
-import soundcloudIcon from "../assets/icons/soundcloud.png";
 
 const Navbar = () => {
   return (
@@ -16,37 +15,6 @@ const Navbar = () => {
         justifyContent: "center",
       }}
     >
-      <Grid item xs={2}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: { xs: "center" },
-            fontSize: "calc(10px + 2vmin)",
-            mb: { xs: 1 },
-          }}
-        >
-          <Link
-            href="https://soundcloud.com/risedjs"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              color: "#282c34",
-              textDecoration: "none",
-              ":hover": {
-                color: "#037392",
-                textDecoration: "underline",
-              },
-            }}
-          >
-            <Box
-              component="img"
-              src={soundcloudIcon}
-              alt="SoundCloud"
-              sx={{ width: "auto", height: "calc(3rem + 5vmin)" }}
-            />
-          </Link>
-        </Box>
-      </Grid>
       <Grid item xs={2}>
         <Box
           sx={{
@@ -96,32 +64,6 @@ const Navbar = () => {
             }}
           >
             <Instagram sx={{ width: "auto", height: "calc(2rem + 4vmin)" }} />
-          </Link>
-        </Box>
-      </Grid>
-      <Grid item xs={2}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: { xs: "center" },
-            fontSize: "calc(10px + 2vmin)",
-            mb: { xs: 1 },
-          }}
-        >
-          <Link
-            href="https://www.youtube.com/@risedj/"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              color: "#282c34",
-              textDecoration: "none",
-              ":hover": {
-                color: "#037392",
-                textDecoration: "underline",
-              },
-            }}
-          >
-            <YouTube sx={{ width: "auto", height: "calc(2rem + 5vmin)" }} />
           </Link>
         </Box>
       </Grid>

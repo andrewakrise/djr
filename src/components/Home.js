@@ -149,7 +149,7 @@ function HomePage() {
                 minHeight: "100px",
                 maxHeight: "200px",
               }}
-              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1875085398&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-vgc-student-party-july-07-2024%2F"
             />
           </Box>
           <Box
@@ -168,7 +168,7 @@ function HomePage() {
                 minHeight: "100px",
                 maxHeight: "200px",
               }}
-              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1853012388&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-00s-rnb-disco-hits%2F"
             />
           </Box>
           <Box
@@ -187,7 +187,26 @@ function HomePage() {
                 minHeight: "100px",
                 maxHeight: "200px",
               }}
-              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1678702296&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Frise-dj-nice-house-music-001%2F"
+            />
+          </Box>
+          <Box
+            sx={{
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <iframe
+              allow="autoplay"
+              style={{
+                width: "calc(100px + 55vmin)",
+                height: "calc(5px + 15vmin)",
+                minHeight: "100px",
+                maxHeight: "200px",
+              }}
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-oldies-dance-promo-mix%2F"
             />
           </Box>
           {isLoading ? (
