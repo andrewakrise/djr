@@ -5,6 +5,10 @@ import AdminNavbar from "./AdminNavbar";
 import EventLists from "./EventList";
 
 function AdminPage() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    navigate("/login");
+  }
   return (
     <>
       <AdminNavbar />

@@ -1,8 +1,15 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminNavbar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <AppBar position="sticky">
       <Toolbar>
@@ -17,6 +24,9 @@ const AdminNavbar = () => {
         </Button>
         <Button color="inherit" component={Link} to="/rdj-api/events">
           Events
+        </Button>
+        <Button onClick={handleLogout} color="secondary">
+          Logout
         </Button>
       </Toolbar>
     </AppBar>

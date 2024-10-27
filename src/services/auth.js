@@ -16,14 +16,14 @@ const authApi = createApi({
   endpoints: (builder) => ({
     loginUser: builder.mutation({
       query: (credentials) => ({
-        url: "login",
+        url: "rdj-login",
         method: "POST",
         body: credentials,
       }),
     }),
     signupUser: builder.mutation({
       query: (userDetails) => ({
-        url: "realtyadmin-signup",
+        url: "rdj-signup",
         method: "POST",
         body: userDetails,
       }),
