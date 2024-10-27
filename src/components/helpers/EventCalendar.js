@@ -92,10 +92,11 @@ const EventCalendar = () => {
       <List>
         {filteredEvents?.map((event) => {
           const eventDate = new Date(event?.date);
-          const formattedDate = eventDate?.toLocaleDateString(undefined, {
+          const formattedDate = eventDate.toLocaleDateString("en-CA", {
             year: "numeric",
             month: "long",
             day: "numeric",
+            timeZone: "America/Vancouver",
           });
           const isFuture = eventDate >= new Date();
 
