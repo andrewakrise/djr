@@ -45,14 +45,29 @@ const EventModal = ({ open, onClose, event }) => {
                 alignItems: "center",
               }}
             >
-              <Typography
-                id="event-details-title"
-                variant="h5"
-                component="h2"
-                gutterBottom
-              >
-                {event?.title}
-              </Typography>
+              <Box>
+                <Typography
+                  id="event-details-title"
+                  variant="h5"
+                  component="h2"
+                  gutterBottom
+                >
+                  {event?.title}
+                </Typography>
+                <Typography
+                  id="event-details-title"
+                  variant="body1"
+                  component="div"
+                  gutterBottom
+                >
+                  {new Date(event?.date).toLocaleDateString("en-CA", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    timeZone: "America/Vancouver",
+                  })}
+                </Typography>
+              </Box>
               <IconButton
                 onClick={onClose}
                 sx={{

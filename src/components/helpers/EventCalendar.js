@@ -73,7 +73,7 @@ const EventCalendar = () => {
       </Typography>
     );
   }
-  console.log("filteredEvents", filteredEvents);
+  // console.log("filteredEvents", filteredEvents);
   return (
     <Box
       sx={{
