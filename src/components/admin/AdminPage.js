@@ -1,8 +1,8 @@
 import React from "react";
 import { Container } from "@mui/material";
-import VideoLinkList from "./video/VideoLinkList";
+import VideoLinkList from "./VideoLinkList";
 import AdminNavbar from "./AdminNavbar";
-import EventLists from "./events/admin/EventList";
+import EventLists from "./EventList";
 
 function AdminPage() {
   return (

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   useAddEventMutation,
   useUpdateEventMutation,
-} from "../../../services/event";
+} from "../../services/event";
 import {
   TextField,
   Button,
@@ -10,6 +10,12 @@ import {
   Alert,
   Container,
 } from "@mui/material";
+import dayjs from "dayjs";
+import dayjsPluginUTC from "dayjs-plugin-utc";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+dayjs.extend(dayjsPluginUTC);
 
 function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [addEvent] = useAddEventMutation();
@@ -46,10 +52,12 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const utcDate = dayjs(date).utc().toISOString();
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("date", date);
+    formData.append("date", utcDate);
     formData.append("location", location);
     if (imageFile) formData.append("image", imageFile);
     formData.append("ticketUrl", ticketUrl);
@@ -57,7 +65,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     try {
       let result;
       if (event) {
-        result = await updateEvent({ eventId: event._id, data: formData });
+        result = await updateEvent({ eventId: event?._id, data: formData });
       } else {
         result = await addEvent(formData);
       }
@@ -99,16 +107,15 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           fullWidth
           margin="normal"
         />
-        <TextField
-          label="Date"
-          type="date"
-          variant="outlined"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DemoContainer components={["DateTimePicker"]}>
+            <DatePicker
+              label="Date"
+              value={date ? dayjs(date) : null}
+              onChange={(newValue) => setDate(newValue)}
+            />
+          </DemoContainer>
+        </LocalizationProvider>
         <TextField
           label="Location"
           variant="outlined"

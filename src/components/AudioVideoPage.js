@@ -7,8 +7,6 @@ import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/boat-science-world.JPG";
 
 function AudioVideoPage() {
-  const [showForm, setShowForm] = useState(false);
-  const [showFullEvents, setShowFullEvents] = useState(false);
   const [showMoreVideos, setShowMoreVideos] = useState(false);
   const [sortedVideoLinks, setSortedVideoLinks] = useState([]);
   const { data: videoLinks, isLoading } = useGetAllVideoLinksQuery();

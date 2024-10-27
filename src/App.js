@@ -4,9 +4,9 @@ import HomePage from "./components/HomePage";
 import BookingPage from "./components/Booking";
 import CalendarPage from "./components/Calendar";
 import AudioVideoPage from "./components/AudioVideoPage";
-import VideoLinkList from "./components/video/VideoLinkList";
-import AdminPage from "./components/AdminPage";
-import EventList from "./components/events/admin/EventList";
+import VideoLinkList from "./components/admin/VideoLinkList";
+import AdminPage from "./components/admin/AdminPage";
+import EventList from "./components/admin/EventList";
 
 function App() {
   return (

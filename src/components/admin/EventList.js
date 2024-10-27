@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   useGetAllEventsQuery,
   useDeleteEventMutation,
-} from "../../../services/event";
+} from "../../services/event";
 import {
   Typography,
   Box,
@@ -61,7 +61,7 @@ function EventList() {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading events.</div>;
-
+  console.log("events", events);
   return (
     <Box
       sx={{
@@ -106,7 +106,12 @@ function EventList() {
                 </ListItemAvatar>
                 <ListItemText
                   primary={event?.title}
-                  secondary={new Date(event?.date).toLocaleDateString()}
+                  secondary={new Date(event?.date).toLocaleDateString("en-CA", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    timeZone: "America/Vancouver",
+                  })}
                   sx={{ m: 1, maxWidth: 150 }}
                 />
                 <ListItemText

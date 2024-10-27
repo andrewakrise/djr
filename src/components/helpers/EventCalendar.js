@@ -73,7 +73,7 @@ const EventCalendar = () => {
       </Typography>
     );
   }
-
+  console.log("filteredEvents", filteredEvents);
   return (
     <Box
       sx={{
@@ -92,7 +92,7 @@ const EventCalendar = () => {
       <List>
         {filteredEvents?.map((event) => {
           const eventDate = new Date(event?.date);
-          const formattedDate = eventDate.toLocaleDateString("en-CA", {
+          const formattedDate = eventDate?.toLocaleDateString("en-CA", {
             year: "numeric",
             month: "long",
             day: "numeric",
