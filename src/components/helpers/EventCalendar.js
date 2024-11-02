@@ -84,7 +84,7 @@ const EventCalendar = () => {
         width: "100%",
         maxWidth: "33rem",
         p: 2,
-        backgroundColor: "#093637",
+        backgroundColor: "rgba(9, 54, 55, 0.5)",
         borderRadius: "0.5rem",
         boxShadow: 3,
       }}
@@ -107,23 +107,42 @@ const EventCalendar = () => {
                 button
                 onClick={() => handleEventClick(event)}
                 sx={{
-                  backgroundColor: isFuture ? "#44A08D" : "#82C0CC",
+                  backgroundColor: isFuture
+                    ? "rgba(68, 160, 141, 0.75)"
+                    : "rgba(130, 192, 204, 0.75)",
                   borderRadius: "0.25rem",
                   mb: 1,
                   "&:hover": {
-                    backgroundColor: isFuture ? "#3da58c" : "#7ab5bb",
+                    backgroundColor: isFuture
+                      ? "rgba(61, 165, 140, 0.85)"
+                      : "rgba(122, 181, 187, 0.85)",
                   },
                 }}
               >
                 <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      bgcolor: "#fff",
-                      color: isFuture ? "#093637" : "#093637",
-                    }}
-                  >
-                    <Event />
-                  </Avatar>
+                  {event?.image?.url ? (
+                    <Avatar
+                      alt={event?.title}
+                      src={event?.image?.url}
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        border: "1px solid #093637",
+                        borderRadius: 0,
+                        mr: 2,
+                      }}
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        bgcolor: "#fff",
+                        color: isFuture ? "#093637" : "#093637",
+                        mr: 2,
+                      }}
+                    >
+                      <Event />
+                    </Avatar>
+                  )}
                 </ListItemAvatar>
                 <ListItemText
                   primary={
