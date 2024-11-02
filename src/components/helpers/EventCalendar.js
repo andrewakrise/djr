@@ -157,7 +157,6 @@ const EventCalendar = () => {
                   }
                 />
               </ListItem>
-              <Divider component="li" sx={{ bgcolor: "#093637" }} />
             </React.Fragment>
           );
         })}
