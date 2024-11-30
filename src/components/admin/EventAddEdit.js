@@ -40,7 +40,14 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [clientName, setClientName] = useState(event?.clientName || "");
   const [clientEmail, setClientEmail] = useState(event?.clientEmail || "");
   const [phoneNumber, setPhoneNumber] = useState(event?.phoneNumber || "");
-  const [services, setServices] = useState(event?.services || []);
+  const [services, setServices] = useState(() => {
+    if (event && event?.services) {
+      return Array.isArray(event.services)
+        ? event?.services
+        : [event?.services];
+    }
+    return [];
+  });
   const [totalSum, setTotalSum] = useState(event?.totalSum || 0);
   const [depositSum, setDepositSum] = useState(event?.depositSum || 0);
   const [imageUrl, setImageUrl] = useState(event?.image?.url || "");
@@ -78,11 +85,18 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       setClientName(event?.clientName);
       setClientEmail(event?.clientEmail);
       setPhoneNumber(event?.phoneNumber);
-      setServices(event?.services);
-      setTotalSum(event?.totalSum);
-      setDepositSum(event?.depositSum);
+      setTotalSum(event.totalSum !== undefined ? event.totalSum : 0);
+      setDepositSum(event.depositSum !== undefined ? event.depositSum : 0);
       setImageUrl(event?.image?.url || "");
       setTicketUrl(event?.ticketUrl);
+      let servicesFromEvent = event.services;
+      if (Array.isArray(servicesFromEvent)) {
+        setServices(servicesFromEvent);
+      } else if (typeof servicesFromEvent === "string") {
+        setServices([servicesFromEvent]);
+      } else {
+        setServices([]);
+      }
     }
   }, [event]);
 
@@ -129,7 +143,9 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     formData.append("clientName", clientName);
     formData.append("clientEmail", clientEmail);
     formData.append("phoneNumber", phoneNumber);
-    formData.append("services", services);
+    services.forEach((service) => {
+      formData.append("services", service);
+    });
     formData.append("totalSum", totalSum);
     formData.append("depositSum", depositSum);
 
@@ -167,6 +183,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       );
     }
   };
+  console.log("Services state before render:", services);
 
   return (
     <Container>
@@ -265,9 +282,14 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           <InputLabel>Services</InputLabel>
           <Select
             multiple
-            value={services}
+            value={services || []}
             onChange={(e) => setServices(e.target.value)}
-            renderValue={(selected) => selected?.join(", ")}
+            renderValue={(selected) => {
+              console.log("Render value selected:", selected);
+              return Array.isArray(selected)
+                ? selected.join(", ")
+                : selected || "";
+            }}
           >
             <MenuItem value="DJing Services">DJing Services</MenuItem>
             <MenuItem value="DJ Controller">DJ Setup/Controller</MenuItem>
