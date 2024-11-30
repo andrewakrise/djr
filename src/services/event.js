@@ -9,7 +9,6 @@ const eventApi = createApi({
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
-      headers.set("accept", "application/json");
       return headers;
     },
   }),
@@ -46,6 +45,23 @@ const eventApi = createApi({
       }),
       invalidatesTags: ["Event"],
     }),
+    uploadInvoice: builder.mutation({
+      query: ({ eventId, formData }) => ({
+        url: `upload-invoice/${eventId}`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Event"],
+    }),
+    getInvoice: builder.query({
+      query: (eventId) => ({
+        url: `invoice/${eventId}`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+      skip: (eventId) => !eventId,
+      providesTags: ["Event"],
+    }),
   }),
 });
 
@@ -54,6 +70,9 @@ export const {
   useAddEventMutation,
   useUpdateEventMutation,
   useDeleteEventMutation,
+  useUploadInvoiceMutation,
+  useGetInvoiceQuery,
+  useLazyGetInvoiceQuery,
 } = eventApi;
 
 export default eventApi;

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   useGetAllEventsQuery,
   useDeleteEventMutation,
+  useLazyGetInvoiceQuery,
 } from "../../services/event";
 import {
   Typography,
@@ -12,22 +13,32 @@ import {
   DialogTitle,
   IconButton,
   Alert,
-  Avatar,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EventAddEdit from "./EventAddEdit";
-import { Delete, Edit } from "@mui/icons-material";
+import {
+  Delete,
+  Edit,
+  PictureAsPdf as PictureAsPdfIcon,
+} from "@mui/icons-material";
 import ConfirmationDialog from "../helpers/ConfirmationDialog";
+import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
+import { saveAs } from "file-saver";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
   const [deleteEvent] = useDeleteEventMutation();
+  const [triggerGetInvoice, { isFetching }] = useLazyGetInvoiceQuery();
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [eventIdToDelete, setEventIdToDelete] = useState(null);
+  const [openGenerateInvoiceDialog, setOpenGenerateInvoiceDialog] =
+    useState(false);
+  const [eventForInvoice, setEventForInvoice] = useState(null);
+  const [currentDownloadingId, setCurrentDownloadingId] = useState(null);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -72,6 +83,35 @@ function EventList() {
     setEventIdToDelete(null);
   };
 
+  const handleOpenGenerateInvoiceDialog = (event) => {
+    setEventForInvoice(event);
+    setOpenGenerateInvoiceDialog(true);
+  };
+
+  const handleCloseGenerateInvoiceDialog = () => {
+    setEventForInvoice(null);
+    setOpenGenerateInvoiceDialog(false);
+  };
+
+  const handleDownloadInvoice = async (eventId) => {
+    try {
+      setCurrentDownloadingId(eventId);
+      const result = await triggerGetInvoice(eventId).unwrap();
+
+      if (!result) {
+        throw new Error("Failed to download invoice");
+      }
+
+      const blob = new Blob([result], { type: "application/pdf" });
+
+      saveAs(blob, `invoice-${eventId}.pdf`);
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+    } finally {
+      setCurrentDownloadingId(null);
+    }
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -95,13 +135,14 @@ function EventList() {
       imageUrl: event?.image?.url || "",
       description: event?.description,
       ticketUrl: event?.ticketUrl,
+      pdfInvoice: event?.pdfInvoice,
     })) || [];
 
   const columns = [
     {
       field: "actions",
       headerName: "Actions",
-      width: 120,
+      width: 150,
       renderCell: (params) => (
         <>
           <IconButton
@@ -118,8 +159,39 @@ function EventList() {
           >
             <Delete />
           </IconButton>
+          <IconButton
+            color="secondary"
+            onClick={() => handleOpenGenerateInvoiceDialog(params?.row)}
+            aria-label="generate-invoice"
+          >
+            <PictureAsPdfIcon />
+          </IconButton>
         </>
       ),
+    },
+    {
+      field: "invoice",
+      headerName: "Invoice",
+      width: 150,
+      renderCell: (params) => {
+        if (params?.row?.pdfInvoice) {
+          const isDownloading =
+            isFetching && currentDownloadingId === params?.row?.id;
+
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleDownloadInvoice(params.row.id)}
+              disabled={isDownloading}
+            >
+              {isDownloading ? "Downloading..." : "Download"}
+            </Button>
+          );
+        } else {
+          return "No File";
+        }
+      },
     },
     { field: "title", headerName: "Title", width: 150 },
     { field: "date", headerName: "Date", width: 150 },
@@ -225,7 +297,7 @@ function EventList() {
       {success && <Alert severity="success">{success}</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
       <Box sx={{ height: 600, width: "100%", mt: 2, color: "#ffffff" }}>
-        {rows.length > 0 ? (
+        {rows?.length > 0 ? (
           <DataGrid
             rows={rows}
             columns={columns}
@@ -254,6 +326,12 @@ function EventList() {
         onCancel={handleCancelDelete}
         confirmText="Delete"
         cancelText="Cancel"
+      />
+      <GenerateInvoiceDialog
+        open={openGenerateInvoiceDialog}
+        onClose={handleCloseGenerateInvoiceDialog}
+        event={eventForInvoice}
+        refetchEvents={refetch}
       />
     </Box>
   );
