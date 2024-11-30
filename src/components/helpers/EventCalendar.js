@@ -48,8 +48,8 @@ const EventCalendar = () => {
     const combinedEvents = [...futureEvents, ...pastEvents];
 
     if (combinedEvents?.length >= 7) {
-      return combinedEvents.slice(0, 7);
-    } else if (combinedEvents.length >= 5) {
+      return combinedEvents?.slice(0, 7);
+    } else if (combinedEvents?.length >= 5) {
       return combinedEvents;
     } else {
       return combinedEvents;
