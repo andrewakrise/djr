@@ -90,51 +90,66 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
       <DialogTitle>Invoice Preview</DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers style={{ minHeight: "600px" }}>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
-        {pdfUrl ? (
-          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+        <div style={{ height: "100%", width: "100%" }}>
+          {pdfUrl ? (
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "8px",
+                  height: "100%",
+                  width: "100%",
+                }}
+              >
+                <Toolbar>
+                  {(props) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "8px",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <ZoomOutButton {...props} />
+                      <ZoomPopover {...props} />
+                      <ZoomInButton {...props} />
+                      <PrintButton {...props} />
+                    </div>
+                  )}
+                </Toolbar>
+                <div style={{ flexGrow: 1, overflow: "auto", width: "90%" }}>
+                  <Viewer
+                    fileUrl={pdfUrl}
+                    plugins={[
+                      toolbarPluginInstance,
+                      zoomPluginInstance,
+                      printPluginInstance,
+                      getFilePluginInstance,
+                    ]}
+                    defaultScale={SpecialZoomLevel.PageWidth}
+                  />
+                </div>
+              </div>
+            </Worker>
+          ) : (
             <div
               style={{
+                height: "100%",
                 display: "flex",
-                flexDirection: "column",
+                justifyContent: "center",
                 alignItems: "center",
-                gap: "8px",
               }}
             >
-              <Toolbar>
-                {(props) => (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: "8px",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    <ZoomOutButton {...props} />
-                    <ZoomPopover {...props} />
-                    <ZoomInButton {...props} />
-                    <PrintButton {...props} />
-                  </div>
-                )}
-              </Toolbar>
-              <Viewer
-                fileUrl={pdfUrl}
-                plugins={[
-                  toolbarPluginInstance,
-                  zoomPluginInstance,
-                  printPluginInstance,
-                  getFilePluginInstance,
-                ]}
-                defaultScale={SpecialZoomLevel.PageWidth}
-              />
+              <CircularProgress />
             </div>
-          </Worker>
-        ) : (
-          <CircularProgress />
-        )}
+          )}
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">

@@ -1,88 +1,300 @@
 // EventInvoicePDF.js
 import React from "react";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Image,
+  Text,
+  View,
+  StyleSheet,
+} from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 4,
+    fontWeight: 400,
     fontSize: 12,
+    flexDirection: "column",
   },
-  section: {
-    marginBottom: 10,
+  topSection: {
+    padding: 10,
+    color: "white",
+    backgroundColor: "#282c34",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  logo: {
+    width: 75,
+    height: 75,
+  },
+  wideHeaderImageUrl: {
+    width: "100%",
+    height: 80,
+    padding: 0,
+    margin: 0,
   },
   header: {
+    textAlign: "left",
+    color: "white",
     fontSize: 20,
-    textAlign: "center",
-    marginBottom: 20,
+    padding: 10,
+    flex: 1,
+  },
+  invoiceNumber: {
+    textAlign: "right",
+    color: "white",
+  },
+  invoiceDate: {
+    textAlign: "right",
+    color: "white",
+    marginBottom: 15,
+  },
+  eventClientSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    width: "100%",
+    padding: "0.5rem 1rem",
+    marginBottom: 5,
+  },
+  clientHeader: {
+    width: "100%",
+    fontSize: 14,
+    padding: 7,
+    marginBottom: 5,
+    borderBottom: "1px solid #000",
+  },
+  clientSection: {
+    textAlign: "left",
+    padding: 10,
+  },
+  dateSection: {
+    textAlign: "right",
+    padding: 10,
+  },
+  eventDate: {
+    flexDirection: "column",
+    marginBottom: 10,
+  },
+  dateLabel: { fontWeight: 900, marginBottom: 4 },
+  clientField: { flexDirection: "row", marginBottom: 10 },
+  clientLabel: { fontWeight: 900 },
+  clientProp: { marginLeft: 4 },
+  serviceSection: {
+    padding: 10,
+  },
+  serviceHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 7,
+    padding: 10,
+    backgroundColor: "#BEBEBE",
+  },
+  serviceTable: {
+    padding: 10,
+  },
+  serviceRow: {
+    marginBottom: 7,
+  },
+  section: {
+    padding: 10,
+    marginBottom: 5,
   },
   field: {
     marginBottom: 5,
   },
   label: {
-    fontWeight: "bold",
+    fontWeight: 900,
+  },
+  paymentSection: {
+    flexDirection: "column",
+    width: "100%",
+    padding: 10,
+  },
+  paymentField: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    textAlign: "right",
+    width: "95%",
+    marginBottom: 5,
+  },
+  paymentLabel: { fontWeight: 900, fontSize: 14 },
+  paymentProp: { marginLeft: 10, fontSize: 14 },
+  footer: {
+    marginTop: 10,
+    borderTop: "1px solid #000",
+    padding: 20,
   },
 });
 
+const formatDateToLocalAmericaPacific = (date) => {
+  return new Date(date).toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+const generateUniqueInvoiceNumber = (date) => {
+  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+    year: "2-digit",
+    month: "short",
+    day: "2-digit",
+  });
+  return `CNT-INV-${formattedDate.toUpperCase().replace(/\./g, "")}`;
+};
+
 const EventInvoicePDF = ({ event }) => {
+  const logoUrl =
+    "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
+  const wideHeaderImageUrl =
+    "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
+
+  const invoiceDate = formatDateToLocalAmericaPacific(new Date());
+  const invoiceNumber = generateUniqueInvoiceNumber(new Date());
+  const eventServices = event?.services?.split(", ");
+  // console.log("event", event);
+
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        <Text style={styles.header}>Invoice Contract</Text>
-        <View style={styles.section}>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Event Title: </Text>
-            {event?.title || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Client Name: </Text>
-            {event?.clientName || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Client Email: </Text>
-            {event?.clientEmail || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Date: </Text>
-            {new Date(event?.date)?.toLocaleDateString()}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Start Time: </Text>
-            {event?.startTime || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>End Time: </Text>
-            {event?.endTime || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Location: </Text>
-            {event?.location || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Address: </Text>
-            {event?.address || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Services: </Text>
-            {/* {event?.services?.join(", ") || ""} */}
-            {Array.isArray(event?.services)
-              ? event?.services.join(", ")
-              : event?.services || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Total Sum: </Text>$
-            {event?.totalSum || ""}
-          </Text>
-          <Text style={styles.field}>
-            <Text style={styles.label}>Deposit Sum: </Text>$
-            {event?.depositSum || ""}
-          </Text>
+      <Page size="A4" orientation="portrait" style={styles.page}>
+        {/* Header Section */}
+        <View style={styles.topSection}>
+          <Image
+            src={logoUrl || "../../assets/icons/logo.png"}
+            style={styles.logo}
+          />
+          <Text style={styles.header}>DJ RISE Service Contract/Invoice</Text>
+          <View>
+            <Text style={styles.invoiceDate}>
+              Date: {invoiceDate || "no invoice date"}
+            </Text>
+            <Text style={styles.invoiceNumber}>No. {invoiceNumber}</Text>
+          </View>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>Terms and Conditions:</Text>
-          <Text>
-            {/* Add your terms and conditions here */}
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        <View>
+          <Image
+            src={wideHeaderImageUrl || "../../assets/pioneerdjset.jpg"}
+            style={styles.wideHeaderImageUrl}
+          />
+        </View>
+
+        <Text style={styles.clientHeader}>Invoice To: </Text>
+        <View style={styles.eventClientSection}>
+          {/* Client Information Section */}
+          <View style={styles.clientSection}>
+            <View style={styles.clientField}>
+              <Text style={styles.clientLabel}>Client Name: </Text>
+              <Text style={styles.clientProp}>
+                {" "}
+                {event?.clientName || "no name"}
+              </Text>
+            </View>
+            <View style={styles.clientField}>
+              <Text style={styles.clientLabel}>Client Email: </Text>
+              <Text style={styles.clientProp}>
+                {" "}
+                {event?.clientEmail || "no email"}
+              </Text>
+            </View>
+            <View style={styles.clientField}>
+              <Text style={styles.clientLabel}>Phone Number: </Text>
+              <Text style={styles.clientProp}>
+                {" "}
+                {event?.phoneNumber || "no phone number"}
+              </Text>
+            </View>
+            <View style={styles.clientField}>
+              <Text style={styles.clientLabel}>Event Address: </Text>
+              <Text style={styles.clientProp}>
+                {" "}
+                {event?.address || "no address"}
+              </Text>
+            </View>
+          </View>
+
+          {/* Event Details Section */}
+          <View style={styles.dateSection}>
+            <View style={styles.eventDate}>
+              <Text style={styles.dateLabel}>Event Start Date & Time: </Text>
+              <Text style={styles.label}>
+                {`${event?.date} ${event?.startTime || ""}` ||
+                  "no start date and time"}
+              </Text>
+            </View>
+            <View style={styles.eventDate}>
+              <Text style={styles.dateLabel}>Event End Date & Time: </Text>
+              <Text style={styles.label}>
+                {`${event?.date} ${event?.endTime || ""}` ||
+                  "no start date and time"}
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* Services Section */}
+        <View style={styles.serviceSection}>
+          <Text style={styles.label}>DJ Services:</Text>
+          <View style={styles.serviceTable}>
+            {eventServices &&
+            eventServices?.length > 0 &&
+            Array.isArray(eventServices) ? (
+              <>
+                <View style={styles.serviceHeader}>
+                  <Text>Description</Text>
+                  <Text>Amount</Text>
+                </View>
+
+                {eventServices?.map((service, index) => (
+                  <View key={index} style={styles.serviceRow}>
+                    <Text>{service}</Text>
+                  </View>
+                ))}
+              </>
+            ) : (
+              <View style={styles.serviceRow}>
+                <Text>NO SERVICES CHOSEN</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Payment Section */}
+        <View style={styles.paymentSection}>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabel}>Total: </Text>
+            <Text style={styles.paymentProp}>
+              ${event?.totalSum || "No Sum"}
+            </Text>
+          </View>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabel}>
+              Deposit Required to Confirm Booking:{" "}
+            </Text>
+            <Text style={styles.paymentProp}>
+              ${event?.depositSum || "No Sum"}
+            </Text>
+          </View>
+        </View>
+
+        {/* Footer Section */}
+        <View style={styles.footer}>
+          <Text style={styles.field}>DJ Rise Legal Information:</Text>
+          <Text style={styles.field}>
+            Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
+          </Text>
+          <Text style={styles.field}>
+            Address: 3410-128 West Cordova Street
+          </Text>
+          <Text style={styles.field}>Phone: +1 (236) 995 - 1120</Text>
+          <Text style={styles.field}>
+            Contact Email: andrewrisedj@gmail.com
+          </Text>
+          <Text style={styles.field}>
+            E-Transfer Email: andriikukharv@gmail.com
           </Text>
         </View>
       </Page>

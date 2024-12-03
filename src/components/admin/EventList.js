@@ -260,7 +260,7 @@ function EventList() {
       </Typography>
     );
   }
-  console.log("events", events);
+  // console.log("events", events);
   return (
     <Box
       sx={{

@@ -99,7 +99,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       }
     }
   }, [event]);
-
+  console.log("event", event);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -124,6 +124,10 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     if (!startTime || !endTime) {
       setError("Start time and end time are required");
       return;
+    }
+    let eventId;
+    if (event && (event?.id || event?._id)) {
+      eventId = event?.id || event?._id;
     }
 
     const utcDate = dayjs(date).utc().toISOString();
@@ -152,7 +156,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     try {
       let result;
       if (event) {
-        result = await updateEvent({ eventId: event?._id, data: formData });
+        result = await updateEvent({ eventId: eventId, data: formData });
       } else {
         result = await addEvent(formData);
       }
