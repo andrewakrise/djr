@@ -77,10 +77,16 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginBottom: 10,
   },
-  dateLabel: { fontWeight: 900, marginBottom: 4 },
+  dateLabel: { fontWeight: 900, marginBottom: 7 },
+  dateProp: { fontWeight: 500, fontSize: 12, color: "#585858" },
   clientField: { flexDirection: "row", marginBottom: 10 },
-  clientLabel: { fontWeight: 900 },
-  clientProp: { marginLeft: 4 },
+  clientLabel: { fontWeight: 900, fontSize: 12, color: "black" },
+  clientProp: {
+    marginLeft: 4,
+    fontWeight: 500,
+    fontSize: 12,
+    color: "#585858",
+  },
   serviceSection: {
     padding: 10,
   },
@@ -96,7 +102,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   serviceRow: {
-    marginBottom: 7,
+    marginBottom: 6,
+    borderBottom: "1px solid #BEBEBE",
+  },
+  serviceRowText: {
+    paddingBottom: 5,
   },
   section: {
     padding: 10,
@@ -104,6 +114,7 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 5,
+    color: "#404040",
   },
   label: {
     fontWeight: 900,
@@ -121,7 +132,7 @@ const styles = StyleSheet.create({
     width: "95%",
     marginBottom: 5,
   },
-  paymentLabel: { fontWeight: 900, fontSize: 14 },
+  paymentLabel: { fontWeight: 900, fontSize: 14, color: "#585858" },
   paymentProp: { marginLeft: 10, fontSize: 14 },
   footer: {
     marginTop: 10,
@@ -221,14 +232,14 @@ const EventInvoicePDF = ({ event }) => {
           <View style={styles.dateSection}>
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event Start Date & Time: </Text>
-              <Text style={styles.label}>
+              <Text style={styles.dateProp}>
                 {`${event?.date} ${event?.startTime || ""}` ||
                   "no start date and time"}
               </Text>
             </View>
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event End Date & Time: </Text>
-              <Text style={styles.label}>
+              <Text style={styles.dateProp}>
                 {`${event?.date} ${event?.endTime || ""}` ||
                   "no start date and time"}
               </Text>
@@ -250,7 +261,7 @@ const EventInvoicePDF = ({ event }) => {
 
                 {eventServices?.map((service, index) => (
                   <View key={index} style={styles.serviceRow}>
-                    <Text>{service}</Text>
+                    <Text style={styles.serviceRowText}>{service}</Text>
                   </View>
                 ))}
               </>
