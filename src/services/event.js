@@ -53,9 +53,26 @@ const eventApi = createApi({
       }),
       invalidatesTags: ["Event"],
     }),
+    uploadDeposit: builder.mutation({
+      query: ({ eventId, formData }) => ({
+        url: `upload-deposit/${eventId}`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Event"],
+    }),
     getInvoice: builder.query({
       query: (eventId) => ({
         url: `invoice/${eventId}`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+      skip: (eventId) => !eventId,
+      providesTags: ["Event"],
+    }),
+    getDeposit: builder.query({
+      query: (eventId) => ({
+        url: `deposit/${eventId}`,
         method: "GET",
         responseHandler: (response) => response.blob(),
       }),
@@ -71,8 +88,11 @@ export const {
   useUpdateEventMutation,
   useDeleteEventMutation,
   useUploadInvoiceMutation,
+  useUploadDepositMutation,
   useGetInvoiceQuery,
+  useGetDepositQuery,
   useLazyGetInvoiceQuery,
+  useLazyGetDepositQuery,
 } = eventApi;
 
 export default eventApi;

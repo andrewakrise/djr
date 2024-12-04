@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   InputAdornment,
+  Autocomplete,
 } from "@mui/material";
 import dayjs from "dayjs";
 import dayjsPluginUTC from "dayjs-plugin-utc";
@@ -40,14 +41,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [clientName, setClientName] = useState(event?.clientName || "");
   const [clientEmail, setClientEmail] = useState(event?.clientEmail || "");
   const [phoneNumber, setPhoneNumber] = useState(event?.phoneNumber || "");
-  const [services, setServices] = useState(() => {
-    if (event && event?.services) {
-      return Array.isArray(event.services)
-        ? event?.services
-        : [event?.services];
-    }
-    return [];
-  });
+  const [services, setServices] = useState([]);
   const [totalSum, setTotalSum] = useState(event?.totalSum || 0);
   const [depositSum, setDepositSum] = useState(event?.depositSum || 0);
   const [imageUrl, setImageUrl] = useState(event?.image?.url || "");
@@ -55,6 +49,30 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [djingHours, setDjingHours] = useState("");
+  const [djingMinutes, setDjingMinutes] = useState("");
+  const [customMicCount, setCustomMicCount] = useState("");
+  const [customMixerCount, setCustomMixerCount] = useState("");
+  const [soundSystemDetails, setSoundSystemDetails] = useState({
+    venueType: "",
+    guestCount: "",
+    withStands: false,
+  });
+
+  const serviceOptions = [
+    "DJing Services",
+    "DJ Controller",
+    "Lighting",
+    "Sound System",
+    "Wireless mic",
+    "2 wireless mics",
+    " wireless mics",
+    " channel mixer",
+    "8 channel mixer",
+    "16 channel mixer",
+    "Setting of the above equipment at the event venue",
+    "Logistics",
+  ];
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -89,17 +107,17 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       setDepositSum(event.depositSum !== undefined ? event.depositSum : 0);
       setImageUrl(event?.image?.url || "");
       setTicketUrl(event?.ticketUrl);
-      let servicesFromEvent = event.services;
-      if (Array.isArray(servicesFromEvent)) {
+      let servicesFromEvent = event?.services;
+      if (typeof servicesFromEvent === "string") {
+        setServices(servicesFromEvent.split(",").map((item) => item?.trim()));
+      } else if (Array.isArray(servicesFromEvent)) {
         setServices(servicesFromEvent);
-      } else if (typeof servicesFromEvent === "string") {
-        setServices([servicesFromEvent]);
       } else {
         setServices([]);
       }
     }
   }, [event]);
-  console.log("event", event);
+  // console.log("services", services);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -125,6 +143,26 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       setError("Start time and end time are required");
       return;
     }
+
+    const uniqueServices = [...new Set(services)];
+
+    let customizedServices = uniqueServices.map((service) => {
+      if (service === "DJing Services" && (djingHours || djingMinutes)) {
+        return `DJing Services for ${djingHours} hours ${djingMinutes} minutes`;
+      } else if (service === "Sound System") {
+        const { venueType, guestCount, withStands } = soundSystemDetails;
+        return `the PA sound system ${
+          withStands ? "with stands" : ""
+        } for at least ${guestCount} guests ${venueType?.toLowerCase()}`;
+      } else if (service === " wireless mics" && customMicCount) {
+        return `${customMicCount} wireless mics`;
+      } else if (service === " channel mixer" && customMixerCount) {
+        return `${customMixerCount} channel mixer`;
+      }
+
+      return service;
+    });
+
     let eventId;
     if (event && (event?.id || event?._id)) {
       eventId = event?.id || event?._id;
@@ -147,7 +185,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     formData.append("clientName", clientName);
     formData.append("clientEmail", clientEmail);
     formData.append("phoneNumber", phoneNumber);
-    services.forEach((service) => {
+    customizedServices.forEach((service) => {
       formData.append("services", service);
     });
     formData.append("totalSum", totalSum);
@@ -187,7 +225,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       );
     }
   };
-  console.log("Services state before render:", services);
+  // console.log("Services state before render:", services);
 
   return (
     <Container>
@@ -282,33 +320,116 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           required
         />
         {/* Services */}
-        <FormControl fullWidth margin="normal" required>
-          <InputLabel>Services</InputLabel>
-          <Select
-            multiple
-            value={services || []}
-            onChange={(e) => setServices(e.target.value)}
-            renderValue={(selected) => {
-              console.log("Render value selected:", selected);
-              return Array.isArray(selected)
-                ? selected.join(", ")
-                : selected || "";
-            }}
-          >
-            <MenuItem value="DJing Services">DJing Services</MenuItem>
-            <MenuItem value="DJ Controller">DJ Setup/Controller</MenuItem>
-            <MenuItem value="Lighting">Lighting</MenuItem>
-            <MenuItem value="Sound System">Sound System</MenuItem>
-            <MenuItem value="Wireless mic">Wireless mic</MenuItem>
-            <MenuItem value="2 wireless mics">2 wireless mics</MenuItem>
-            <MenuItem value="8 channel mixer">8 channel mixer</MenuItem>
-            <MenuItem value="16 channel mixer">16 channel mixer</MenuItem>
-            <MenuItem value="Setting of the above equipment at the event venue">
-              Setting of the above equipment at the event venue
-            </MenuItem>
-            <MenuItem value="Logistics">Logistics</MenuItem>
-          </Select>
-        </FormControl>
+        <Autocomplete
+          multiple
+          freeSolo
+          value={services}
+          onChange={(event, newValue) => {
+            setServices(newValue);
+          }}
+          options={serviceOptions}
+          renderInput={(params) => (
+            <TextField {...params} label="Services" margin="normal" />
+          )}
+        />
+        {services?.includes(" wireless mics") && (
+          <TextField
+            label="Number of Wireless Mics"
+            type="number"
+            value={customMicCount}
+            onChange={(e) => setCustomMicCount(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+        )}
+
+        {services?.includes(" channel mixer") && (
+          <TextField
+            label="Number of Channels for Mixer"
+            type="number"
+            value={customMixerCount}
+            onChange={(e) => setCustomMixerCount(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+        )}
+        {services?.includes("DJing Services") && (
+          <>
+            <TextField
+              label="DJing Hours"
+              type="number"
+              value={djingHours}
+              onChange={(e) => setDjingHours(e.target.value)}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">hours</InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="DJing Minutes"
+              type="number"
+              value={djingMinutes}
+              onChange={(e) => setDjingMinutes(e.target.value)}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">minutes</InputAdornment>
+                ),
+              }}
+            />
+          </>
+        )}
+        {services?.includes("Sound System") && (
+          <>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Venue Type</InputLabel>
+              <Select
+                value={soundSystemDetails.venueType}
+                onChange={(e) =>
+                  setSoundSystemDetails({
+                    ...soundSystemDetails,
+                    venueType: e.target.value,
+                  })
+                }
+              >
+                <MenuItem value="Indoor">Indoor</MenuItem>
+                <MenuItem value="Outdoor">Outdoor</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Guest Count"
+              type="number"
+              value={soundSystemDetails.guestCount}
+              onChange={(e) =>
+                setSoundSystemDetails({
+                  ...soundSystemDetails,
+                  guestCount: e.target.value,
+                })
+              }
+              fullWidth
+              margin="normal"
+            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel>With Stands</InputLabel>
+              <Select
+                value={soundSystemDetails.withStands ? "Yes" : "No"}
+                onChange={(e) =>
+                  setSoundSystemDetails({
+                    ...soundSystemDetails,
+                    withStands: e.target.value === "Yes",
+                  })
+                }
+              >
+                <MenuItem value="Yes">Yes</MenuItem>
+                <MenuItem value="No">No</MenuItem>
+              </Select>
+            </FormControl>
+          </>
+        )}
         {/* Financials */}
         <TextField
           label="Total Sum"

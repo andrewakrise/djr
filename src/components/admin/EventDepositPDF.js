@@ -10,7 +10,7 @@ import {
 } from "@react-pdf/renderer";
 import {
   formatDateToLocalAmericaPacific,
-  generateUniqueInvoiceNumber,
+  generateUniqueDepositNumber,
 } from "../helpers/utils";
 
 const styles = StyleSheet.create({
@@ -134,13 +134,20 @@ const styles = StyleSheet.create({
   },
   paymentField: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
-    textAlign: "right",
+    textAlign: "center",
     width: "95%",
     marginBottom: 5,
   },
   paymentLabel: { fontWeight: 900, fontSize: 14, color: "#585858" },
+  paymentLabelAddText: {
+    marginTop: 10,
+    fontWeight: 900,
+    fontSize: 14,
+    fontStyle: "italic",
+    color: "#000000",
+  },
   paymentProp: { marginLeft: 10, fontSize: 14 },
   footer: {
     // marginTop: 10,
@@ -151,14 +158,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const EventInvoicePDF = ({ event }) => {
+const EventDepositPDF = ({ event }) => {
   const logoUrl =
     "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
   const wideHeaderImageUrl =
     "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
 
-  const invoiceDate = formatDateToLocalAmericaPacific(new Date());
-  const invoiceNumber = generateUniqueInvoiceNumber(new Date());
+  const depositDate = formatDateToLocalAmericaPacific(new Date());
+  const depositNumber = generateUniqueDepositNumber(new Date());
   const eventServices = event?.services?.split(", ");
   // console.log("event", event);
 
@@ -171,12 +178,12 @@ const EventInvoicePDF = ({ event }) => {
             src={logoUrl || "../../assets/icons/logo.png"}
             style={styles.logo}
           />
-          <Text style={styles.header}>DJ RISE Service Contract/Invoice</Text>
+          <Text style={styles.header}>DJ RISE Service Deposit Bill</Text>
           <View>
-            <Text style={styles.invoiceDate}>
-              Date: {invoiceDate || "no invoice date"}
+            <Text style={styles.depositDate}>
+              Date: {depositDate || "no deposit date"}
             </Text>
-            <Text style={styles.invoiceNumber}>No. {invoiceNumber}</Text>
+            <Text style={styles.depositNumber}>No. {depositNumber}</Text>
           </View>
         </View>
         <View>
@@ -186,7 +193,7 @@ const EventInvoicePDF = ({ event }) => {
           />
         </View>
 
-        <Text style={styles.clientHeader}>Invoice To: </Text>
+        <Text style={styles.clientHeader}>Bill To: </Text>
         <View style={styles.eventClientSection}>
           {/* Client Information Section */}
           <View style={styles.clientSection}>
@@ -268,17 +275,17 @@ const EventInvoicePDF = ({ event }) => {
         {/* Payment Section */}
         <View style={styles.paymentSection}>
           <View style={styles.paymentField}>
-            <Text style={styles.paymentLabel}>Total: </Text>
-            <Text style={styles.paymentProp}>
-              ${event?.totalSum || "No Sum"}
-            </Text>
-          </View>
-          <View style={styles.paymentField}>
             <Text style={styles.paymentLabel}>
               Deposit Required to Confirm Booking:{" "}
             </Text>
             <Text style={styles.paymentProp}>
               ${event?.depositSum || "No Sum"}
+            </Text>
+          </View>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabelAddText}>
+              After the deposit is made, the confirmation will be sent to your
+              email
             </Text>
           </View>
         </View>
@@ -305,4 +312,4 @@ const EventInvoicePDF = ({ event }) => {
   );
 };
 
-export default EventInvoicePDF;
+export default EventDepositPDF;

@@ -3,6 +3,7 @@ import {
   useGetAllEventsQuery,
   useDeleteEventMutation,
   useLazyGetInvoiceQuery,
+  useLazyGetDepositQuery,
 } from "../../services/event";
 import {
   Typography,
@@ -13,6 +14,8 @@ import {
   DialogTitle,
   IconButton,
   Alert,
+  CircularProgress,
+  Tooltip,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EventAddEdit from "./EventAddEdit";
@@ -20,15 +23,20 @@ import {
   Delete,
   Edit,
   PictureAsPdf as PictureAsPdfIcon,
+  Download,
 } from "@mui/icons-material";
 import ConfirmationDialog from "../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
+import GenerateDepositDialog from "./GenerateDepositDialog";
 import { saveAs } from "file-saver";
+import { generateUniqueFileName } from "../helpers/utils";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
   const [deleteEvent] = useDeleteEventMutation();
   const [triggerGetInvoice, { isFetching }] = useLazyGetInvoiceQuery();
+  const [triggerGetDeposit, { isFetching: isDepositFetching }] =
+    useLazyGetDepositQuery();
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -36,6 +44,8 @@ function EventList() {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [eventIdToDelete, setEventIdToDelete] = useState(null);
   const [openGenerateInvoiceDialog, setOpenGenerateInvoiceDialog] =
+    useState(false);
+  const [openGenerateDepositDialog, setOpenGenerateDepositDialog] =
     useState(false);
   const [eventForInvoice, setEventForInvoice] = useState(null);
   const [currentDownloadingId, setCurrentDownloadingId] = useState(null);
@@ -93,20 +103,49 @@ function EventList() {
     setOpenGenerateInvoiceDialog(false);
   };
 
-  const handleDownloadInvoice = async (eventId) => {
+  const handleOpenGenerateDepositDialog = (event) => {
+    setEventForInvoice(event);
+    setOpenGenerateDepositDialog(true);
+  };
+
+  const handleCloseGenerateDepositDialog = () => {
+    setEventForInvoice(null);
+    setOpenGenerateDepositDialog(false);
+  };
+
+  const handleDownloadInvoice = async (eventId, eventDate) => {
     try {
       setCurrentDownloadingId(eventId);
       const result = await triggerGetInvoice(eventId).unwrap();
-
       if (!result) {
-        throw new Error("Failed to download invoice");
+        throw new Error("Failed to download Invoice");
       }
 
       const blob = new Blob([result], { type: "application/pdf" });
+      const fileName = generateUniqueFileName(eventDate, "Contract-Invoice");
 
-      saveAs(blob, `invoice-${eventId}.pdf`);
+      saveAs(blob, `${fileName}.pdf`);
     } catch (error) {
-      console.error("Error downloading invoice:", error);
+      console.error("Error downloading Invoice:", error);
+    } finally {
+      setCurrentDownloadingId(null);
+    }
+  };
+
+  const handleDownloadDeposit = async (eventId, eventDate) => {
+    try {
+      setCurrentDownloadingId(eventId);
+      const result = await triggerGetDeposit(eventId).unwrap();
+      if (!result) {
+        throw new Error("Failed to download Deposit");
+      }
+
+      const blob = new Blob([result], { type: "application/pdf" });
+      const fileName = generateUniqueFileName(eventDate, "Deposit Bill");
+
+      saveAs(blob, `${fileName}.pdf`);
+    } catch (error) {
+      console.error("Error downloading Deposit:", error);
     } finally {
       setCurrentDownloadingId(null);
     }
@@ -136,13 +175,14 @@ function EventList() {
       description: event?.description,
       ticketUrl: event?.ticketUrl,
       pdfInvoice: event?.pdfInvoice,
+      pdfDeposit: event?.pdfDeposit,
     })) || [];
 
   const columns = [
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      width: 200,
       renderCell: (params) => (
         <>
           <IconButton
@@ -166,32 +206,64 @@ function EventList() {
           >
             <PictureAsPdfIcon />
           </IconButton>
+          <IconButton
+            color="success"
+            onClick={() => handleOpenGenerateDepositDialog(params?.row)}
+            aria-label="generate-invoice"
+          >
+            <PictureAsPdfIcon />
+          </IconButton>
         </>
       ),
     },
     {
       field: "invoice",
-      headerName: "Invoice",
-      width: 150,
-      renderCell: (params) => {
-        if (params?.row?.pdfInvoice) {
-          const isDownloading =
-            isFetching && currentDownloadingId === params?.row?.id;
-
-          return (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleDownloadInvoice(params.row.id)}
-              disabled={isDownloading}
-            >
-              {isDownloading ? "Downloading..." : "Download"}
-            </Button>
-          );
-        } else {
-          return "No File";
-        }
-      },
+      headerName: "Inv/Dep",
+      width: 100,
+      renderCell: (params) => (
+        <>
+          {params?.row?.pdfInvoice && (
+            <Tooltip title="Download Invoice">
+              <IconButton
+                color="secondary"
+                onClick={() =>
+                  handleDownloadInvoice(params.row.id, params.row.date)
+                }
+                aria-label="download-invoice"
+              >
+                {isFetching && currentDownloadingId === params?.row?.id ? (
+                  <CircularProgress />
+                ) : (
+                  <Download />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
+          {params?.row?.pdfDeposit && (
+            <Tooltip title="Download Deposit">
+              <IconButton
+                color="success"
+                onClick={() =>
+                  handleDownloadDeposit(params.row.id, params.row.date)
+                }
+                aria-label="download-deposit"
+              >
+                {isDepositFetching &&
+                currentDownloadingId === params?.row?.id ? (
+                  <CircularProgress />
+                ) : (
+                  <Download />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
+          {!params?.row?.pdfInvoice && !params?.row?.pdfDeposit && (
+            <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+              No File
+            </Typography>
+          )}
+        </>
+      ),
     },
     { field: "title", headerName: "Title", width: 150 },
     { field: "date", headerName: "Date", width: 150 },
@@ -330,6 +402,12 @@ function EventList() {
       <GenerateInvoiceDialog
         open={openGenerateInvoiceDialog}
         onClose={handleCloseGenerateInvoiceDialog}
+        event={eventForInvoice}
+        refetchEvents={refetch}
+      />
+      <GenerateDepositDialog
+        open={openGenerateDepositDialog}
+        onClose={handleCloseGenerateDepositDialog}
         event={eventForInvoice}
         refetchEvents={refetch}
       />

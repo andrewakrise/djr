@@ -99,7 +99,7 @@ const EventModal = ({ open, onClose, event }) => {
             <Typography id="event-details-description" sx={{ mt: 2 }}>
               {event?.description}
             </Typography>
-            {event?.location && (
+            {event?.location && event?.isPublic && (
               <Typography sx={{ mt: 2 }}>
                 <strong>Location:</strong>{" "}
                 <a
@@ -112,7 +112,7 @@ const EventModal = ({ open, onClose, event }) => {
                 </a>
               </Typography>
             )}
-            {event?.ticketUrl && (
+            {event?.ticketUrl && event?.isPublic && (
               <Button
                 variant="contained"
                 color="secondary"

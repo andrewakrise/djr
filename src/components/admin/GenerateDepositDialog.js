@@ -1,4 +1,4 @@
-// GenerateInvoiceDialog.js
+// GenerateDepositDialog.js
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -19,16 +19,16 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
-import EventInvoicePDF from "./EventInvoicePDF";
-import { useUploadInvoiceMutation } from "../../services/event";
+import EventDepositPDF from "./EventDepositPDF";
+import { useUploadDepositMutation } from "../../services/event";
 import { generateUniqueFileName } from "../helpers/utils";
 
-const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
+const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [uploadInvoice, { isLoading }] = useUploadInvoiceMutation();
+  const [uploadDeposit, { isLoading }] = useUploadDepositMutation();
 
   // Plugins for PDF Viewer
   const zoomPluginInstance = zoomPlugin();
@@ -53,7 +53,7 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
 
   const generatePdf = async (event) => {
     try {
-      const blob = await pdf(<EventInvoicePDF event={event} />).toBlob();
+      const blob = await pdf(<EventDepositPDF event={event} />).toBlob();
       setPdfBlob(blob);
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
@@ -62,29 +62,29 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
     }
   };
 
-  const handleUploadInvoice = async () => {
+  const handleUploadDeposit = async () => {
     if (!pdfBlob) {
       setError("No PDF to upload");
       return;
     }
 
-    const fileName = generateUniqueFileName(event?.date, "Contract-Invoice");
+    const fileName = generateUniqueFileName(event?.date, "Deposit Bill");
     // console.log("fileName", fileName)
     const formData = new FormData();
-    formData.append("pdfInvoice", pdfBlob, `${fileName}.pdf`);
+    formData.append("pdfDeposit", pdfBlob, `${fileName}.pdf`);
 
-    const result = await uploadInvoice({
+    const result = await uploadDeposit({
       eventId: event?.id,
       formData,
     });
 
     if (result?.data && result?.data?.event) {
-      setSuccess("Invoice uploaded successfully");
+      setSuccess("Deposit uploaded successfully");
       refetchEvents?.();
       onClose();
     } else {
       setError(
-        `Error uploading invoice: ${
+        `Error uploading Deposit: ${
           result?.error.data?.msg || "Error on the Server"
         }`
       );
@@ -93,7 +93,7 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>Invoice Preview</DialogTitle>
+      <DialogTitle>Deposit Preview</DialogTitle>
       <DialogContent dividers style={{ minHeight: "600px" }}>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
@@ -160,15 +160,15 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
           Cancel
         </Button>
         <Button
-          onClick={handleUploadInvoice}
+          onClick={handleUploadDeposit}
           color="primary"
           disabled={isLoading}
         >
-          {isLoading ? <CircularProgress size={24} /> : "Upload Invoice"}
+          {isLoading ? <CircularProgress size={24} /> : "Upload Deposit"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default GenerateInvoiceDialog;
+export default GenerateDepositDialog;
