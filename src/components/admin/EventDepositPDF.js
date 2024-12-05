@@ -71,10 +71,13 @@ const styles = StyleSheet.create({
     borderBottom: "1px solid #000",
   },
   clientSection: {
+    flex: 3,
     textAlign: "left",
     padding: 10,
+    wordBreak: "break-word",
   },
   dateSection: {
+    flex: 2,
     textAlign: "right",
     padding: 10,
   },
@@ -84,13 +87,18 @@ const styles = StyleSheet.create({
   },
   dateLabel: { fontWeight: 900, marginBottom: 7 },
   dateProp: { fontWeight: 500, fontSize: 12, color: "#585858" },
-  clientField: { flexDirection: "row", marginBottom: 10 },
-  clientLabel: { fontWeight: 900, fontSize: 12, color: "black" },
+  clientField: {
+    flexDirection: "row",
+    marginBottom: 10,
+    alignItems: "flex-start",
+  },
+  clientLabel: { fontWeight: 900, fontSize: 12, color: "black", width: 100 },
   clientProp: {
-    marginLeft: 4,
     fontWeight: 500,
     fontSize: 12,
     color: "#585858",
+    flex: 1,
+    lineHeight: 1.75,
   },
   serviceSection: {
     paddingLeft: 10,

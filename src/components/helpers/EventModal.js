@@ -83,7 +83,7 @@ const EventModal = ({ open, onClose, event }) => {
                 <Cancel />
               </IconButton>
             </Box>
-            {event.image?.url && event.image?.url && (
+            {event.image && event.image?.url && (
               <Box sx={{ mb: 2 }}>
                 <img
                   src={event?.image?.url}

@@ -24,12 +24,14 @@ import {
   Edit,
   PictureAsPdf as PictureAsPdfIcon,
   Download,
+  Visibility as VisibilityIcon,
 } from "@mui/icons-material";
 import ConfirmationDialog from "../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
 import GenerateDepositDialog from "./GenerateDepositDialog";
 import { saveAs } from "file-saver";
 import { generateUniqueFileName } from "../helpers/utils";
+import AdminEventModal from "./AdminEventModal";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -49,6 +51,8 @@ function EventList() {
     useState(false);
   const [eventForInvoice, setEventForInvoice] = useState(null);
   const [currentDownloadingId, setCurrentDownloadingId] = useState(null);
+  const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
+  const [eventForPreview, setEventForPreview] = useState(null);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -151,6 +155,16 @@ function EventList() {
     }
   };
 
+  const handleOpenPreviewDialog = (event) => {
+    setEventForPreview(event);
+    setOpenPreviewDialog(true);
+  };
+
+  const handleClosePreviewDialog = () => {
+    setEventForPreview(null);
+    setOpenPreviewDialog(false);
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -182,7 +196,7 @@ function EventList() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 200,
+      width: 225,
       renderCell: (params) => (
         <>
           <IconButton
@@ -212,6 +226,13 @@ function EventList() {
             aria-label="generate-invoice"
           >
             <PictureAsPdfIcon />
+          </IconButton>
+          <IconButton
+            color="info"
+            onClick={() => handleOpenPreviewDialog(params?.row)}
+            aria-label="preview"
+          >
+            <VisibilityIcon />
           </IconButton>
         </>
       ),
@@ -410,6 +431,11 @@ function EventList() {
         onClose={handleCloseGenerateDepositDialog}
         event={eventForInvoice}
         refetchEvents={refetch}
+      />
+      <AdminEventModal
+        open={openPreviewDialog}
+        onClose={handleClosePreviewDialog}
+        event={eventForPreview}
       />
     </Box>
   );
