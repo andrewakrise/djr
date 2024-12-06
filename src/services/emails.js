@@ -22,9 +22,33 @@ const emailsApi = createApi({
         body: { sendData },
       }),
     }),
+    sendEventEmailWithAttachments: builder.mutation({
+      query: ({
+        clientEmail,
+        clientName,
+        includeInvoice,
+        includeDeposit,
+        customBodyText,
+        eventId,
+      }) => ({
+        url: "send-event-email",
+        method: "POST",
+        body: {
+          clientEmail,
+          clientName,
+          includeInvoice,
+          includeDeposit,
+          customBodyText,
+          eventId,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useSendBookEventEmailMutation } = emailsApi;
+export const {
+  useSendBookEventEmailMutation,
+  useSendEventEmailWithAttachmentsMutation,
+} = emailsApi;
 
 export default emailsApi;

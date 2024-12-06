@@ -5,6 +5,7 @@ import {
   useLazyGetInvoiceQuery,
   useLazyGetDepositQuery,
 } from "../../services/event";
+import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
 import {
   Typography,
   Box,
@@ -25,6 +26,7 @@ import {
   PictureAsPdf as PictureAsPdfIcon,
   Download,
   Visibility as VisibilityIcon,
+  Email as EmailIcon,
 } from "@mui/icons-material";
 import ConfirmationDialog from "../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
@@ -32,6 +34,7 @@ import GenerateDepositDialog from "./GenerateDepositDialog";
 import { saveAs } from "file-saver";
 import { generateUniqueFileName } from "../helpers/utils";
 import AdminEventModal from "./AdminEventModal";
+import ClientEmailDialog from "./ClientEmailDialog";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -39,6 +42,7 @@ function EventList() {
   const [triggerGetInvoice, { isFetching }] = useLazyGetInvoiceQuery();
   const [triggerGetDeposit, { isFetching: isDepositFetching }] =
     useLazyGetDepositQuery();
+  const [sendEventEmail] = useSendEventEmailWithAttachmentsMutation();
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -53,6 +57,7 @@ function EventList() {
   const [currentDownloadingId, setCurrentDownloadingId] = useState(null);
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
   const [eventForPreview, setEventForPreview] = useState(null);
+  const [openEmailDialog, setOpenEmailDialog] = useState(false);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -171,6 +176,16 @@ function EventList() {
   const handleClosePreviewDialog = () => {
     setEventForPreview(null);
     setOpenPreviewDialog(false);
+  };
+
+  const handleOpenEmailDialog = (event) => {
+    setSelectedEvent(event);
+    setOpenEmailDialog(true);
+  };
+
+  const handleCloseEmailDialog = () => {
+    setSelectedEvent(null);
+    setOpenEmailDialog(false);
   };
 
   const rows =
@@ -300,6 +315,22 @@ function EventList() {
             </Typography>
           )}
         </>
+      ),
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 100,
+      renderCell: (params) => (
+        <Tooltip title="Send Email to Client">
+          <IconButton
+            color="primary"
+            onClick={() => handleOpenEmailDialog(params?.row)}
+            aria-label="send-email"
+          >
+            <EmailIcon />
+          </IconButton>
+        </Tooltip>
       ),
     },
     { field: "title", headerName: "Title", width: 150 },
@@ -452,6 +483,12 @@ function EventList() {
         open={openPreviewDialog}
         onClose={handleClosePreviewDialog}
         event={eventForPreview}
+      />
+      <ClientEmailDialog
+        open={openEmailDialog}
+        onClose={handleCloseEmailDialog}
+        event={selectedEvent}
+        sendEventEmail={sendEventEmail}
       />
     </Box>
   );
