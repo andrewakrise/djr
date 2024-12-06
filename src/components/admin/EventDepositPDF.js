@@ -11,6 +11,7 @@ import {
 import {
   formatDateToLocalAmericaPacific,
   generateUniqueDepositNumber,
+  convertTo12HourFormat,
 } from "../helpers/utils";
 
 const styles = StyleSheet.create({
@@ -21,7 +22,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   topSection: {
-    padding: 10,
+    margin: 0,
+    padding: 0,
+    paddingLeft: 10,
+    paddingRight: 10,
     color: "white",
     backgroundColor: "#282c34",
     flexDirection: "row",
@@ -29,8 +33,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 75,
-    height: 75,
+    width: 55,
+    height: 55,
   },
   wideHeaderImageUrl: {
     width: "100%",
@@ -60,14 +64,18 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     width: "100%",
     padding: 10,
-    marginBottom: 5,
+    margin: 0,
+    marginBottom: 0,
+    paddingBottom: 0,
+    marginTop: 0,
+    paddingTop: 0,
   },
   clientHeader: {
     width: "100%",
     fontSize: 14,
     padding: 7,
     paddingLeft: 20,
-    marginBottom: 5,
+    margin: 0,
     borderBottom: "1px solid #000",
   },
   clientSection: {
@@ -75,6 +83,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     padding: 10,
     wordBreak: "break-word",
+    margin: 0,
   },
   dateSection: {
     flex: 2,
@@ -89,7 +98,7 @@ const styles = StyleSheet.create({
   dateProp: { fontWeight: 500, fontSize: 12, color: "#585858" },
   clientField: {
     flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: 0,
     alignItems: "flex-start",
   },
   clientLabel: { fontWeight: 900, fontSize: 12, color: "black", width: 100 },
@@ -101,6 +110,12 @@ const styles = StyleSheet.create({
     lineHeight: 1.75,
   },
   serviceSection: {
+    margin: 0,
+    padding: 0,
+    marginBottom: 0,
+    paddingBottom: 0,
+    marginTop: 0,
+    paddingTop: 0,
     paddingLeft: 10,
     paddingRight: 10,
   },
@@ -174,7 +189,12 @@ const EventDepositPDF = ({ event }) => {
 
   const depositDate = formatDateToLocalAmericaPacific(new Date());
   const depositNumber = generateUniqueDepositNumber(new Date());
-  const eventServices = event?.services?.split(", ");
+  const eventServices = event?.services?.split(", ").map((service) => {
+    if (service === "Logistics and Setting of the above equipment") {
+      return "Logistics and Setting of the above equipment at the event venue";
+    }
+    return service;
+  });
   // console.log("event", event);
 
   return (
@@ -240,15 +260,17 @@ const EventDepositPDF = ({ event }) => {
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event Start Date & Time: </Text>
               <Text style={styles.dateProp}>
-                {`${event?.date} ${event?.startTime || ""}` ||
-                  "no start date and time"}
+                {`${event?.date} ${
+                  convertTo12HourFormat(event?.startTime) || ""
+                }` || "no start date and time"}
               </Text>
             </View>
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event End Date & Time: </Text>
               <Text style={styles.dateProp}>
-                {`${event?.date} ${event?.endTime || ""}` ||
-                  "no start date and time"}
+                {`${event?.date} ${
+                  convertTo12HourFormat(event?.endTime) || ""
+                }` || "no start date and time"}
               </Text>
             </View>
           </View>

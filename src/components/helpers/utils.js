@@ -39,12 +39,21 @@ export const generateUniqueDepositNumber = (date) => {
   return `BLL-${formattedDate.toUpperCase().replace(/\./g, "")}`;
 };
 
-export const generateUniqueFileName = (date, fileFormat) => {
-  const sanitizedFileName = `Event at ${formatDateToLocalAmericaPacific(
+export const generateUniqueFileName = (title, date, fileFormat) => {
+  const sanitizedFileName = `${title} at ${formatDateToLocalAmericaPacific(
     date
   )} ${fileFormat} ${formatDateToLocalAmericaPacific(new Date())}`.replace(
     /[.,?/\\|<>]/g,
     ""
   );
   return sanitizedFileName;
+};
+
+export const convertTo12HourFormat = (time) => {
+  if (!time) return "";
+  const [hour, minute] = time.split(":");
+  const intHour = parseInt(hour, 10);
+  const period = intHour >= 12 ? "pm" : "am";
+  const formattedHour = intHour % 12 === 0 ? 12 : intHour % 12;
+  return `${formattedHour}:${minute} ${period}`;
 };

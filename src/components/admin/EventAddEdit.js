@@ -51,6 +51,8 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [imageFile, setImageFile] = useState(null);
   const [djingHours, setDjingHours] = useState("");
   const [djingMinutes, setDjingMinutes] = useState("");
+  const [supportDjingHours, setSupportDjingHours] = useState("");
+  const [supportDjingMinutes, setSupportDjingMinutes] = useState("");
   const [customMicCount, setCustomMicCount] = useState("");
   const [customMixerCount, setCustomMixerCount] = useState("");
   const [soundSystemDetails, setSoundSystemDetails] = useState({
@@ -61,6 +63,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
 
   const serviceOptions = [
     "DJing Services",
+    "Support DJing Services",
     "DJ Controller",
     "Lighting",
     "Sound System",
@@ -70,8 +73,8 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     " channel mixer",
     "8 channel mixer",
     "16 channel mixer",
-    "Setting of the above equipment at the event venue",
     "Logistics",
+    "Setting of the above equipment at the event venue",
   ];
 
   const handleImageChange = (event) => {
@@ -87,7 +90,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   };
 
   const isValidPhoneNumber = (phoneNumber) => {
-    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    const phoneRegex = /^(\+1\s?)?(\(\d{3}\)\s?|\d{3}[-\s]?)\d{3}[-\s]?\d{4}$/;
     return phoneRegex.test(phoneNumber);
   };
 
@@ -144,11 +147,34 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       return;
     }
 
-    const uniqueServices = [...new Set(services)];
+    let uniqueServices = [...new Set(services)];
+
+    if (
+      uniqueServices.includes("Logistics") &&
+      uniqueServices.includes(
+        "Setting of the above equipment at the event venue"
+      )
+    ) {
+      uniqueServices = uniqueServices.filter(
+        (service) =>
+          service !== "Logistics" &&
+          service !== "Setting of the above equipment at the event venue"
+      );
+      uniqueServices.push("Logistics and Setting of the above equipment");
+    }
 
     let customizedServices = uniqueServices.map((service) => {
       if (service === "DJing Services" && (djingHours || djingMinutes)) {
-        return `DJing Services for ${djingHours} hours ${djingMinutes} minutes`;
+        return `DJing Services for ${djingHours} hours${
+          djingMinutes ? " " + djingMinutes + " minutes" : ""
+        }`;
+      } else if (
+        service === "Support DJing Services" &&
+        (djingHours || djingMinutes)
+      ) {
+        return `Program Support DJing Services for ${supportDjingHours} hours${
+          supportDjingMinutes ? " " + supportDjingMinutes + " minutes" : ""
+        }`;
       } else if (service === "Sound System") {
         const { venueType, guestCount, withStands } = soundSystemDetails;
         return `the PA sound system ${
@@ -225,7 +251,6 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       );
     }
   };
-  // console.log("Services state before render:", services);
 
   return (
     <Container>
@@ -373,6 +398,36 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
               type="number"
               value={djingMinutes}
               onChange={(e) => setDjingMinutes(e.target.value)}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">minutes</InputAdornment>
+                ),
+              }}
+            />
+          </>
+        )}
+        {services?.includes("Support DJing Services") && (
+          <>
+            <TextField
+              label="Support DJing Hours"
+              type="number"
+              value={supportDjingHours}
+              onChange={(e) => setSupportDjingHours(e.target.value)}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">hours</InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="Support DJing Minutes"
+              type="number"
+              value={supportDjingMinutes}
+              onChange={(e) => setSupportDjingMinutes(e.target.value)}
               fullWidth
               margin="normal"
               InputProps={{

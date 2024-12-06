@@ -33,7 +33,7 @@ const StyledModalBox = styled(Box)(({ theme }) => ({
 const AdminEventModal = ({ open, onClose, event }) => {
   if (!event) return null;
 
-  console.log("event", event);
+  // console.log("event", event);
   return (
     <Modal
       open={open}

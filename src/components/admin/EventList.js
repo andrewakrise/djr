@@ -117,7 +117,7 @@ function EventList() {
     setOpenGenerateDepositDialog(false);
   };
 
-  const handleDownloadInvoice = async (eventId, eventDate) => {
+  const handleDownloadInvoice = async (eventId, eventDate, eventTitle) => {
     try {
       setCurrentDownloadingId(eventId);
       const result = await triggerGetInvoice(eventId).unwrap();
@@ -126,7 +126,11 @@ function EventList() {
       }
 
       const blob = new Blob([result], { type: "application/pdf" });
-      const fileName = generateUniqueFileName(eventDate, "Contract-Invoice");
+      const fileName = generateUniqueFileName(
+        eventTitle,
+        eventDate,
+        "Contract-Invoice"
+      );
 
       saveAs(blob, `${fileName}.pdf`);
     } catch (error) {
@@ -136,7 +140,7 @@ function EventList() {
     }
   };
 
-  const handleDownloadDeposit = async (eventId, eventDate) => {
+  const handleDownloadDeposit = async (eventId, eventDate, eventTitle) => {
     try {
       setCurrentDownloadingId(eventId);
       const result = await triggerGetDeposit(eventId).unwrap();
@@ -145,7 +149,11 @@ function EventList() {
       }
 
       const blob = new Blob([result], { type: "application/pdf" });
-      const fileName = generateUniqueFileName(eventDate, "Deposit Bill");
+      const fileName = generateUniqueFileName(
+        eventTitle,
+        eventDate,
+        "Deposit Bill"
+      );
 
       saveAs(blob, `${fileName}.pdf`);
     } catch (error) {
@@ -248,7 +256,11 @@ function EventList() {
               <IconButton
                 color="secondary"
                 onClick={() =>
-                  handleDownloadInvoice(params.row.id, params.row.date)
+                  handleDownloadInvoice(
+                    params.row.id,
+                    params.row.date,
+                    params.row.title
+                  )
                 }
                 aria-label="download-invoice"
               >
@@ -265,7 +277,11 @@ function EventList() {
               <IconButton
                 color="success"
                 onClick={() =>
-                  handleDownloadDeposit(params.row.id, params.row.date)
+                  handleDownloadDeposit(
+                    params.row.id,
+                    params.row.date,
+                    params.row.title
+                  )
                 }
                 aria-label="download-deposit"
               >
