@@ -39,6 +39,9 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [location, setLocation] = useState(event?.location || "");
   const [address, setAddress] = useState(event?.address || "");
   const [clientName, setClientName] = useState(event?.clientName || "");
+  const [clientCompanyName, setClientCompanyName] = useState(
+    event?.clientCompanyName || ""
+  );
   const [clientEmail, setClientEmail] = useState(event?.clientEmail || "");
   const [phoneNumber, setPhoneNumber] = useState(event?.phoneNumber || "");
   const [services, setServices] = useState([]);
@@ -104,6 +107,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       setLocation(event?.location);
       setAddress(event?.address);
       setClientName(event?.clientName);
+      setClientCompanyName(event?.clientCompanyName);
       setClientEmail(event?.clientEmail);
       setPhoneNumber(event?.phoneNumber);
       setTotalSum(event.totalSum !== undefined ? event.totalSum : 0);
@@ -209,6 +213,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     formData.append("startTime", formattedStartTime);
     formData.append("endTime", formattedEndTime);
     formData.append("clientName", clientName);
+    formData.append("clientCompanyName", clientCompanyName);
     formData.append("clientEmail", clientEmail);
     formData.append("phoneNumber", phoneNumber);
     customizedServices.forEach((service) => {
@@ -235,11 +240,23 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         setLocation("");
         setAddress("");
         setClientName("");
+        setClientCompanyName("");
         setClientEmail("");
         setPhoneNumber("");
         setServices([]);
         setTotalSum(0);
         setDepositSum(0);
+        setDjingHours("");
+        setDjingMinutes("");
+        setSupportDjingHours("");
+        setSupportDjingMinutes("");
+        setCustomMicCount("");
+        setCustomMixerCount("");
+        setSoundSystemDetails({
+          venueType: "",
+          guestCount: "",
+          withStands: false,
+        });
         setImageFile(null);
         setTicketUrl("");
         onAddSuccess();
@@ -324,6 +341,14 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           label="Client Name"
           value={clientName}
           onChange={(e) => setClientName(e.target.value)}
+          fullWidth
+          margin="normal"
+          required
+        />
+        <TextField
+          label="Client Company Name"
+          value={clientCompanyName}
+          onChange={(e) => setClientCompanyName(e.target.value)}
           fullWidth
           margin="normal"
           required

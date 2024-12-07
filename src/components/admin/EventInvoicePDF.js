@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   invoiceDate: {
     textAlign: "right",
     color: "white",
-    marginBottom: 15,
+    marginBottom: 7,
   },
   eventClientSection: {
     flexDirection: "row",
@@ -230,18 +230,27 @@ const EventInvoicePDF = ({ event }) => {
                 {event?.clientName || "no name"}
               </Text>
             </View>
-            <View style={styles.clientField}>
-              <Text style={styles.clientLabel}>Client Email: </Text>
-              <Text style={styles.clientProp}>
-                {" "}
-                {event?.clientEmail || "no email"}
-              </Text>
-            </View>
+            {event?.clientCompanyName && (
+              <View style={styles.clientField}>
+                <Text style={styles.clientLabel}>Company/Venue: </Text>
+                <Text style={styles.clientProp}>
+                  {" "}
+                  {event?.clientCompanyName || "no name"}
+                </Text>
+              </View>
+            )}
             <View style={styles.clientField}>
               <Text style={styles.clientLabel}>Phone Number: </Text>
               <Text style={styles.clientProp}>
                 {" "}
                 {event?.phoneNumber || "no phone number"}
+              </Text>
+            </View>
+            <View style={styles.clientField}>
+              <Text style={styles.clientLabel}>Client Email: </Text>
+              <Text style={styles.clientProp}>
+                {" "}
+                {event?.clientEmail || "no email"}
               </Text>
             </View>
             <View style={styles.clientField}>

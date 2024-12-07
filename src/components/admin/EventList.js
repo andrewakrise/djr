@@ -203,6 +203,7 @@ function EventList() {
       location: event?.location,
       address: event?.address,
       clientName: event?.clientName,
+      clientCompanyName: event?.clientCompanyName,
       clientEmail: event?.clientEmail,
       phoneNumber: event?.phoneNumber,
       services: event?.services.join(", "),
@@ -333,6 +334,11 @@ function EventList() {
         </Tooltip>
       ),
     },
+    {
+      field: "clientName",
+      headerName: "Client Name",
+      width: 150,
+    },
     { field: "title", headerName: "Title", width: 150 },
     { field: "date", headerName: "Date", width: 150 },
     {
@@ -346,8 +352,8 @@ function EventList() {
       width: 100,
     },
     {
-      field: "clientName",
-      headerName: "Client Name",
+      field: "clientCompanyName",
+      headerName: "Company/Venue",
       width: 150,
     },
     {
