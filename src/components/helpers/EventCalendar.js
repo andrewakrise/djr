@@ -11,12 +11,17 @@ import {
   Divider,
   CircularProgress,
 } from "@mui/material";
-import { useGetAllEventsQuery } from "../../services/event";
+import { useGetAllConfEventsQuery } from "../../services/event";
 import { Event } from "@mui/icons-material";
 import EventModal from "./EventModal";
 
 const EventCalendar = () => {
-  const { data: events, isLoading, isError, error } = useGetAllEventsQuery();
+  const {
+    data: events,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllConfEventsQuery();
 
   const [openModal, setOpenModal] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState(null);

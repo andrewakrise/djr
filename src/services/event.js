@@ -18,6 +18,10 @@ const eventApi = createApi({
       query: () => "get-all",
       providesTags: ["Event"],
     }),
+    getAllConfEvents: builder.query({
+      query: () => "get-all-conf",
+      providesTags: ["Event"],
+    }),
     addEvent: builder.mutation({
       query: (formData) => {
         return {
@@ -79,11 +83,28 @@ const eventApi = createApi({
       skip: (eventId) => !eventId,
       providesTags: ["Event"],
     }),
+    confirmEvent: builder.mutation({
+      query: ({ eventId, sendEmail }) => ({
+        url: `confirm-event`,
+        method: "POST",
+        body: { eventId, sendEmail },
+      }),
+      invalidatesTags: ["Event"],
+    }),
+    unconfirmEvent: builder.mutation({
+      query: (eventId) => ({
+        url: `unconfirm-event`,
+        method: "POST",
+        body: eventId,
+      }),
+      invalidatesTags: ["Event"],
+    }),
   }),
 });
 
 export const {
   useGetAllEventsQuery,
+  useGetAllConfEventsQuery,
   useAddEventMutation,
   useUpdateEventMutation,
   useDeleteEventMutation,
@@ -93,6 +114,8 @@ export const {
   useGetDepositQuery,
   useLazyGetInvoiceQuery,
   useLazyGetDepositQuery,
+  useConfirmEventMutation,
+  useUnconfirmEventMutation,
 } = eventApi;
 
 export default eventApi;

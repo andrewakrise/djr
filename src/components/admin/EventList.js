@@ -4,6 +4,8 @@ import {
   useDeleteEventMutation,
   useLazyGetInvoiceQuery,
   useLazyGetDepositQuery,
+  useConfirmEventMutation,
+  useUnconfirmEventMutation,
 } from "../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
 import {
@@ -27,6 +29,8 @@ import {
   Download,
   Visibility as VisibilityIcon,
   Email as EmailIcon,
+  CheckCircle,
+  Unpublished,
 } from "@mui/icons-material";
 import ConfirmationDialog from "../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
@@ -35,6 +39,7 @@ import { saveAs } from "file-saver";
 import { generateUniqueFileName } from "../helpers/utils";
 import AdminEventModal from "./AdminEventModal";
 import ClientEmailDialog from "./ClientEmailDialog";
+import EventConfirmationDialog from "./EventConfirmationDialog";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -43,6 +48,10 @@ function EventList() {
   const [triggerGetDeposit, { isFetching: isDepositFetching }] =
     useLazyGetDepositQuery();
   const [sendEventEmail] = useSendEventEmailWithAttachmentsMutation();
+  const [confirmEvent, { isLoading: isConfirmEventFetching }] =
+    useConfirmEventMutation();
+  const [unconfirmEvent, { isLoading: isUnconfirmEventFetching }] =
+    useUnconfirmEventMutation();
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -58,6 +67,10 @@ function EventList() {
   const [openPreviewDialog, setOpenPreviewDialog] = useState(false);
   const [eventForPreview, setEventForPreview] = useState(null);
   const [openEmailDialog, setOpenEmailDialog] = useState(false);
+  const [openConfirmEventDialog, setOpenConfirmEventDialog] = useState(false);
+  const [sendConfirmationEmail, setSendConfirmationEmail] = useState(false);
+  const [eventToConfirm, setEventToConfirm] = useState(null);
+  const [confirmMode, setConfirmMode] = useState("confirm");
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -188,6 +201,19 @@ function EventList() {
     setOpenEmailDialog(false);
   };
 
+  const handleConfirmEventClick = async (selectedEvent) => {
+    setEventToConfirm(selectedEvent);
+    setConfirmMode(selectedEvent.isConfirmed ? "unconfirm" : "confirm");
+    setOpenConfirmEventDialog(true);
+  };
+
+  const handleCloseConfirmEventDialog = () => {
+    setConfirmMode("");
+    setEventToConfirm(null);
+    setOpenConfirmEventDialog(false);
+    setSendConfirmationEmail(false);
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -214,6 +240,8 @@ function EventList() {
       ticketUrl: event?.ticketUrl,
       pdfInvoice: event?.pdfInvoice,
       pdfDeposit: event?.pdfDeposit,
+      isPublic: event?.isPublic,
+      isConfirmed: event?.isConfirmed,
     })) || [];
 
   const columns = [
@@ -333,6 +361,25 @@ function EventList() {
           </IconButton>
         </Tooltip>
       ),
+    },
+    {
+      field: "Confirm",
+      headerName: "Confirm",
+      width: 100,
+      renderCell: (params) => {
+        const confirmed = params?.row?.isConfirmed;
+        return (
+          <Tooltip title="Confirm the Event payment reaceived">
+            <IconButton
+              color="warning"
+              onClick={() => handleConfirmEventClick(params?.row)}
+              aria-label="confirm-event"
+            >
+              {confirmed ? <CheckCircle /> : <Unpublished />}
+            </IconButton>
+          </Tooltip>
+        );
+      },
     },
     {
       field: "clientName",
@@ -495,6 +542,27 @@ function EventList() {
         onClose={handleCloseEmailDialog}
         event={selectedEvent}
         sendEventEmail={sendEventEmail}
+      />
+      <EventConfirmationDialog
+        open={openConfirmEventDialog}
+        onClose={() => {
+          setEventToConfirm(null);
+          setOpenConfirmEventDialog(false);
+          setSendConfirmationEmail(false);
+        }}
+        onConfirmEvent={
+          confirmMode === "confirm" ? confirmEvent : unconfirmEvent
+        }
+        event={eventToConfirm}
+        sendConfirmationEmail={sendConfirmationEmail}
+        setSendConfirmationEmail={setSendConfirmationEmail}
+        refetch={refetch}
+        setSuccess={setSuccess}
+        setError={setError}
+        isConfirmEventFetching={
+          isConfirmEventFetching || isUnconfirmEventFetching
+        }
+        confirmMode={confirmMode}
       />
     </Box>
   );
