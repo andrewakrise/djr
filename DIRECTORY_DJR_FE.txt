@@ -4,40 +4,71 @@
 ├── package.json
 ├── public
 │   ├── favicon.ico
+│   ├── icons
+│   │   ├── mixcloud.png
+│   │   └── vimeo.jpeg
 │   ├── index.html
 │   ├── logo.png
 │   ├── posters
 │   └── robots.txt
+├── repo-commands.txt
 ├── server.js
 └── src
-    ├── App copy.js
     ├── App.css
     ├── App.js
     ├── assets
     │   ├── bside-radio-fri-oct-27th.jpeg
     │   ├── bside-radio-fri.JPG
     │   ├── eventsData.js
-    │   ├── recordworkz-oct-23.jpg
-    │   ├── recordworkz-sep-18.jpg
-    │   ├── recordworkz.png
-    │   ├── sep-16.jpg
-    │   ├── sunset-party.jpg
-    │   ├── upcoming-event.png
-    │   └── vcyp-sep-30.jpg
+    │   ├── icons
+    │   │   ├── Avatar-DJ-vinyl-1.JPG
+    │   │   ├── back-club-setup.JPG
+    │   │   ├── boat-science-world.JPG
+    │   │   ├── garder-table-setup.JPG
+    │   │   ├── logo.png
+    │   │   ├── mixcloud-svgrepo-com.svg
+    │   │   ├── mixcloud.png
+    │   │   ├── soundcloud.jpeg
+    │   │   ├── soundcloud.png
+    │   │   ├── soundcloud.svg
+    │   │   ├── vimeo-svgrepo-com.svg
+    │   │   ├── vimeo-vimeo-svgrepo-com.svg
+    │   │   ├── vimeo.jpeg
+    │   │   └── vimeo.png
+    │   ├── pioneerdjset.jpg
+    │   └── upcoming-event.png
     ├── components
-    │   ├── AdminPage.js
-    │   ├── Event.js
-    │   ├── EventPreview.js
-    │   ├── EventSlider.js
-    │   ├── Events.js
-    │   ├── Form.js
-    │   ├── Home.js
+    │   ├── AudioVideoPage.js
+    │   ├── Booking.js
+    │   ├── Calendar.js
+    │   ├── FormPage.js
+    │   ├── HomePage.js
     │   ├── Navbar.js
-    │   └── video
-    │       ├── VideoLinkAdd.js
-    │       ├── VideoLinkDelete.js
-    │       ├── VideoLinkList.js
-    │       └── VideoLinkUpdate.js
+    │   ├── admin
+    │   │   ├── AdminEventModal.js
+    │   │   ├── AdminNavbar.js
+    │   │   ├── AdminPage.js
+    │   │   ├── ClientEmailDialog.js
+    │   │   ├── EventAddEdit.js
+    │   │   ├── EventConfirmationDialog.js
+    │   │   ├── EventDepositPDF.js
+    │   │   ├── EventInvoicePDF.js
+    │   │   ├── EventList.js
+    │   │   ├── GenerateDepositDialog.js
+    │   │   ├── GenerateInvoiceDialog.js
+    │   │   ├── VideoLinkAdd.js
+    │   │   └── VideoLinkList.js
+    │   ├── auth
+    │   │   ├── IsTokenValid.js
+    │   │   ├── LoginPage.js
+    │   │   └── SignupPage.js
+    │   └── helpers
+    │       ├── BackButton.js
+    │       ├── ConfirmationDialog.js
+    │       ├── EventCalendar.js
+    │       ├── EventModal.js
+    │       ├── IconLinks.js
+    │       └── utils.js
     ├── index.css
     ├── index.js
     ├── redux
@@ -45,7 +76,10 @@
     └── services
         ├── auth.js
         ├── emails.js
+        ├── event.js
+        ├── routes
+        │   └── PrivateRoute.js
         ├── user.js
         └── video.js
 
-9 directories, 40 files
+14 directories, 69 files
