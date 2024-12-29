@@ -6,6 +6,7 @@ import {
   useLazyGetDepositQuery,
   useConfirmEventMutation,
   useUnconfirmEventMutation,
+  useFinalPaymentEventMutation,
 } from "../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
 import {
@@ -40,6 +41,7 @@ import { generateUniqueFileName } from "../helpers/utils";
 import AdminEventModal from "./AdminEventModal";
 import ClientEmailDialog from "./ClientEmailDialog";
 import EventConfirmationDialog from "./EventConfirmationDialog";
+import EventFinalPaymentDialog from "./EventFinalPaymentDialog";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -52,6 +54,9 @@ function EventList() {
     useConfirmEventMutation();
   const [unconfirmEvent, { isLoading: isUnconfirmEventFetching }] =
     useUnconfirmEventMutation();
+  const [finalPaymentEvent, { isLoading: isFinalPaymentFetching }] =
+    useFinalPaymentEventMutation();
+
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -71,6 +76,9 @@ function EventList() {
   const [sendConfirmationEmail, setSendConfirmationEmail] = useState(false);
   const [eventToConfirm, setEventToConfirm] = useState(null);
   const [confirmMode, setConfirmMode] = useState("confirm");
+  const [openFinalPaymentDialog, setOpenFinalPaymentDialog] = useState(false);
+  const [eventToFinalize, setEventToFinalize] = useState(null);
+  const [sendFinalPaymentEmail, setSendFinalPaymentEmail] = useState(false);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -214,6 +222,17 @@ function EventList() {
     setSendConfirmationEmail(false);
   };
 
+  const handleOpenFinalPaymentDialog = (event) => {
+    setEventToFinalize(event);
+    setOpenFinalPaymentDialog(true);
+  };
+
+  const handleCloseFinalPaymentDialog = () => {
+    setEventToFinalize(null);
+    setOpenFinalPaymentDialog(false);
+    setSendFinalPaymentEmail(false);
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -349,7 +368,7 @@ function EventList() {
     {
       field: "email",
       headerName: "Email",
-      width: 100,
+      width: 55,
       renderCell: (params) => (
         <Tooltip title="Send Email to Client">
           <IconButton
@@ -365,7 +384,7 @@ function EventList() {
     {
       field: "Confirm",
       headerName: "Confirm",
-      width: 100,
+      width: 70,
       renderCell: (params) => {
         const confirmed = params?.row?.isConfirmed;
         return (
@@ -379,6 +398,52 @@ function EventList() {
             </IconButton>
           </Tooltip>
         );
+      },
+    },
+    {
+      field: "donePayto",
+      headerName: "Done/Await payment",
+      width: 100,
+      renderCell: (params) => {
+        const confirmed = params?.row?.isConfirmed;
+        // We'll also read isFullyPaid:
+        const fullyPaid = params?.row?.isFullyPaid;
+
+        // 1) If deposit not paid (isConfirmed = false), display something like "N/A" or disable button
+        // 2) If deposit is paid (isConfirmed = true) but final NOT paid (isFullyPaid = false)
+        // 3) If final is fully paid, show "Done Payment"
+
+        const eventDate = new Date(params.row.date);
+        const today = new Date();
+        const dateHasPassed = eventDate < today;
+
+        // Let's define the text or the button:
+        if (!confirmed) {
+          return <Typography variant="body2">Await Deposit</Typography>;
+        } else if (confirmed && !fullyPaid) {
+          if (!dateHasPassed) {
+            // date not passed, show "In Progress" (still future event)
+            return <Typography variant="body2">In Progress</Typography>;
+          } else {
+            // date has passed, but final not paid => show a button to confirm final payment
+            return (
+              <Tooltip title="Confirm final payment">
+                <IconButton
+                  color="success"
+                  onClick={() => handleOpenFinalPaymentDialog(params?.row)}
+                >
+                  <Unpublished />
+                </IconButton>
+              </Tooltip>
+            );
+          }
+        } else if (fullyPaid) {
+          return (
+            <Typography variant="body2" color="success.main">
+              Payment Done
+            </Typography>
+          );
+        }
       },
     },
     {
@@ -563,6 +628,18 @@ function EventList() {
           isConfirmEventFetching || isUnconfirmEventFetching
         }
         confirmMode={confirmMode}
+      />
+      <EventFinalPaymentDialog
+        open={openFinalPaymentDialog}
+        onClose={handleCloseFinalPaymentDialog}
+        onFinalPayment={finalPaymentEvent}
+        event={eventToFinalize}
+        sendFinalPaymentEmail={sendFinalPaymentEmail}
+        setSendFinalPaymentEmail={setSendFinalPaymentEmail}
+        refetch={refetch}
+        setSuccess={setSuccess}
+        setError={setError}
+        isFinalPaymentFetching={isFinalPaymentFetching}
       />
     </Box>
   );

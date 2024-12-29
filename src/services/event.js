@@ -99,6 +99,14 @@ const eventApi = createApi({
       }),
       invalidatesTags: ["Event"],
     }),
+    finalPaymentEvent: builder.mutation({
+      query: ({ eventId, sendEmail }) => ({
+        url: `final-payment-event`,
+        method: "POST",
+        body: { eventId, sendEmail },
+      }),
+      invalidatesTags: ["Event"],
+    }),
   }),
 });
 
@@ -116,6 +124,7 @@ export const {
   useLazyGetDepositQuery,
   useConfirmEventMutation,
   useUnconfirmEventMutation,
+  useFinalPaymentEventMutation,
 } = eventApi;
 
 export default eventApi;
