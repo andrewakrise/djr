@@ -155,6 +155,27 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-ucc-birthday-party-old-school-hip-hop-rnb%2F"
+            />
+          </Box>
+          <Box
+            sx={{
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              mb: 2,
+            }}
+          >
+            <iframe
+              allow="autoplay"
+              style={{
+                minWidth: "18rem",
+                width: "100%",
+                maxWidth: "45rem",
+                minHeight: "4rem",
+                height: "100%",
+                maxHeight: "7.5rem",
+              }}
               src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-kids-bowl-club-oct-23-2024%2F"
             />
           </Box>
