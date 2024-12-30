@@ -33,7 +33,7 @@ const StyledModalBox = styled(Box)(({ theme }) => ({
 const AdminEventModal = ({ open, onClose, event }) => {
   if (!event) return null;
 
-  // console.log("event", event);
+  console.log("event", event);
   return (
     <Modal
       open={open}
@@ -148,6 +148,17 @@ const AdminEventModal = ({ open, onClose, event }) => {
         <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
 
         <Typography variant="body1" gutterBottom>
+          <strong>Confirmed:</strong> {event?.isConfirmed ? "Is " : "Not "}
+          Confirmed
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>Fully Paid:</strong> {event?.isFullyPaid ? "Is " : "Not "}
+          Fully Paid
+        </Typography>
+
+        <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
+
+        <Typography variant="body1" gutterBottom>
           <strong>Services:</strong> {event?.services || "N/A"}
         </Typography>
 
@@ -157,6 +168,13 @@ const AdminEventModal = ({ open, onClose, event }) => {
         <Typography variant="body1" gutterBottom>
           <strong>Deposit Required:</strong> ${event?.depositSum || "N/A"}
         </Typography>
+
+        {event?.isConfirmed && !event?.isFullyPaid && (
+          <Typography variant="body1" gutterBottom>
+            <strong>Final Payment:</strong> $
+            {event?.totalSum - event?.depositSum || "N/A"}
+          </Typography>
+        )}
 
         {event?.ticketUrl && (
           <Box sx={{ mt: 3 }}>

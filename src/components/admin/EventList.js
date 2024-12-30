@@ -261,6 +261,7 @@ function EventList() {
       pdfDeposit: event?.pdfDeposit,
       isPublic: event?.isPublic,
       isConfirmed: event?.isConfirmed,
+      isFullyPaid: event?.isFullyPaid,
     })) || [];
 
   const columns = [
@@ -402,8 +403,8 @@ function EventList() {
     },
     {
       field: "donePayto",
-      headerName: "Done/Await payment",
-      width: 100,
+      headerName: "Done/Awaiting",
+      width: 120,
       renderCell: (params) => {
         const confirmed = params?.row?.isConfirmed;
         // We'll also read isFullyPaid:
@@ -416,6 +417,8 @@ function EventList() {
         const eventDate = new Date(params.row.date);
         const today = new Date();
         const dateHasPassed = eventDate < today;
+        const finalPaymentSum =
+          params?.row?.totalSum - params?.row?.depositSum || 0;
 
         // Let's define the text or the button:
         if (!confirmed) {
@@ -432,15 +435,25 @@ function EventList() {
                   color="success"
                   onClick={() => handleOpenFinalPaymentDialog(params?.row)}
                 >
-                  <Unpublished />
+                  <Unpublished /> ${finalPaymentSum}
                 </IconButton>
               </Tooltip>
             );
           }
         } else if (fullyPaid) {
           return (
-            <Typography variant="body2" color="success.main">
-              Payment Done
+            <Typography
+              variant="body2"
+              color="success.main"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                gap: "0.5rem",
+                height: "100%",
+              }}
+            >
+              <CheckCircle /> Done
             </Typography>
           );
         }
