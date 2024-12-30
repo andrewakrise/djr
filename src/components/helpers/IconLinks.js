@@ -28,7 +28,7 @@ const IconLinks = () => {
           }}
         >
           <Link
-            href="https://soundcloud.com/risedjs"
+            href="https://www.mixcloud.com/andrewrisedj/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
