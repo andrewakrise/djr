@@ -96,9 +96,15 @@ const EventModal = ({ open, onClose, event }) => {
                 />
               </Box>
             )}
-            <Typography id="event-details-description" sx={{ mt: 2 }}>
-              {event?.description}
-            </Typography>
+            {event?.isPublic && (
+              <Typography
+                variant="body1"
+                id="event-details-description"
+                sx={{ whiteSpace: "pre-wrap", mt: 2 }}
+              >
+                {event?.description}
+              </Typography>
+            )}
             {event?.location && event?.isPublic && (
               <Typography sx={{ mt: 2 }}>
                 <strong>Location:</strong>{" "}

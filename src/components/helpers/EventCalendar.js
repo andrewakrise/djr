@@ -8,7 +8,6 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
-  Divider,
   CircularProgress,
 } from "@mui/material";
 import { useGetAllConfEventsQuery } from "../../services/event";

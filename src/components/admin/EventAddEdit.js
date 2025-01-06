@@ -286,6 +286,8 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
+          multiline
+          rows={6}
           margin="normal"
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>

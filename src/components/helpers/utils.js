@@ -25,18 +25,18 @@ export const formatDateToLocalAmericaPacific = (date) => {
 export const generateUniqueInvoiceNumber = (date) => {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "2-digit",
-    month: "short",
+    month: "2-digit",
     day: "2-digit",
   });
-  return `CNT-INV-${formattedDate.toUpperCase().replace(/\./g, "")}`;
+  return `CNT-INV-${formattedDate}`;
 };
 export const generateUniqueDepositNumber = (date) => {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     year: "2-digit",
-    month: "short",
+    month: "2-digit",
     day: "2-digit",
   });
-  return `BLL-${formattedDate.toUpperCase().replace(/\./g, "")}`;
+  return `BLL-${formattedDate}`;
 };
 
 export const generateUniqueFileName = (title, date, fileFormat) => {

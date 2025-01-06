@@ -156,6 +156,14 @@ function EventList() {
         throw new Error("Failed to download Invoice");
       }
 
+      if (result.type === "application/json") {
+        const textData = await result.text();
+        const jsonData = JSON.parse(textData);
+        console.warn("No invoice file:", jsonData.msg);
+        setError(jsonData.msg || "No invoice file available.");
+        return;
+      }
+
       const blob = new Blob([result], { type: "application/pdf" });
       const fileName = generateUniqueFileName(
         eventTitle,
@@ -166,6 +174,7 @@ function EventList() {
       saveAs(blob, `${fileName}.pdf`);
     } catch (error) {
       console.error("Error downloading Invoice:", error);
+      setError(`Error downloading Invoice: ${error?.msg || error?.status}`);
     } finally {
       setCurrentDownloadingId(null);
     }
@@ -179,6 +188,14 @@ function EventList() {
         throw new Error("Failed to download Deposit");
       }
 
+      if (result.type === "application/json") {
+        const textData = await result.text();
+        const jsonData = JSON.parse(textData);
+        console.warn("No deposit file:", jsonData.msg);
+        setError(jsonData.msg || "No deposit file available.");
+        return;
+      }
+
       const blob = new Blob([result], { type: "application/pdf" });
       const fileName = generateUniqueFileName(
         eventTitle,
@@ -189,6 +206,7 @@ function EventList() {
       saveAs(blob, `${fileName}.pdf`);
     } catch (error) {
       console.error("Error downloading Deposit:", error);
+      setError(`Error downloading Deposit: ${error?.msg || error?.status}`);
     } finally {
       setCurrentDownloadingId(null);
     }
@@ -335,54 +353,44 @@ function EventList() {
       width: 100,
       renderCell: (params) => (
         <>
-          {params?.row?.pdfInvoice && (
-            <Tooltip title="Download Invoice">
-              <IconButton
-                color="secondary"
-                onClick={() =>
-                  handleDownloadInvoice(
-                    params.row.id,
-                    params.row.date,
-                    params.row.title
-                  )
-                }
-                aria-label="download-invoice"
-              >
-                {isFetching && currentDownloadingId === params?.row?.id ? (
-                  <CircularProgress />
-                ) : (
-                  <Download />
-                )}
-              </IconButton>
-            </Tooltip>
-          )}
-          {params?.row?.pdfDeposit && (
-            <Tooltip title="Download Deposit">
-              <IconButton
-                color="success"
-                onClick={() =>
-                  handleDownloadDeposit(
-                    params.row.id,
-                    params.row.date,
-                    params.row.title
-                  )
-                }
-                aria-label="download-deposit"
-              >
-                {isDepositFetching &&
-                currentDownloadingId === params?.row?.id ? (
-                  <CircularProgress />
-                ) : (
-                  <Download />
-                )}
-              </IconButton>
-            </Tooltip>
-          )}
-          {!params?.row?.pdfInvoice && !params?.row?.pdfDeposit && (
-            <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
-              No File
-            </Typography>
-          )}
+          <Tooltip title="Download Invoice">
+            <IconButton
+              color="secondary"
+              onClick={() =>
+                handleDownloadInvoice(
+                  params.row.id,
+                  params.row.date,
+                  params.row.title
+                )
+              }
+              aria-label="download-invoice"
+            >
+              {isFetching && currentDownloadingId === params?.row?.id ? (
+                <CircularProgress />
+              ) : (
+                <Download />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Download Deposit">
+            <IconButton
+              color="success"
+              onClick={() =>
+                handleDownloadDeposit(
+                  params.row.id,
+                  params.row.date,
+                  params.row.title
+                )
+              }
+              aria-label="download-deposit"
+            >
+              {isDepositFetching && currentDownloadingId === params?.row?.id ? (
+                <CircularProgress />
+              ) : (
+                <Download />
+              )}
+            </IconButton>
+          </Tooltip>
         </>
       ),
     },
