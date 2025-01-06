@@ -7,6 +7,7 @@ import {
   useConfirmEventMutation,
   useUnconfirmEventMutation,
   useFinalPaymentEventMutation,
+  useTogglePublicMutation,
 } from "../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
 import {
@@ -32,6 +33,8 @@ import {
   Email as EmailIcon,
   CheckCircle,
   Unpublished,
+  Public as PublicIcon,
+  PublicOff as PublicOffIcon,
 } from "@mui/icons-material";
 import ConfirmationDialog from "../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
@@ -56,6 +59,8 @@ function EventList() {
     useUnconfirmEventMutation();
   const [finalPaymentEvent, { isLoading: isFinalPaymentFetching }] =
     useFinalPaymentEventMutation();
+  const [togglePublic, { isLoading: isTogglePublicLoading }] =
+    useTogglePublicMutation();
 
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
@@ -233,6 +238,23 @@ function EventList() {
     setSendFinalPaymentEmail(false);
   };
 
+  const handleTogglePublic = async (row) => {
+    try {
+      const { eventId } = row;
+      console.log("handleTogglePublic eventId", eventId);
+      const result = await togglePublic(eventId).unwrap();
+      console.log("handleTogglePublic result", result);
+      if (result?.event) {
+        setSuccess(
+          result?.msg || "Public/Private status updated successfully"
+        );
+        refetch?.();
+      }
+    } catch (err) {
+      setError(`Server error: ${err?.data?.msg || err?.status}`);
+    }
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -396,6 +418,25 @@ function EventList() {
               aria-label="confirm-event"
             >
               {confirmed ? <CheckCircle /> : <Unpublished />}
+            </IconButton>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      field: "isPublic",
+      headerName: "Public",
+      width: 70,
+      renderCell: (params) => {
+        const { isPublic } = params.row;
+        return (
+          <Tooltip title={isPublic ? "Set to Private" : "Set to Public"}>
+            <IconButton
+              color={isPublic ? "success" : "warning"}
+              onClick={() => handleTogglePublic({ eventId: params.row.id })}
+              aria-label="toggle-public"
+            >
+              {isPublic ? <PublicIcon /> : <PublicOffIcon />}
             </IconButton>
           </Tooltip>
         );

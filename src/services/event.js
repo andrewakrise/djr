@@ -107,6 +107,14 @@ const eventApi = createApi({
       }),
       invalidatesTags: ["Event"],
     }),
+    togglePublic: builder.mutation({
+      query: (eventId) => ({
+        url: `toggle-public-event`,
+        method: "POST",
+        body: { eventId },
+      }),
+      invalidatesTags: ["Event"],
+    }),
   }),
 });
 
@@ -125,6 +133,7 @@ export const {
   useConfirmEventMutation,
   useUnconfirmEventMutation,
   useFinalPaymentEventMutation,
+  useTogglePublicMutation,
 } = eventApi;
 
 export default eventApi;
