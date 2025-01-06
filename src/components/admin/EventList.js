@@ -245,9 +245,7 @@ function EventList() {
       const result = await togglePublic(eventId).unwrap();
       console.log("handleTogglePublic result", result);
       if (result?.event) {
-        setSuccess(
-          result?.msg || "Public/Private status updated successfully"
-        );
+        setSuccess(result?.msg || "Public/Private status updated successfully");
         refetch?.();
       }
     } catch (err) {
@@ -389,6 +387,25 @@ function EventList() {
       ),
     },
     {
+      field: "isPublic",
+      headerName: "Public",
+      width: 70,
+      renderCell: (params) => {
+        const { isPublic } = params.row;
+        return (
+          <Tooltip title={isPublic ? "Set to Private" : "Set to Public"}>
+            <IconButton
+              color={isPublic ? "success" : "warning"}
+              onClick={() => handleTogglePublic({ eventId: params.row.id })}
+              aria-label="toggle-public"
+            >
+              {isPublic ? <PublicIcon /> : <PublicOffIcon />}
+            </IconButton>
+          </Tooltip>
+        );
+      },
+    },
+    {
       field: "email",
       headerName: "Email",
       width: 55,
@@ -418,25 +435,6 @@ function EventList() {
               aria-label="confirm-event"
             >
               {confirmed ? <CheckCircle /> : <Unpublished />}
-            </IconButton>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      field: "isPublic",
-      headerName: "Public",
-      width: 70,
-      renderCell: (params) => {
-        const { isPublic } = params.row;
-        return (
-          <Tooltip title={isPublic ? "Set to Private" : "Set to Public"}>
-            <IconButton
-              color={isPublic ? "success" : "warning"}
-              onClick={() => handleTogglePublic({ eventId: params.row.id })}
-              aria-label="toggle-public"
-            >
-              {isPublic ? <PublicIcon /> : <PublicOffIcon />}
             </IconButton>
           </Tooltip>
         );
