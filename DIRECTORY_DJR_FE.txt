@@ -52,6 +52,7 @@
     │   │   ├── EventAddEdit.js
     │   │   ├── EventConfirmationDialog.js
     │   │   ├── EventDepositPDF.js
+    │   │   ├── EventFinalPaymentDialog.js
     │   │   ├── EventInvoicePDF.js
     │   │   ├── EventList.js
     │   │   ├── GenerateDepositDialog.js
@@ -82,4 +83,4 @@
         ├── user.js
         └── video.js
 
-14 directories, 69 files
+14 directories, 70 files
