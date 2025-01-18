@@ -23,6 +23,7 @@ function HomePage() {
     { text: "instagram.com", href: "https://www.instagram.com/vandjrise" },
     { text: "upcoming events / calendar", href: "/calendar" },
     { text: "audio & video previews", href: "/audio-video-previews" },
+    { text: "reviews", href: "/reviews" },
   ];
 
   return (

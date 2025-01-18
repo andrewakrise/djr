@@ -3,6 +3,7 @@ import { Container } from "@mui/material";
 import VideoLinkList from "./VideoLinkList";
 import AdminNavbar from "./AdminNavbar";
 import EventLists from "./EventList";
+import ReviewList from "./ReviewList";
 
 function AdminPage() {
   const token = localStorage.getItem("token");
@@ -29,6 +30,7 @@ function AdminPage() {
         }}
       >
         <EventLists />
+        <ReviewList />
         <VideoLinkList />
       </Container>
     </>
