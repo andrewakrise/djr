@@ -250,6 +250,8 @@ function ReviewsPage() {
                 height: "30rem",
                 overflowY: "auto",
                 paddingRight: "1rem",
+                margin: 0,
+                padding: 0,
                 mb: 2,
                 border: "3px solid #ccc",
                 borderImage:
@@ -285,6 +287,7 @@ function ReviewsPage() {
                       padding: "0.5rem 1rem",
                       border: "1px solid #ccc",
                       borderRadius: "8px",
+                      margin: "0.5rem 0",
                       mb: "1rem",
                       cursor: "pointer",
                       backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -326,8 +329,6 @@ function ReviewsPage() {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                width: "100%",
-                maxWidth: "38rem",
                 gap: "1rem",
                 border: "1px solid #ccc",
                 borderRadius: "8px",
