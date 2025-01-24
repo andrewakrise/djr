@@ -42,42 +42,67 @@
     <title>DJ RISE</title>
 
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Event",
-        "name": "DJ RISE Live Events",
-        "startDate": "2024-12-01T19:00:00-08:00",
-        "endDate": "2024-12-01T23:00:00-08:00",
-        "location": {
-          "@type": "Place",
-          "name": "Vancouver Event Hall",
+      [
+        {
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "DJ RISE",
+          "image": "https://www.djrise.party/logo.png",
+          "url": "https://www.djrise.party",
+          "telephone": "+1-604-123-4567",
+          "priceRange": "$$",
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "Downtown",
+            "streetAddress": "1234 Main St",
             "addressLocality": "Vancouver",
             "addressRegion": "BC",
-            "postalCode": "V6B",
+            "postalCode": "V6B 1A1",
             "addressCountry": "CA"
+          },
+          "description": "Professional DJ services for weddings, private events, and more in Vancouver, BC.",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "49.2827",
+            "longitude": "-123.1207"
           }
         },
-        "image": ["https://www.djrise.party/social-share-image.jpg"],
-        "description": "Join DJ RISE for an unforgettable night of music and entertainment. Experience DJ sessions for private parties, weddings, and other live events with energetic beats.",
-        "organizer": {
-          "@type": "Organization",
-          "name": "DJ RISE",
-          "url": "https://www.djrise.party"
-        },
-        "eventStatus": "https://schema.org/EventScheduled",
-        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-        "offers": {
-          "@type": "Offer",
-          "url": "https://www.djrise.party/calendar",
-          "price": "500.00",
-          "priceCurrency": "CAD",
-          "availability": "https://schema.org/InStock",
-          "validFrom": "2024-11-01T00:00:00-08:00"
+        {
+          "@context": "https://schema.org",
+          "@type": "Event",
+          "name": "DJ RISE Live Events",
+          "startDate": "2024-12-01T19:00:00-08:00",
+          "endDate": "2024-12-01T23:00:00-08:00",
+          "location": {
+            "@type": "Place",
+            "name": "Vancouver Event Hall",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Downtown",
+              "addressLocality": "Vancouver",
+              "addressRegion": "BC",
+              "postalCode": "V6B",
+              "addressCountry": "CA"
+            }
+          },
+          "image": ["https://www.djrise.party/logo.png"],
+          "description": "Join DJ RISE for an unforgettable night of music and entertainment. Experience DJ sessions for private parties, weddings, and other live events with energetic beats.",
+          "organizer": {
+            "@type": "Organization",
+            "name": "DJ RISE",
+            "url": "https://www.djrise.party"
+          },
+          "eventStatus": "https://schema.org/EventScheduled",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "offers": {
+            "@type": "Offer",
+            "url": "https://www.djrise.party/calendar",
+            "price": "500.00",
+            "priceCurrency": "CAD",
+            "availability": "https://schema.org/InStock",
+            "validFrom": "2024-11-01T00:00:00-08:00"
+          }
         }
-      }
+      ]
     </script>
   </head>
 

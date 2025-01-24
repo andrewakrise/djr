@@ -248,6 +248,7 @@ function ReviewsPage() {
             <Box
               sx={{
                 height: "30rem",
+                overflowX: "hidden",
                 overflowY: "auto",
                 paddingRight: "1rem",
                 margin: 0,
