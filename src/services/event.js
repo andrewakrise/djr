@@ -116,6 +116,30 @@ const eventApi = createApi({
       }),
       invalidatesTags: ["Event"],
     }),
+    uploadFinal: builder.mutation({
+      query: ({ eventId, formData }) => ({
+        url: `upload-final/${eventId}`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Event"],
+    }),
+    getFinal: builder.query({
+      query: (eventId) => ({
+        url: `final/${eventId}`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+      skip: (eventId) => !eventId,
+      providesTags: ["Event"],
+    }),
+    sendFinalBillEmail: builder.mutation({
+      query: ({ eventId, customNote }) => ({
+        url: "send-final-bill",
+        method: "POST",
+        body: { eventId, customNote },
+      }),
+    }),
   }),
 });
 
@@ -135,6 +159,10 @@ export const {
   useUnconfirmEventMutation,
   useFinalPaymentEventMutation,
   useTogglePublicMutation,
+  useUploadFinalMutation,
+  useGetFinalQuery,
+  useLazyGetFinalQuery,
+  useSendFinalBillEmailMutation,
 } = eventApi;
 
 export default eventApi;

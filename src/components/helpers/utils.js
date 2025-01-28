@@ -39,6 +39,15 @@ export const generateUniqueDepositNumber = (date) => {
   return `BLL-${formattedDate}`;
 };
 
+export const generateUniqueFinalNumber = (date) => {
+  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return `FNL-BLL-${formattedDate}`;
+};
+
 export const generateUniqueFileName = (title, date, fileFormat) => {
   const sanitizedFileName = `${title} at ${formatDateToLocalAmericaPacific(
     date

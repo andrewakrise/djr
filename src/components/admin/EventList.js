@@ -8,6 +8,8 @@ import {
   useUnconfirmEventMutation,
   useFinalPaymentEventMutation,
   useTogglePublicMutation,
+  useUploadFinalMutation,
+  useLazyGetFinalQuery,
 } from "../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
 import {
@@ -45,14 +47,21 @@ import AdminEventModal from "./AdminEventModal";
 import ClientEmailDialog from "./ClientEmailDialog";
 import EventConfirmationDialog from "./EventConfirmationDialog";
 import EventFinalPaymentDialog from "./EventFinalPaymentDialog";
+import GenerateFinalDialog from "./GenerateFinalDialog";
+import EventFinalEmailDialog from "./EventFinalEmailDialog";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
   const [deleteEvent] = useDeleteEventMutation();
+
   const [triggerGetInvoice, { isFetching }] = useLazyGetInvoiceQuery();
   const [triggerGetDeposit, { isFetching: isDepositFetching }] =
     useLazyGetDepositQuery();
+  const [triggerGetFinal, { isFetching: isFinalFetching }] =
+    useLazyGetFinalQuery();
+
   const [sendEventEmail] = useSendEventEmailWithAttachmentsMutation();
+
   const [confirmEvent, { isLoading: isConfirmEventFetching }] =
     useConfirmEventMutation();
   const [unconfirmEvent, { isLoading: isUnconfirmEventFetching }] =
@@ -84,6 +93,14 @@ function EventList() {
   const [openFinalPaymentDialog, setOpenFinalPaymentDialog] = useState(false);
   const [eventToFinalize, setEventToFinalize] = useState(null);
   const [sendFinalPaymentEmail, setSendFinalPaymentEmail] = useState(false);
+
+  const [openGenerateFinalDialog, setOpenGenerateFinalDialog] = useState(false);
+  const [eventForFinal, setEventForFinal] = useState(null);
+  const [currentDownloadingFinalId, setCurrentDownloadingFinalId] =
+    useState(null);
+
+  const [openFinalEmailDialog, setOpenFinalEmailDialog] = useState(false);
+  const [eventForFinalEmail, setEventForFinalEmail] = useState(null);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -238,13 +255,6 @@ function EventList() {
     setOpenConfirmEventDialog(true);
   };
 
-  const handleCloseConfirmEventDialog = () => {
-    setConfirmMode("");
-    setEventToConfirm(null);
-    setOpenConfirmEventDialog(false);
-    setSendConfirmationEmail(false);
-  };
-
   const handleOpenFinalPaymentDialog = (event) => {
     setEventToFinalize(event);
     setOpenFinalPaymentDialog(true);
@@ -269,6 +279,57 @@ function EventList() {
     } catch (err) {
       setError(`Server error: ${err?.data?.msg || err?.status}`);
     }
+  };
+
+  const handleOpenGenerateFinalDialog = (event) => {
+    setEventForFinal(event);
+    setOpenGenerateFinalDialog(true);
+  };
+
+  const handleCloseGenerateFinalDialog = () => {
+    setEventForFinal(null);
+    setOpenGenerateFinalDialog(false);
+  };
+
+  const handleDownloadFinal = async (eventId, eventDate, eventTitle) => {
+    try {
+      setCurrentDownloadingFinalId(eventId);
+      const result = await triggerGetFinal(eventId).unwrap();
+      if (!result) {
+        throw new Error("Failed to download Final Bill");
+      }
+
+      if (result.type === "application/json") {
+        const textData = await result.text();
+        const jsonData = JSON.parse(textData);
+        console.warn("No final file:", jsonData.msg);
+        setError(jsonData.msg || "No final file available.");
+        return;
+      }
+
+      const blob = new Blob([result], { type: "application/pdf" });
+      const fileName = generateUniqueFileName(
+        eventTitle,
+        eventDate,
+        "Final Bill"
+      );
+      saveAs(blob, `${fileName}.pdf`);
+    } catch (error) {
+      console.error("Error downloading Final Bill:", error);
+      setError(`Error downloading Final Bill: ${error.message}`);
+    } finally {
+      setCurrentDownloadingFinalId(null);
+    }
+  };
+
+  const handleOpenFinalEmailDialog = (event) => {
+    setEventForFinalEmail(event);
+    setOpenFinalEmailDialog(true);
+  };
+
+  const handleCloseFinalEmailDialog = () => {
+    setEventForFinalEmail(null);
+    setOpenFinalEmailDialog(false);
   };
 
   const rows =
@@ -449,17 +510,56 @@ function EventList() {
       },
     },
     {
+      field: "finalBill",
+      headerName: "Final",
+      width: 150,
+      renderCell: (params) => (
+        <>
+          <Tooltip title="Generate Final Bill">
+            <IconButton
+              color="warning"
+              onClick={() => handleOpenGenerateFinalDialog(params?.row)}
+            >
+              <PictureAsPdfIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Download Final Bill">
+            <IconButton
+              color="info"
+              onClick={() =>
+                handleDownloadFinal(
+                  params.row.id,
+                  params.row.date,
+                  params.row.title
+                )
+              }
+            >
+              {isFinalFetching &&
+              currentDownloadingFinalId === params.row.id ? (
+                <CircularProgress size={24} />
+              ) : (
+                <Download />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Send Final Bill Email to Client">
+            <IconButton
+              color="primary"
+              onClick={() => handleOpenFinalEmailDialog(params.row)}
+            >
+              <EmailIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
+    },
+    {
       field: "donePayto",
       headerName: "Done/Awaiting",
       width: 120,
       renderCell: (params) => {
         const confirmed = params?.row?.isConfirmed;
-        // We'll also read isFullyPaid:
         const fullyPaid = params?.row?.isFullyPaid;
-
-        // 1) If deposit not paid (isConfirmed = false), display something like "N/A" or disable button
-        // 2) If deposit is paid (isConfirmed = true) but final NOT paid (isFullyPaid = false)
-        // 3) If final is fully paid, show "Done Payment"
 
         const eventDate = new Date(params.row.date);
         const today = new Date();
@@ -467,15 +567,12 @@ function EventList() {
         const finalPaymentSum =
           params?.row?.totalSum - params?.row?.depositSum || 0;
 
-        // Let's define the text or the button:
         if (!confirmed) {
           return <Typography variant="body2">Await Deposit</Typography>;
         } else if (confirmed && !fullyPaid) {
           if (!dateHasPassed) {
-            // date not passed, show "In Progress" (still future event)
             return <Typography variant="body2">In Progress</Typography>;
           } else {
-            // date has passed, but final not paid => show a button to confirm final payment
             return (
               <Tooltip title="Confirm final payment">
                 <IconButton
@@ -700,6 +797,17 @@ function EventList() {
         setSuccess={setSuccess}
         setError={setError}
         isFinalPaymentFetching={isFinalPaymentFetching}
+      />
+      <GenerateFinalDialog
+        open={openGenerateFinalDialog}
+        onClose={handleCloseGenerateFinalDialog}
+        event={eventForFinal}
+        refetchEvents={refetch}
+      />
+      <EventFinalEmailDialog
+        open={openFinalEmailDialog}
+        onClose={handleCloseFinalEmailDialog}
+        event={eventForFinalEmail}
       />
     </Box>
   );
