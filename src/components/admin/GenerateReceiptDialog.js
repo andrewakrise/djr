@@ -1,4 +1,4 @@
-// src/components/admin/GenerateFinalDialog.js
+// src/components/admin/GenerateReceiptDialog.js
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -21,18 +21,20 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 
-import { useUploadFinalMutation } from "../../services/event";
+import { useUploadReceiptMutation } from "../../services/event";
 import { generateUniqueFileName } from "../helpers/utils";
-import EventFinalPDF from "./EventFinalPDF";
+import EventReceiptPDF from "./EventReceiptPDF";
 
-const GenerateFinalDialog = ({ open, onClose, event, refetchEvents }) => {
+const GenerateReceiptDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);
   const [pdfUrl, setPdfUrl] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [uploadFinal, { isLoading }] = useUploadFinalMutation();
 
-  // PDF Viewer plugins
+  // Our RTK mutation for uploading the "receipt" PDF
+  const [uploadReceipt, { isLoading }] = useUploadReceiptMutation();
+
+  // Plugins for PDF preview
   const zoomPluginInstance = zoomPlugin();
   const printPluginInstance = printPlugin();
   const getFilePluginInstance = getFilePlugin();
@@ -41,9 +43,11 @@ const GenerateFinalDialog = ({ open, onClose, event, refetchEvents }) => {
   const { ZoomInButton, ZoomOutButton, ZoomPopover } = zoomPluginInstance;
   const { PrintButton } = printPluginInstance;
 
+  // Whenever the dialog opens with a given event, generate the PDF
   useEffect(() => {
     if (event) generatePdf(event);
     return () => {
+      // Clean up object URLs
       if (pdfUrl) {
         URL.revokeObjectURL(pdfUrl);
       }
@@ -52,7 +56,7 @@ const GenerateFinalDialog = ({ open, onClose, event, refetchEvents }) => {
 
   const generatePdf = async (eventData) => {
     try {
-      const blob = await pdf(<EventFinalPDF event={eventData} />).toBlob();
+      const blob = await pdf(<EventReceiptPDF event={eventData} />).toBlob();
       setPdfBlob(blob);
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
@@ -61,41 +65,54 @@ const GenerateFinalDialog = ({ open, onClose, event, refetchEvents }) => {
     }
   };
 
-  const handleUploadFinal = async () => {
+  // Upload the finished receipt PDF to the server
+  const handleUploadReceipt = async () => {
     if (!pdfBlob) {
       setError("No PDF to upload");
       return;
     }
-    const fileName = generateUniqueFileName(event?.date, "Final Bill");
-    const formData = new FormData();
-    formData.append("pdfFinal", pdfBlob, `${fileName}.pdf`);
+    setError("");
+    setSuccess("");
 
-    const result = await uploadFinal({
-      eventId: event?.id,
+    // Generate a name for the saved PDF
+    const fileName = generateUniqueFileName(event?.date, "Paid Receipt");
+
+    const formData = new FormData();
+    formData.append("pdfReceipt", pdfBlob, `${fileName}.pdf`);
+
+    const result = await uploadReceipt({
+      eventId: event?.id, //
       formData,
     });
 
     if (result?.data && result?.data?.event) {
-      setSuccess("Final bill uploaded successfully");
+      setSuccess("Receipt uploaded successfully!");
       refetchEvents?.();
       setTimeout(() => {
         onClose();
       }, 1000);
     } else {
       setError(
-        `Error uploading final bill: ${
-          result?.error?.data?.msg || "Server error"
-        }`
+        `Error uploading receipt: ${result?.error?.data?.msg || "Server error"}`
       );
     }
   };
 
+  const handleClose = () => {
+    setError("");
+    setSuccess("");
+    setPdfBlob(null);
+    setPdfUrl("");
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>Final Bill Preview</DialogTitle>
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+      <DialogTitle>Paid Receipt Preview</DialogTitle>
       <DialogContent dividers style={{ minHeight: "600px" }}>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
+
         {!pdfUrl ? (
           <CircularProgress />
         ) : (
@@ -136,19 +153,19 @@ const GenerateFinalDialog = ({ open, onClose, event, refetchEvents }) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         <Button
-          onClick={handleUploadFinal}
+          onClick={handleUploadReceipt}
           color="primary"
           disabled={isLoading}
         >
-          {isLoading ? <CircularProgress size={24} /> : "Upload Final Bill"}
+          {isLoading ? <CircularProgress size={24} /> : "Upload Receipt"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default GenerateFinalDialog;
+export default GenerateReceiptDialog;

@@ -101,10 +101,10 @@ const eventApi = createApi({
       invalidatesTags: ["Event"],
     }),
     finalPaymentEvent: builder.mutation({
-      query: ({ eventId, sendEmail }) => ({
+      query: ({ eventId, sendEmail, includeReceiptAttachment }) => ({
         url: `final-payment-event`,
         method: "POST",
-        body: { eventId, sendEmail },
+        body: { eventId, sendEmail, includeReceiptAttachment },
       }),
       invalidatesTags: ["Event"],
     }),
@@ -127,6 +127,23 @@ const eventApi = createApi({
     getFinal: builder.query({
       query: (eventId) => ({
         url: `final/${eventId}`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+      skip: (eventId) => !eventId,
+      providesTags: ["Event"],
+    }),
+    uploadReceipt: builder.mutation({
+      query: ({ eventId, formData }) => ({
+        url: `upload-receipt/${eventId}`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Event"],
+    }),
+    getReceipt: builder.query({
+      query: (eventId) => ({
+        url: `receipt/${eventId}`,
         method: "GET",
         responseHandler: (response) => response.blob(),
       }),
@@ -162,6 +179,9 @@ export const {
   useUploadFinalMutation,
   useGetFinalQuery,
   useLazyGetFinalQuery,
+  useUploadReceiptMutation,
+  useGetReceiptQuery,
+  useLazyGetReceiptQuery,
   useSendFinalBillEmailMutation,
 } = eventApi;
 

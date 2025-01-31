@@ -10,6 +10,7 @@ import {
   useTogglePublicMutation,
   useUploadFinalMutation,
   useLazyGetFinalQuery,
+  useLazyGetReceiptQuery,
 } from "../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
 import {
@@ -49,6 +50,7 @@ import EventConfirmationDialog from "./EventConfirmationDialog";
 import EventFinalPaymentDialog from "./EventFinalPaymentDialog";
 import GenerateFinalDialog from "./GenerateFinalDialog";
 import EventFinalEmailDialog from "./EventFinalEmailDialog";
+import GenerateReceiptDialog from "./GenerateReceiptDialog";
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -70,6 +72,11 @@ function EventList() {
     useFinalPaymentEventMutation();
   const [togglePublic, { isLoading: isTogglePublicLoading }] =
     useTogglePublicMutation();
+
+  const [triggerGetReceipt, { isFetching: isReceiptFetching }] =
+    useLazyGetReceiptQuery();
+  const [currentDownloadingReceiptId, setCurrentDownloadingReceiptId] =
+    useState(null);
 
   const [openAddEventForm, setOpenAddEventForm] = useState(false);
   const [error, setError] = useState("");
@@ -101,6 +108,10 @@ function EventList() {
 
   const [openFinalEmailDialog, setOpenFinalEmailDialog] = useState(false);
   const [eventForFinalEmail, setEventForFinalEmail] = useState(null);
+
+  const [openGenerateReceiptDialog, setOpenGenerateReceiptDialog] =
+    useState(false);
+  const [eventForReceipt, setEventForReceipt] = useState(null);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -229,6 +240,36 @@ function EventList() {
     }
   };
 
+  const handleDownloadReceipt = async (eventId, eventDate, eventTitle) => {
+    try {
+      setCurrentDownloadingReceiptId(eventId);
+      const result = await triggerGetReceipt(eventId).unwrap();
+      if (!result) {
+        throw new Error("Failed to download the receipt");
+      }
+
+      if (result.type === "application/json") {
+        const textData = await result.text();
+        const jsonData = JSON.parse(textData);
+        console.warn("No final receipt file:", jsonData.msg);
+        setError(jsonData.msg || "No receipt file available.");
+        return;
+      }
+
+      const blob = new Blob([result], { type: "application/pdf" });
+      const fileName = generateUniqueFileName(
+        eventTitle,
+        eventDate,
+        "Paid Receipt"
+      );
+      saveAs(blob, `${fileName}.pdf`);
+    } catch (error) {
+      setError(`Error downloading receipt: ${error.message}`);
+    } finally {
+      setCurrentDownloadingReceiptId(null);
+    }
+  };
+
   const handleOpenPreviewDialog = (event) => {
     setEventForPreview(event);
     setOpenPreviewDialog(true);
@@ -332,6 +373,16 @@ function EventList() {
     setOpenFinalEmailDialog(false);
   };
 
+  const handleOpenGenerateReceiptDialog = (event) => {
+    setEventForReceipt(event);
+    setOpenGenerateReceiptDialog(true);
+  };
+
+  const handleCloseGenerateReceiptDialog = () => {
+    setOpenGenerateReceiptDialog(false);
+    setEventForReceipt(null);
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -367,7 +418,7 @@ function EventList() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 225,
+      width: 150,
       renderCell: (params) => (
         <>
           <IconButton
@@ -384,20 +435,7 @@ function EventList() {
           >
             <Delete />
           </IconButton>
-          <IconButton
-            color="secondary"
-            onClick={() => handleOpenGenerateInvoiceDialog(params?.row)}
-            aria-label="generate-invoice"
-          >
-            <PictureAsPdfIcon />
-          </IconButton>
-          <IconButton
-            color="success"
-            onClick={() => handleOpenGenerateDepositDialog(params?.row)}
-            aria-label="generate-invoice"
-          >
-            <PictureAsPdfIcon />
-          </IconButton>
+
           <IconButton
             color="info"
             onClick={() => handleOpenPreviewDialog(params?.row)}
@@ -411,9 +449,18 @@ function EventList() {
     {
       field: "invoice",
       headerName: "Inv/Dep",
-      width: 100,
+      width: 180,
       renderCell: (params) => (
         <>
+          <Tooltip title="Generate Invoice">
+            <IconButton
+              color="secondary"
+              onClick={() => handleOpenGenerateInvoiceDialog(params?.row)}
+              aria-label="generate-invoice"
+            >
+              <PictureAsPdfIcon />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="Download Invoice">
             <IconButton
               color="secondary"
@@ -431,6 +478,15 @@ function EventList() {
               ) : (
                 <Download />
               )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Generate Deposit">
+            <IconButton
+              color="success"
+              onClick={() => handleOpenGenerateDepositDialog(params?.row)}
+              aria-label="generate-invoice"
+            >
+              <PictureAsPdfIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Download Deposit">
@@ -511,7 +567,7 @@ function EventList() {
     },
     {
       field: "finalBill",
-      headerName: "Final",
+      headerName: "Final Bill",
       width: 150,
       renderCell: (params) => (
         <>
@@ -554,6 +610,44 @@ function EventList() {
       ),
     },
     {
+      field: "actionsReceipt",
+      headerName: "Receipt",
+      width: 130,
+      renderCell: (params) => {
+        return (
+          <>
+            <Tooltip title="Generate Paid Receipt">
+              <IconButton
+                color="primary"
+                onClick={() => handleOpenGenerateReceiptDialog(params?.row)}
+              >
+                <PictureAsPdfIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download Paid Receipt">
+              <IconButton
+                color="success"
+                onClick={() =>
+                  handleDownloadReceipt(
+                    params?.row?.id,
+                    params?.row?.date,
+                    params?.row?.title
+                  )
+                }
+              >
+                {isReceiptFetching &&
+                currentDownloadingReceiptId === params?.row.id ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <Download />
+                )}
+              </IconButton>
+            </Tooltip>
+          </>
+        );
+      },
+    },
+    {
       field: "donePayto",
       headerName: "Done/Awaiting",
       width: 120,
@@ -570,20 +664,47 @@ function EventList() {
         if (!confirmed) {
           return <Typography variant="body2">Await Deposit</Typography>;
         } else if (confirmed && !fullyPaid) {
-          if (!dateHasPassed) {
-            return <Typography variant="body2">In Progress</Typography>;
-          } else {
-            return (
-              <Tooltip title="Confirm final payment">
-                <IconButton
-                  color="success"
-                  onClick={() => handleOpenFinalPaymentDialog(params?.row)}
-                >
-                  <Unpublished /> ${finalPaymentSum}
-                </IconButton>
-              </Tooltip>
-            );
-          }
+          return (
+            <Tooltip title="Confirm final payment">
+              <IconButton
+                color="success"
+                onClick={() => handleOpenFinalPaymentDialog(params?.row)}
+              >
+                <Unpublished /> ${finalPaymentSum}
+              </IconButton>
+            </Tooltip>
+          );
+        } else if (dateHasPassed && fullyPaid) {
+          return (
+            <Typography
+              variant="body2"
+              color="success.main"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                gap: "0.5rem",
+                height: "100%",
+              }}
+            >
+              <CheckCircle />
+            </Typography>
+          );
+        }
+      },
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 120,
+      renderCell: (params) => {
+        const confirmed = params?.row?.isConfirmed;
+        const fullyPaid = params?.row?.isFullyPaid;
+
+        if (!confirmed) {
+          return <Typography variant="body2">Await Deposit</Typography>;
+        } else if (confirmed && !fullyPaid) {
+          return <Typography variant="body2">In Progress</Typography>;
         } else if (fullyPaid) {
           return (
             <Typography
@@ -597,7 +718,7 @@ function EventList() {
                 height: "100%",
               }}
             >
-              <CheckCircle /> Done
+              Done
             </Typography>
           );
         }
@@ -809,6 +930,13 @@ function EventList() {
         onClose={handleCloseFinalEmailDialog}
         event={eventForFinalEmail}
       />
+      <GenerateReceiptDialog
+        open={openGenerateReceiptDialog}
+        onClose={handleCloseGenerateReceiptDialog}
+        event={eventForReceipt}
+        refetchEvents={refetch}
+      />
+      ;
     </Box>
   );
 }

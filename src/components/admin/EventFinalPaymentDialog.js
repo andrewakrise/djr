@@ -1,5 +1,5 @@
 // ./EventFinalPaymentDialog.js
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -24,6 +24,8 @@ function EventFinalPaymentDialog({
   setError,
   isFinalPaymentFetching,
 }) {
+  const [attachReceipt, setAttachReceipt] = useState(false);
+
   const handleFinalPayment = async () => {
     if (!event?.id) {
       setError("No event selected");
@@ -34,13 +36,14 @@ function EventFinalPaymentDialog({
       const result = await onFinalPayment({
         eventId: event.id,
         sendEmail: sendFinalPaymentEmail,
+        includeReceiptAttachment: attachReceipt,
       });
       if (result?.data) {
         setSuccess("Final payment received successfully.");
         setTimeout(() => {
           setSuccess("");
           refetch();
-        }, 3000);
+        }, 2000);
       }
     } catch (err) {
       setError(`Server error: ${err?.data?.msg || err?.status}`);
@@ -65,6 +68,18 @@ function EventFinalPaymentDialog({
           }
           label="Send a 'Final Payment Received' email to the client"
         />
+
+        {sendFinalPaymentEmail && (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={attachReceipt}
+                onChange={(e) => setAttachReceipt(e.target.checked)}
+              />
+            }
+            label="Attach Paid Receipt PDF?"
+          />
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
