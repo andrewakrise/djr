@@ -12,6 +12,7 @@ import {
   ThemeProvider,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { useSendBookEventEmailMutation } from "../services/emails";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -66,7 +67,8 @@ const Form = () => {
     eventType: "",
     date: null,
   });
-  const [sendEventBookingEmail] = useSendBookEventEmailMutation();
+  const [sendEventBookingEmail, { isLoading }] =
+    useSendBookEventEmailMutation();
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -110,7 +112,7 @@ const Form = () => {
         : null,
     };
     const result = await sendEventBookingEmail({ sendData });
-    if (result.data) {
+    if (result?.data) {
       setSuccessMessage("Email successfully sent!");
       setValues({
         name: "",
@@ -216,6 +218,7 @@ const Form = () => {
                 label="Event Date"
                 inputFormat="MM/dd/yyyy"
                 value={values.date}
+                required
                 onChange={handleDateChange}
                 TextField={(params) => (
                   <TextField
@@ -262,8 +265,10 @@ const Form = () => {
                   backgroundColor: "#9c490e",
                   "&:hover": { backgroundColor: "#cc6f2d" },
                 }}
+                disabled={isLoading}
+                startIcon={isLoading && <CircularProgress />}
               >
-                Submit
+                {isLoading ? "Sending" : "Send"}
               </Button>
             </Grid>
           </Grid>
