@@ -299,7 +299,7 @@ function ReviewsPage() {
                     onClick={() => handleReviewClick(review)}
                   >
                     <Typography variant="h6">{review?.name}</Typography>
-                    <StarRating rating={review?.rate} />
+                    <StarRating rating={review?.rate} readOnly />
                     <Typography variant="body2" color="textSecondary">
                       {new Date(review?.eventDate)?.toLocaleDateString(
                         "en-CA",
