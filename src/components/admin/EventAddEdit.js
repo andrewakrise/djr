@@ -45,6 +45,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [clientEmail, setClientEmail] = useState(event?.clientEmail || "");
   const [phoneNumber, setPhoneNumber] = useState(event?.phoneNumber || "");
   const [services, setServices] = useState([]);
+  const [customService, setCustomService] = useState("");
   const [totalSum, setTotalSum] = useState(event?.totalSum || 0);
   const [depositSum, setDepositSum] = useState(event?.depositSum || 0);
   const [imageUrl, setImageUrl] = useState(event?.image?.url || "");
@@ -384,6 +385,35 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
             <TextField {...params} label="Services" margin="normal" />
           )}
         />
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginTop: "10px",
+            marginBottom: "10px",
+          }}
+        >
+          <TextField
+            label="Add Custom Service"
+            value={customService}
+            onChange={(e) => setCustomService(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "16px", height: "56px" }}
+            onClick={() => {
+              if (customService.trim()) {
+                setServices([...services, customService.trim()]);
+                setCustomService("");
+              }
+            }}
+          >
+            Add Custom
+          </Button>
+        </div>
         {services?.includes(" wireless mics") && (
           <TextField
             label="Number of Wireless Mics"
