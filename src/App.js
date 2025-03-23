@@ -12,53 +12,56 @@ import PrivateRoute from "./services/routes/PrivateRoute";
 import LoginPage from "./components/auth/LoginPage";
 import SignupPage from "./components/auth/SignupPage";
 import ReviewsPage from "./components/ReviewsPage";
+import { NotificationProvider } from "./context/NotificationContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/booking" element={<BookingPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/audio-video-previews" element={<AudioVideoPage />} />
-        <Route path="/reviews" element={<ReviewsPage />} />
+    <NotificationProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/audio-video-previews" element={<AudioVideoPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
 
-        <Route
-          path="/rdj-api"
-          element={
-            <PrivateRoute>
-              <AdminPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/rdj-api/video-links"
-          element={
-            <PrivateRoute>
-              <VideoLinkList />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/rdj-api/events"
-          element={
-            <PrivateRoute>
-              <EventList />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/rdj-api/reviews"
-          element={
-            <PrivateRoute>
-              <ReviewList />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </Router>
+          <Route
+            path="/rdj-api"
+            element={
+              <PrivateRoute>
+                <AdminPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/rdj-api/video-links"
+            element={
+              <PrivateRoute>
+                <VideoLinkList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/rdj-api/events"
+            element={
+              <PrivateRoute>
+                <EventList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/rdj-api/reviews"
+            element={
+              <PrivateRoute>
+                <ReviewList />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </NotificationProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -13,11 +13,19 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  FormHelperText,
 } from "@mui/material";
 import { useSendBookEventEmailMutation } from "../services/emails";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { gradient } from "./helpers/utils";
+import { useNotification } from "../context/NotificationContext";
+import {
+  isNotEmpty,
+  isValidEmail,
+  isValidFutureDate,
+  meetsMinLength,
+} from "../utils/validation";
 
 const theme = createTheme({
   components: {
@@ -56,10 +64,20 @@ const theme = createTheme({
         },
       },
     },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: "#f44336",
+          margin: "3px 14px 0",
+        },
+      },
+    },
   },
 });
 
 const Form = () => {
+  const { showNotification } = useNotification();
+
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -67,10 +85,25 @@ const Form = () => {
     eventType: "",
     date: null,
   });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    message: "",
+    eventType: "",
+    date: "",
+  });
+
+  const [touchedFields, setTouchedFields] = useState({
+    name: false,
+    email: false,
+    message: false,
+    eventType: false,
+    date: false,
+  });
+
   const [sendEventBookingEmail, { isLoading }] =
     useSendBookEventEmailMutation();
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
   const eventTypeOptions = [
     "club-event",
@@ -79,18 +112,97 @@ const Form = () => {
     "other",
   ];
 
+  const validateField = (name, value) => {
+    switch (name) {
+      case "name":
+        return isNotEmpty(value) ? "" : "Name is required";
+      case "email":
+        return isValidEmail(value) ? "" : "Please enter a valid email address";
+      case "message":
+        return meetsMinLength(value, 10)
+          ? ""
+          : "Message should be at least 10 characters";
+      case "eventType":
+        return isNotEmpty(value) ? "" : "Please select an event type";
+      case "date":
+        return isValidFutureDate(value) ? "" : "Please select a future date";
+      default:
+        return "";
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: validateField("name", values.name),
+      email: validateField("email", values.email),
+      message: validateField("message", values.message),
+      eventType: validateField("eventType", values.eventType),
+      date: validateField("date", values.date),
+    };
+
+    setErrors(newErrors);
+
+    // Mark all fields as touched
+    setTouchedFields({
+      name: true,
+      email: true,
+      message: true,
+      eventType: true,
+      date: true,
+    });
+
+    // Return true if no errors, false otherwise
+    return Object.values(newErrors).every((error) => error === "");
+  };
+
   const handleChange = (event) => {
+    const { name, value } = event.target;
+
     setValues({
       ...values,
-      [event.target.name]: event.target.value,
+      [name]: value,
+    });
+
+    // Validate field when the user types
+    if (touchedFields[name]) {
+      setErrors({
+        ...errors,
+        [name]: validateField(name, value),
+      });
+    }
+  };
+
+  const handleBlur = (event) => {
+    const { name, value } = event.target;
+
+    // Mark field as touched when focusing out
+    setTouchedFields({
+      ...touchedFields,
+      [name]: true,
+    });
+
+    // Validate field on blur
+    setErrors({
+      ...errors,
+      [name]: validateField(name, value),
     });
   };
 
   const handleSelectChange = (event) => {
+    const { value } = event.target;
+
     setValues({
       ...values,
-      eventType: event.target.value,
+      eventType: value,
     });
+
+    // Validate field when the user selects
+    if (touchedFields.eventType) {
+      setErrors({
+        ...errors,
+        eventType: validateField("eventType", value),
+      });
+    }
   };
 
   const handleDateChange = (newValue) => {
@@ -98,10 +210,40 @@ const Form = () => {
       ...values,
       date: newValue,
     });
+
+    // Validate field when the user selects a date
+    if (touchedFields.date) {
+      setErrors({
+        ...errors,
+        date: validateField("date", newValue),
+      });
+    }
+  };
+
+  const handleDateBlur = () => {
+    // Mark field as touched when focusing out
+    setTouchedFields({
+      ...touchedFields,
+      date: true,
+    });
+
+    // Validate field on blur
+    setErrors({
+      ...errors,
+      date: validateField("date", values.date),
+    });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validate all fields before submission
+    const isValid = validateForm();
+
+    if (!isValid) {
+      showNotification("Please fix the errors in the form", "error");
+      return;
+    }
 
     const sendData = {
       ...values,
@@ -111,29 +253,37 @@ const Form = () => {
           }-${values.date.getDate()}`
         : null,
     };
-    const result = await sendEventBookingEmail({ sendData });
-    if (result?.data) {
-      setSuccessMessage("Email successfully sent!");
-      setValues({
-        name: "",
-        email: "",
-        message: "",
-        eventType: "",
-        date: null,
-      });
-    } else {
-      setSuccessMessage(`Error sending email: ${result?.error?.data?.msg}`);
-      console.log(result?.error?.data?.msg);
-    }
-  };
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+    try {
+      const result = await sendEventBookingEmail({ sendData });
 
-    setSuccessMessage("");
-    setErrorMessage("");
+      if (result?.data) {
+        showNotification("Email successfully sent!", "success");
+        // Reset form after successful submission
+        setValues({
+          name: "",
+          email: "",
+          message: "",
+          eventType: "",
+          date: null,
+        });
+        // Reset touched fields
+        setTouchedFields({
+          name: false,
+          email: false,
+          message: false,
+          eventType: false,
+          date: false,
+        });
+      } else {
+        const errorMessage = result?.error?.data?.msg || "Error sending email";
+        showNotification(errorMessage, "error");
+        console.log(result?.error);
+      }
+    } catch (error) {
+      showNotification("An unexpected error occurred", "error");
+      console.error(error);
+    }
   };
 
   return (
@@ -159,6 +309,9 @@ const Form = () => {
                 required
                 value={values.name}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                error={touchedFields.name && !!errors.name}
+                helperText={touchedFields.name && errors.name}
                 sx={{
                   backgroundColor: "#857f7b",
                   "&:hover": { backgroundColor: "#827165" },
@@ -175,6 +328,9 @@ const Form = () => {
                 required
                 value={values.email}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                error={touchedFields.email && !!errors.email}
+                helperText={touchedFields.email && errors.email}
                 sx={{
                   backgroundColor: "#857f7b",
                   "&:hover": { backgroundColor: "#827165" },
@@ -185,6 +341,7 @@ const Form = () => {
               <FormControl
                 fullWidth
                 variant="outlined"
+                error={touchedFields.eventType && !!errors.eventType}
                 sx={{
                   backgroundColor: "#857f7b",
                   "&:hover": { backgroundColor: "#827165" },
@@ -198,6 +355,7 @@ const Form = () => {
                   required
                   value={values.eventType}
                   onChange={handleSelectChange}
+                  onBlur={handleBlur}
                   label="Event Type"
                   sx={{
                     backgroundColor: "#857f7b",
@@ -210,6 +368,9 @@ const Form = () => {
                     </MenuItem>
                   ))}
                 </Select>
+                {touchedFields.eventType && errors.eventType && (
+                  <FormHelperText>{errors.eventType}</FormHelperText>
+                )}
               </FormControl>
             </Grid>
             <Grid item xs={12}>
@@ -220,18 +381,20 @@ const Form = () => {
                 value={values.date}
                 required
                 onChange={handleDateChange}
-                TextField={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    required
-                    variant="outlined"
-                    sx={{
+                onClose={handleDateBlur}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    fullWidth: true,
+                    required: true,
+                    error: touchedFields.date && !!errors.date,
+                    helperText: touchedFields.date && errors.date,
+                    sx: {
                       backgroundColor: "#827165",
                       "&:hover": { backgroundColor: "#827165" },
-                    }}
-                  />
-                )}
+                    },
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -245,6 +408,9 @@ const Form = () => {
                 required
                 value={values.message}
                 onChange={handleChange}
+                onBlur={handleBlur}
+                error={touchedFields.message && !!errors.message}
+                helperText={touchedFields.message && errors.message}
                 placeholder={
                   values.eventType === "other"
                     ? "Describe here your event and add specific information, please"
@@ -266,38 +432,12 @@ const Form = () => {
                   "&:hover": { backgroundColor: "#cc6f2d" },
                 }}
                 disabled={isLoading}
-                startIcon={isLoading && <CircularProgress />}
+                startIcon={isLoading && <CircularProgress size={24} />}
               >
                 {isLoading ? "Sending" : "Send"}
               </Button>
             </Grid>
           </Grid>
-          <Snackbar
-            open={Boolean(successMessage)}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-          >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity="success"
-              sx={{ width: "100%" }}
-            >
-              {successMessage}
-            </Alert>
-          </Snackbar>
-          <Snackbar
-            open={Boolean(errorMessage)}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-          >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity="error"
-              sx={{ width: "100%" }}
-            >
-              {errorMessage}
-            </Alert>
-          </Snackbar>
         </Box>
       </LocalizationProvider>
     </ThemeProvider>
