@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const EventDepositPDF = ({ event }) => {
+const EventDepositPDF = ({ event, showLegalInfo = true }) => {
   const logoUrl =
     "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
   const wideHeaderImageUrl =
@@ -330,22 +330,24 @@ const EventDepositPDF = ({ event }) => {
         </View>
 
         {/* Footer Section */}
-        <View style={styles.footer}>
-          <Text style={styles.field}>DJ Rise Legal Information:</Text>
-          <Text style={styles.field}>
-            Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
-          </Text>
-          <Text style={styles.field}>
-            Address: 3410-128 West Cordova Street
-          </Text>
-          <Text style={styles.field}>Phone: +1 (236) 995 - 1120</Text>
-          <Text style={styles.field}>
-            Contact Email: andrewrisedj@gmail.com
-          </Text>
-          <Text style={styles.field}>
-            E-Transfer Email: andriikukharv@gmail.com
-          </Text>
-        </View>
+        {showLegalInfo && (
+          <View style={styles.footer}>
+            <Text style={styles.field}>DJ Rise Legal Information:</Text>
+            <Text style={styles.field}>
+              Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
+            </Text>
+            <Text style={styles.field}>
+              Address: 3410-128 West Cordova Street
+            </Text>
+            <Text style={styles.field}>Phone: +1 (236) 995 - 1120</Text>
+            <Text style={styles.field}>
+              Contact Email: andrewrisedj@gmail.com
+            </Text>
+            <Text style={styles.field}>
+              E-Transfer Email: andriikukharv@gmail.com
+            </Text>
+          </View>
+        )}
       </Page>
     </Document>
   );

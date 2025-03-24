@@ -8,6 +8,8 @@ import {
   Button,
   CircularProgress,
   Alert,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { pdf } from "@react-pdf/renderer";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
@@ -28,6 +30,7 @@ const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showLegalInfo, setShowLegalInfo] = useState(true);
   const [uploadDeposit, { isLoading }] = useUploadDepositMutation();
 
   // Plugins for PDF Viewer
@@ -49,17 +52,23 @@ const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
         URL.revokeObjectURL(pdfUrl);
       }
     };
-  }, [event]);
+  }, [event, showLegalInfo]);
 
   const generatePdf = async (event) => {
     try {
-      const blob = await pdf(<EventDepositPDF event={event} />).toBlob();
+      const blob = await pdf(
+        <EventDepositPDF event={event} showLegalInfo={showLegalInfo} />
+      ).toBlob();
       setPdfBlob(blob);
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
     } catch (err) {
       setError(`Error generating PDF: ${err.message}`);
     }
+  };
+
+  const handleShowLegalInfoChange = () => {
+    setShowLegalInfo(!showLegalInfo);
   };
 
   const handleUploadDeposit = async () => {
@@ -97,6 +106,17 @@ const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
       <DialogContent dividers style={{ minHeight: "600px" }}>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={showLegalInfo}
+              onChange={handleShowLegalInfoChange}
+              color="primary"
+            />
+          }
+          label="Include legal information in footer"
+          style={{ marginBottom: "10px" }}
+        />
         <div style={{ height: "100%", width: "100%" }}>
           {pdfUrl ? (
             <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
