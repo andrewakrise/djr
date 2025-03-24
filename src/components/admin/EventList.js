@@ -936,7 +936,6 @@ function EventList() {
         event={eventForReceipt}
         refetchEvents={refetch}
       />
-      ;
     </Box>
   );
 }
