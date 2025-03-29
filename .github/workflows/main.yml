@@ -3,7 +3,7 @@ name: Deploy djrise Frontend to Heroku
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
