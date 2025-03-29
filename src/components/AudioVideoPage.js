@@ -20,39 +20,73 @@ function AudioVideoPage() {
     }
   }, [videoLinks]);
 
+  useEffect(() => {
+    // Load Mixcloud widget script
+    const script = document.createElement("script");
+    script.src = "https://widget.mixcloud.com/media/js/widgetApi.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const toggleShowMore = () => {
     setShowMoreVideos(!showMoreVideos);
   };
 
   const renderVideoIframes = (videos) => {
-    return videos?.map((video, index) => (
-      <Box
-        key={index}
-        sx={{
-          position: "relative",
-          overflow: "hidden",
-          width: "100%",
-          height: "100%",
-          paddingTop: "6.25%",
-          mb: 2,
-        }}
-      >
-        <iframe
-          src={video?.url}
-          title={video?.description}
-          allowFullScreen
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          style={{
-            minWidth: "18rem",
+    return videos?.map((video, index) => {
+      const isMixcloud = video?.url?.includes("mixcloud.com");
+
+      return (
+        <Box
+          key={index}
+          sx={{
+            position: "relative",
+            overflow: "hidden",
             width: "100%",
-            maxWidth: "45rem",
-            minHeight: "35rem",
             height: "100%",
-            maxHeight: "50rem",
+            paddingTop: isMixcloud ? "56.25%" : "56.25%",
+            mb: 2,
           }}
-        />
-      </Box>
-    ));
+        >
+          {isMixcloud ? (
+            <iframe
+              src={`https://www.mixcloud.com/widget/iframe/?hide_cover=1&mini=1&light=1&feed=${encodeURIComponent(
+                video.url
+              )}`}
+              title={video?.description}
+              allowFullScreen
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                border: "none",
+              }}
+            />
+          ) : (
+            <iframe
+              src={video?.url}
+              title={video?.description}
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                border: "none",
+              }}
+            />
+          )}
+        </Box>
+      );
+    });
   };
 
   return (

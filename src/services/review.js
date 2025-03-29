@@ -32,11 +32,11 @@ const reviewApi = createApi({
       invalidatesTags: ["Review"],
     }),
     getAllReviews: builder.query({
-      query: () => "",
+      query: (page = 1, limit = 10) => `?page=${page}&limit=${limit}`,
       providesTags: (result) =>
-        result
+        result?.reviews
           ? [
-              ...result.map(({ _id }) => ({ type: "Review", id: _id })),
+              ...result.reviews.map(({ _id }) => ({ type: "Review", id: _id })),
               { type: "Review", id: "LIST" },
             ]
           : [{ type: "Review", id: "LIST" }],
@@ -67,11 +67,12 @@ const reviewApi = createApi({
       ],
     }),
     getAllVerifiedReviews: builder.query({
-      query: () => "verified",
+      query: ({ page = 1, limit = 10 }) =>
+        `verified?page=${page}&limit=${limit}`,
       providesTags: (result) =>
-        result
+        result?.reviews
           ? [
-              ...result.map(({ _id }) => ({ type: "Review", id: _id })),
+              ...result.reviews.map(({ _id }) => ({ type: "Review", id: _id })),
               { type: "Review", id: "LIST" },
             ]
           : [{ type: "Review", id: "LIST" }],

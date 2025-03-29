@@ -1,10 +1,19 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Container, Typography, Box, Avatar, Link } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Box,
+  Avatar,
+  Link,
+  CircularProgress,
+} from "@mui/material";
 import { ArrowRightAlt } from "@mui/icons-material";
 import IconLinks from "./helpers/IconLinks";
-import logo from "../assets/icons/Avatar-DJ-vinyl-1.JPG";
 import { gradient } from "./helpers/utils";
+
+// Lazy load the logo image
+const logo = new URL("../assets/icons/Avatar-DJ-vinyl-1.JPG", import.meta.url);
 
 function HomePage() {
   const linkItems = [
@@ -70,11 +79,14 @@ function HomePage() {
             DJ RISE
           </Typography>
         </Box>
-        <Avatar
-          src={logo}
-          sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-          alt="DJ RISE"
-        />
+        <Suspense fallback={<CircularProgress />}>
+          <Avatar
+            src={logo}
+            sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
+            alt="DJ RISE"
+            loading="lazy"
+          />
+        </Suspense>
         <IconLinks />
         <Box
           sx={{

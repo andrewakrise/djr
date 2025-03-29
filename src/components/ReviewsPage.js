@@ -1,6 +1,6 @@
 // src/components/ReviewsPage.js
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   createTheme,
   ThemeProvider,
@@ -16,6 +16,7 @@ import {
   CircularProgress,
   Grid,
   Snackbar,
+  Pagination,
 } from "@mui/material";
 import {
   useGetAllVerifiedReviewsQuery,
@@ -27,6 +28,8 @@ import IconLinks from "./helpers/IconLinks";
 import BackButton from "./helpers/BackButton";
 import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/boat-science-world.JPG";
+
+const ITEMS_PER_PAGE = 5;
 
 const theme = createTheme({
   components: {
@@ -69,13 +72,14 @@ const theme = createTheme({
 });
 
 function ReviewsPage() {
+  const [page, setPage] = useState(1);
   const {
-    data: reviews,
+    data: reviewsData,
     isLoading,
     isError,
     error,
     refetch,
-  } = useGetAllVerifiedReviewsQuery();
+  } = useGetAllVerifiedReviewsQuery({ page, limit: ITEMS_PER_PAGE });
   const [addReview, { isLoading: isAdding }] = useAddReviewMutation();
 
   const [formData, setFormData] = useState({
@@ -95,6 +99,10 @@ function ReviewsPage() {
 
   const [openReviewModal, setOpenReviewModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -167,6 +175,15 @@ function ReviewsPage() {
     setOpenReviewModal(false);
   };
 
+  const renderReviewMessage = (message) => {
+    if (!message) return "";
+    // Remove any duplicate phrases and clean up the message
+    const cleanMessage = message.replace(/(\b\w+\b)(?=.*\1)/g, "");
+    return cleanMessage.length > 150
+      ? `${cleanMessage.substring(0, 150)}...`
+      : cleanMessage;
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -185,344 +202,313 @@ function ReviewsPage() {
           justifyContent: "center",
           color: "white",
           padding: "2rem 0 2rem 0",
-          fontSize: "calc(0.75rem + 2vmin)",
         }}
       >
         <BackButton />
         <Box
-          spacing={2}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
             width: "100%",
-            maxWidth: "40rem",
-            p: "1rem",
-            m: "0",
+            maxWidth: "50rem",
+            mt: 2,
           }}
         >
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              mb: 1,
-              fontSize: "calc(0.5rem + 1.2vmin)",
-              gap: "1rem",
+              height: "30rem",
+              overflowX: "hidden",
+              overflowY: "auto",
+              paddingRight: "1rem",
+              margin: 0,
+              padding: 0,
+              mb: 2,
+              border: "3px solid #ccc",
+              borderImage:
+                "linear-gradient(180deg, #FFA500, #FFFF00, #FFA500) 1",
+              animation: `${gradient} 10s ease infinite`,
+              borderRadius: "0.5rem",
             }}
           >
-            <Typography
-              sx={{
-                fontSize: "calc(2rem + 2vmin)",
-                letterSpacing: "0.5rem",
-              }}
-              variant="h3"
-            >
-              DJ RISE
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "calc(2rem + 2vmin)",
-                letterSpacing: "0.5rem",
-              }}
-              variant="h3"
-            >
-              REVIEWS
-            </Typography>
-          </Box>
-          <Avatar
-            src={logo}
-            sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-            alt="RISE DJ"
-          />
-          <IconLinks />
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: "50rem",
-              mt: 2,
-            }}
-          >
-            <Box
-              sx={{
-                height: "30rem",
-                overflowX: "hidden",
-                overflowY: "auto",
-                paddingRight: "1rem",
-                margin: 0,
-                padding: 0,
-                mb: 2,
-                border: "3px solid #ccc",
-                borderImage:
-                  "linear-gradient(180deg, #FFA500, #FFFF00, #FFA500) 1",
-                animation: `${gradient} 10s ease infinite`,
-                borderRadius: "0.5rem",
-              }}
-            >
-              {isLoading ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    mt: 4,
-                  }}
-                >
-                  <CircularProgress />
-                </Box>
-              ) : isError ? (
-                <Typography color="error" sx={{ mt: 4 }}>
-                  Error loading reviews: {error?.msg || "Unknown error."}
-                </Typography>
-              ) : reviews?.length > 0 ? (
-                reviews?.map((review) => (
-                  <Box
-                    key={review?._id}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      justifyContent: "center",
-                      gap: "0.5rem 1rem",
-                      padding: "0.5rem 1rem",
-                      border: "1px solid #ccc",
-                      borderRadius: "8px",
-                      margin: "0.5rem 0",
-                      mb: "1rem",
-                      cursor: "pointer",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.2)",
-                      },
-                    }}
-                    onClick={() => handleReviewClick(review)}
-                  >
-                    <Typography variant="h6">{review?.name}</Typography>
-                    <StarRating rating={review?.rate} readOnly />
-                    <Typography variant="body2" color="textSecondary">
-                      {new Date(review?.eventDate)?.toLocaleDateString(
-                        "en-CA",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }
-                      )}
-                    </Typography>
-                  </Box>
-                ))
-              ) : (
-                <Typography>No reviews available.</Typography>
-              )}
-            </Box>
-
-            {selectedReview && (
-              <ReviewModal
-                open={openReviewModal}
-                onClose={handleCloseReviewModal}
-                review={selectedReview}
-              />
-            )}
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1rem",
-                border: "1px solid #ccc",
-                borderRadius: "8px",
-                padding: "1rem",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              }}
-            >
-              <Typography variant="h5">Submit Your Review</Typography>
-              {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-              {successMsg && <Alert severity="success">{successMsg}</Alert>}
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    type="email"
-                    required
-                    sx={{
-                      width: "75%",
-                      backgroundColor: "#857f7b",
-                      "&:hover": { backgroundColor: "#827165" },
-                      borderRadius: "4px",
-                      color: "white",
-                      input: { color: "white" },
-                      "& .MuiInputLabel-root": { color: "white" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    sx={{
-                      width: "75%",
-                      backgroundColor: "#857f7b",
-                      "&:hover": { backgroundColor: "#827165" },
-                      borderRadius: "4px",
-                      color: "white",
-                      input: { color: "white" },
-                      "& .MuiInputLabel-root": { color: "white" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Event Date"
-                    name="eventDate"
-                    type="date"
-                    value={formData.eventDate}
-                    onChange={handleChange}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    required
-                    sx={{
-                      width: "75%",
-                      backgroundColor: "#857f7b",
-                      "&:hover": { backgroundColor: "#827165" },
-                      borderRadius: "4px",
-                      color: "white",
-                      input: { color: "white" },
-                      "& .MuiInputLabel-root": { color: "white" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Event Name"
-                    name="eventName"
-                    value={formData.eventName}
-                    onChange={handleChange}
-                    sx={{
-                      width: "75%",
-                      backgroundColor: "#857f7b",
-                      "&:hover": { backgroundColor: "#827165" },
-                      borderRadius: "4px",
-                      color: "white",
-                      input: { color: "white" },
-                      "& .MuiInputLabel-root": { color: "white" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    multiline
-                    rows={7}
-                    required
-                    sx={{
-                      width: "75%",
-                      backgroundColor: "#857f7b",
-                      "&:hover": { backgroundColor: "#827165" },
-                      borderRadius: "4px",
-                      color: "white",
-                      input: { color: "white" },
-                      "& .MuiInputLabel-root": { color: "white" },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Box>
-                    <Typography variant="body1">Rating:</Typography>
-                    <StarRating
-                      rating={formData.rate}
-                      onRateChange={handleRateChange}
-                    />
-                  </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={formData.isWillingToHireAgain}
-                        onChange={handleChange}
-                        name="isWillingToHireAgain"
-                        sx={{
-                          color: "white",
-                          "&.Mui-checked": { color: "white" },
-                        }}
-                      />
-                    }
-                    label="Willing to Hire Again"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={formData.isWillRecommend}
-                        onChange={handleChange}
-                        name="isWillRecommend"
-                        sx={{
-                          color: "white",
-                          "&.Mui-checked": { color: "white" },
-                        }}
-                      />
-                    }
-                    label="Will Recommend"
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={isAdding}
+            {isLoading ? (
+              <Box
                 sx={{
-                  flexDirection: "column",
+                  display: "flex",
                   justifyContent: "center",
-                  alighItems: "center",
-                  textAlign: "center",
-                  width: "100%",
-                  backgroundColor: "#9c490e",
-                  "&:hover": { backgroundColor: "#cc6f2d" },
+                  mt: 4,
                 }}
               >
-                {isAdding ? "Submitting..." : "Submit Review"}
-              </Button>
-            </Box>
-            <Snackbar
-              open={Boolean(successMsg)}
-              autoHideDuration={6000}
-              onClose={() => setSuccessMsg("")}
-            >
-              <Alert
-                onClose={() => setSuccessMsg("")}
-                severity="success"
-                sx={{ width: "100%" }}
-              >
-                {successMsg}
-              </Alert>
-            </Snackbar>
-            <Snackbar
-              open={Boolean(errorMsg)}
-              autoHideDuration={6000}
-              onClose={() => setErrorMsg("")}
-            >
-              <Alert
-                onClose={() => setErrorMsg("")}
-                severity="error"
-                sx={{ width: "100%" }}
-              >
-                {errorMsg}
-              </Alert>
-            </Snackbar>
+                <CircularProgress />
+              </Box>
+            ) : isError ? (
+              <Typography color="error" sx={{ mt: 4 }}>
+                Error loading reviews: {error?.msg || "Unknown error."}
+              </Typography>
+            ) : reviewsData?.reviews?.length > 0 ? (
+              reviewsData.reviews.map((review) => (
+                <Box
+                  key={review?._id}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "center",
+                    gap: "0.5rem 1rem",
+                    padding: "0.5rem 1rem",
+                    border: "1px solid #ccc",
+                    borderRadius: "8px",
+                    margin: "0.5rem 0",
+                    mb: "1rem",
+                    cursor: "pointer",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    },
+                  }}
+                  onClick={() => handleReviewClick(review)}
+                >
+                  <Typography variant="h6">{review?.name}</Typography>
+                  <StarRating rating={review?.rate} readOnly />
+                  <Typography variant="body2" color="textSecondary">
+                    {new Date(review?.eventDate)?.toLocaleDateString("en-CA", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 1 }}>
+                    {renderReviewMessage(review.message)}
+                  </Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography>No reviews available.</Typography>
+            )}
           </Box>
+
+          {reviewsData?.pagination?.pages > 1 && (
+            <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+              <Pagination
+                count={reviewsData.pagination.pages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                size="large"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white",
+                  },
+                  "& .MuiPaginationItem-page.Mui-selected": {
+                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+          {selectedReview && (
+            <ReviewModal
+              open={openReviewModal}
+              onClose={handleCloseReviewModal}
+              review={selectedReview}
+            />
+          )}
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              padding: "1rem",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <Typography variant="h5">Submit Your Review</Typography>
+            {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
+            {successMsg && <Alert severity="success">{successMsg}</Alert>}
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  type="email"
+                  required
+                  sx={{
+                    width: "75%",
+                    backgroundColor: "#857f7b",
+                    "&:hover": { backgroundColor: "#827165" },
+                    borderRadius: "4px",
+                    color: "white",
+                    input: { color: "white" },
+                    "& .MuiInputLabel-root": { color: "white" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  sx={{
+                    width: "75%",
+                    backgroundColor: "#857f7b",
+                    "&:hover": { backgroundColor: "#827165" },
+                    borderRadius: "4px",
+                    color: "white",
+                    input: { color: "white" },
+                    "& .MuiInputLabel-root": { color: "white" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Event Date"
+                  name="eventDate"
+                  type="date"
+                  value={formData.eventDate}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  required
+                  sx={{
+                    width: "75%",
+                    backgroundColor: "#857f7b",
+                    "&:hover": { backgroundColor: "#827165" },
+                    borderRadius: "4px",
+                    color: "white",
+                    input: { color: "white" },
+                    "& .MuiInputLabel-root": { color: "white" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Event Name"
+                  name="eventName"
+                  value={formData.eventName}
+                  onChange={handleChange}
+                  sx={{
+                    width: "75%",
+                    backgroundColor: "#857f7b",
+                    "&:hover": { backgroundColor: "#827165" },
+                    borderRadius: "4px",
+                    color: "white",
+                    input: { color: "white" },
+                    "& .MuiInputLabel-root": { color: "white" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  multiline
+                  rows={7}
+                  required
+                  sx={{
+                    width: "75%",
+                    backgroundColor: "#857f7b",
+                    "&:hover": { backgroundColor: "#827165" },
+                    borderRadius: "4px",
+                    color: "white",
+                    input: { color: "white" },
+                    "& .MuiInputLabel-root": { color: "white" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Box>
+                  <Typography variant="body1">Rating:</Typography>
+                  <StarRating
+                    rating={formData.rate}
+                    onRateChange={handleRateChange}
+                  />
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.isWillingToHireAgain}
+                      onChange={handleChange}
+                      name="isWillingToHireAgain"
+                      sx={{
+                        color: "white",
+                        "&.Mui-checked": { color: "white" },
+                      }}
+                    />
+                  }
+                  label="Willing to Hire Again"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.isWillRecommend}
+                      onChange={handleChange}
+                      name="isWillRecommend"
+                      sx={{
+                        color: "white",
+                        "&.Mui-checked": { color: "white" },
+                      }}
+                    />
+                  }
+                  label="Will Recommend"
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isAdding}
+              sx={{
+                flexDirection: "column",
+                justifyContent: "center",
+                alighItems: "center",
+                textAlign: "center",
+                width: "100%",
+                backgroundColor: "#9c490e",
+                "&:hover": { backgroundColor: "#cc6f2d" },
+              }}
+            >
+              {isAdding ? "Submitting..." : "Submit Review"}
+            </Button>
+          </Box>
+          <Snackbar
+            open={Boolean(successMsg)}
+            autoHideDuration={6000}
+            onClose={() => setSuccessMsg("")}
+          >
+            <Alert
+              onClose={() => setSuccessMsg("")}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              {successMsg}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={Boolean(errorMsg)}
+            autoHideDuration={6000}
+            onClose={() => setErrorMsg("")}
+          >
+            <Alert
+              onClose={() => setErrorMsg("")}
+              severity="error"
+              sx={{ width: "100%" }}
+            >
+              {errorMsg}
+            </Alert>
+          </Snackbar>
         </Box>
       </Container>
     </ThemeProvider>
