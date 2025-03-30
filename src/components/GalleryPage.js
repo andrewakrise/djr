@@ -24,6 +24,7 @@ import logo from "../assets/icons/garder-table-setup.JPG";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 function GalleryPage() {
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
@@ -77,6 +78,53 @@ function GalleryPage() {
     }
   }, []);
 
+  // Custom arrow components
+  const CustomPrevArrow = ({ onClick }) => (
+    <Box
+      onClick={onClick}
+      sx={{
+        position: "absolute",
+        left: "1rem",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 1,
+        cursor: "pointer",
+        color: "white",
+        backgroundColor: "rgba(0, 0, 0, 0.3)",
+        borderRadius: "50%",
+        p: 1,
+        "&:hover": {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+      }}
+    >
+      <ChevronLeft sx={{ fontSize: "4rem" }} />
+    </Box>
+  );
+
+  const CustomNextArrow = ({ onClick }) => (
+    <Box
+      onClick={onClick}
+      sx={{
+        position: "absolute",
+        right: "1rem",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 1,
+        cursor: "pointer",
+        color: "white",
+        backgroundColor: "rgba(0, 0, 0, 0.3)",
+        borderRadius: "50%",
+        p: 1,
+        "&:hover": {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+        },
+      }}
+    >
+      <ChevronRight sx={{ fontSize: "4rem" }} />
+    </Box>
+  );
+
   // Basic slider settings
   const settings = useMemo(
     () => ({
@@ -92,6 +140,8 @@ function GalleryPage() {
       afterChange: (current) => {
         stopVideo();
       },
+      prevArrow: <CustomPrevArrow />,
+      nextArrow: <CustomNextArrow />,
     }),
     [stopVideo]
   );

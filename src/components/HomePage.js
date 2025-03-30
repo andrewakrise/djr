@@ -7,8 +7,9 @@ import {
   Avatar,
   Link,
   CircularProgress,
+  Divider,
 } from "@mui/material";
-import { ArrowRightAlt } from "@mui/icons-material";
+import { ArrowRightAlt, OpenInNew } from "@mui/icons-material";
 import IconLinks from "./helpers/IconLinks";
 import { gradient } from "./helpers/utils";
 
@@ -21,6 +22,11 @@ function HomePage() {
       text: "bookings inquiries",
       href: "/booking",
     },
+    { text: "gallery / reels / pictures", href: "/gallery" },
+    { text: "reviews", href: "/reviews" },
+    { text: "upcoming events / calendar", href: "/calendar" },
+    { text: "audio & video previews", href: "/audio-video-previews" },
+    { text: "instagram.com", href: "https://www.instagram.com/vandjrise" },
     {
       text: "mixcloud.com / dj mixes",
       href: "https://www.mixcloud.com/andrewrisedj",
@@ -29,11 +35,6 @@ function HomePage() {
       text: "vimeo.com videos / dj mixes",
       href: "https://vimeo.com/risedj",
     },
-    { text: "instagram.com", href: "https://www.instagram.com/vandjrise" },
-    { text: "upcoming events / calendar", href: "/calendar" },
-    { text: "audio & video previews", href: "/audio-video-previews" },
-    { text: "reviews", href: "/reviews" },
-    { text: "gallery", href: "/gallery" },
   ];
 
   return (
@@ -98,36 +99,54 @@ function HomePage() {
         >
           {linkItems?.map((item, index) => {
             const isExternal = /^https?:\/\//.test(item?.href);
+            const isInstagram = item.text === "instagram.com";
 
             return (
-              <Link
-                key={index}
-                component={isExternal ? "a" : RouterLink}
-                to={isExternal ? undefined : item.href}
-                href={isExternal ? item.href : undefined}
-                underline="none"
-                color="inherit"
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  textDecoration: "none",
-                  padding: "1rem",
-                  width: "100%",
-                  boxSizing: "border-box",
-                  borderRadius: "1rem",
-                  "&:hover": {
-                    background: "linear-gradient(-45deg, #44A08D, #093637)",
-                    backgroundSize: "400% 400%",
-                    animation: `${gradient} 10s ease infinite`,
-                  },
-                }}
-              >
-                <Typography variant="h6">{item.text}</Typography>
-                <ArrowRightAlt />
-              </Link>
+              <React.Fragment key={index}>
+                {isInstagram && (
+                  <Divider
+                    sx={{
+                      my: 1,
+                      borderColor: "rgba(255, 255, 255, 0.2)",
+                      "&:before, &:after": {
+                        borderColor: "rgba(255, 255, 255, 0.2)",
+                      },
+                    }}
+                  />
+                )}
+                <Link
+                  component={isExternal ? "a" : RouterLink}
+                  to={isExternal ? undefined : item.href}
+                  href={isExternal ? item.href : undefined}
+                  underline="none"
+                  color="inherit"
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    textDecoration: "none",
+                    padding: "1rem",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    borderRadius: "1rem",
+                    "&:hover": {
+                      background: "linear-gradient(-45deg, #44A08D, #093637)",
+                      backgroundSize: "400% 400%",
+                      animation: `${gradient} 10s ease infinite`,
+                    },
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography variant="h6">{item.text}</Typography>
+                    {isExternal && (
+                      <OpenInNew sx={{ fontSize: "1rem", opacity: 0.7 }} />
+                    )}
+                  </Box>
+                  <ArrowRightAlt />
+                </Link>
+              </React.Fragment>
             );
           })}
         </Box>
