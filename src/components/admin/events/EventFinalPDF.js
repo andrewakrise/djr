@@ -12,7 +12,7 @@ import {
   formatDateToLocalAmericaPacific,
   generateUniqueFinalNumber,
   convertTo12HourFormat,
-} from "../helpers/utils";
+} from "../../helpers/utils";
 
 const styles = StyleSheet.create({
   page: {

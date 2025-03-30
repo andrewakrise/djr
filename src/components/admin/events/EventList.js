@@ -11,8 +11,8 @@ import {
   useUploadFinalMutation,
   useLazyGetFinalQuery,
   useLazyGetReceiptQuery,
-} from "../../services/event";
-import { useSendEventEmailWithAttachmentsMutation } from "../../services/emails";
+} from "../../../services/event";
+import { useSendEventEmailWithAttachmentsMutation } from "../../../services/emails";
 import {
   Typography,
   Box,
@@ -39,13 +39,13 @@ import {
   Public as PublicIcon,
   PublicOff as PublicOffIcon,
 } from "@mui/icons-material";
-import ConfirmationDialog from "../helpers/ConfirmationDialog";
+import ConfirmationDialog from "../../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
 import GenerateDepositDialog from "./GenerateDepositDialog";
 import { saveAs } from "file-saver";
-import { generateUniqueFileName } from "../helpers/utils";
+import { generateUniqueFileName } from "../../helpers/utils";
 import AdminEventModal from "./AdminEventModal";
-import ClientEmailDialog from "./ClientEmailDialog";
+import ClientEmailDialog from "../ClientEmailDialog";
 import EventConfirmationDialog from "./EventConfirmationDialog";
 import EventFinalPaymentDialog from "./EventFinalPaymentDialog";
 import GenerateFinalDialog from "./GenerateFinalDialog";

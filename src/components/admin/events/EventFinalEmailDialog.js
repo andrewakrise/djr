@@ -11,7 +11,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { useSendFinalBillEmailMutation } from "../../services/event";
+import { useSendFinalBillEmailMutation } from "../../../services/event";
 
 function EventFinalEmailDialog({ open, onClose, event }) {
   const [customNote, setCustomNote] = useState("");

@@ -12,7 +12,8 @@ import {
   formatDateToLocalAmericaPacific,
   generateUniqueInvoiceNumber,
   convertTo12HourFormat,
-} from "../helpers/utils";
+  generateUniqueFileName,
+} from "../../helpers/utils";
 
 const styles = StyleSheet.create({
   page: {

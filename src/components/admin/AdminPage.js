@@ -1,9 +1,10 @@
 import React from "react";
 import { Container } from "@mui/material";
-import VideoLinkList from "./VideoLinkList";
+import VideoLinkList from "./video/VideoLinkList";
 import AdminNavbar from "./AdminNavbar";
-import EventLists from "./EventList";
-import ReviewList from "./ReviewList";
+import EventList from "./events/EventList";
+import ReviewList from "./reviews/ReviewList";
+import GalleryAdmin from "./gallery/GalleryAdmin";
 
 function AdminPage() {
   const token = localStorage.getItem("token");
@@ -29,8 +30,9 @@ function AdminPage() {
           fontSize: "calc(10px + 2vmin)",
         }}
       >
-        <EventLists />
+        <EventList />
         <ReviewList />
+        <GalleryAdmin />
         <VideoLinkList />
       </Container>
     </>

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Cancel } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { gradient } from "../helpers/utils";
+import { gradient } from "../../helpers/utils";
 
 const StyledModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",

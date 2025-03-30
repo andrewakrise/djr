@@ -1,11 +1,11 @@
-// src/components/admin/ReviewList.js
+// src/components/admin/reviews/ReviewList.js
 
 import React, { useState } from "react";
 import {
   useGetAllReviewsQuery,
   useDeleteReviewMutation,
   useUpdateReviewMutation,
-} from "../../services/review";
+} from "../../../services/review";
 import {
   Box,
   Typography,
@@ -23,9 +23,9 @@ import {
   Cancel as CancelIcon,
   Add as AddIcon,
 } from "@mui/icons-material";
-import ConfirmationDialog from "../helpers/ConfirmationDialog";
+import ConfirmationDialog from "../../helpers/ConfirmationDialog";
 import ReviewAddEditDialog from "./ReviewAddEditDialog";
-import { gradient } from "../helpers/utils";
+import { gradient } from "../../helpers/utils";
 
 function ReviewList() {
   const { data: reviews, refetch } = useGetAllReviewsQuery();
@@ -209,9 +209,9 @@ function ReviewList() {
       {successMsg && <Alert severity="success">{successMsg}</Alert>}
       {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
       <Box sx={{ height: 600, width: "100%", mt: 2 }}>
-        {reviews?.length > 0 ? (
+        {reviews && reviews?.reviews && reviews?.reviews?.length > 0 ? (
           <DataGrid
-            rows={reviews}
+            rows={reviews?.reviews}
             columns={columns}
             pageSize={10}
             rowsPerPageOptions={[10, 25, 50]}

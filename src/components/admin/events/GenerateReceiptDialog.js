@@ -21,8 +21,8 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 
-import { useUploadReceiptMutation } from "../../services/event";
-import { generateUniqueFileName } from "../helpers/utils";
+import { useUploadReceiptMutation } from "../../../services/event";
+import { generateUniqueFileName } from "../../helpers/utils";
 import EventReceiptPDF from "./EventReceiptPDF";
 
 const GenerateReceiptDialog = ({ open, onClose, event, refetchEvents }) => {

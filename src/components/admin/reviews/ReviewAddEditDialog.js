@@ -1,4 +1,4 @@
-// src/components/admin/ReviewAddEditDialog.js
+// src/components/admin/reviews/ReviewAddEditDialog.js
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -19,9 +19,9 @@ import { Close } from "@mui/icons-material";
 import {
   useAddReviewAsAdminMutation,
   useUpdateReviewMutation,
-} from "../../services/review";
-import StarRating from "../helpers/StarRating";
-import { gradient } from "../helpers/utils";
+} from "../../../services/review";
+import StarRating from "../../helpers/StarRating";
+import { gradient } from "../../helpers/utils";
 
 function ReviewAddEditDialog({ open, onClose, refetchReviews, review }) {
   const isEditMode = Boolean(review);

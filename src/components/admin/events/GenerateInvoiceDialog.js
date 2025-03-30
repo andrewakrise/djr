@@ -10,6 +10,8 @@ import {
   Alert,
   FormControlLabel,
   Checkbox,
+  TextField,
+  Box,
 } from "@mui/material";
 import { pdf } from "@react-pdf/renderer";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
@@ -22,8 +24,12 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 import EventInvoicePDF from "./EventInvoicePDF";
-import { useUploadInvoiceMutation } from "../../services/event";
-import { generateUniqueFileName } from "../helpers/utils";
+import {
+  useUploadInvoiceMutation,
+  useLazyGetInvoiceQuery,
+} from "../../../services/event";
+import { generateUniqueFileName } from "../../helpers/utils";
+import { saveAs } from "file-saver";
 
 const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);

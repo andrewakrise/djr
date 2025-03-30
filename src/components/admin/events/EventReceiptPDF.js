@@ -1,4 +1,4 @@
-// EventInvoicePDF.js
+// src/components/admin/EventReceiptPDF.js
 import React from "react";
 import {
   Document,
@@ -10,12 +10,14 @@ import {
 } from "@react-pdf/renderer";
 import {
   formatDateToLocalAmericaPacific,
-  generateUniqueDepositNumber,
+  generateUniqueReceiptNumber,
   convertTo12HourFormat,
-} from "../helpers/utils";
+  generateUniqueFileName,
+} from "../../helpers/utils";
 
 const styles = StyleSheet.create({
   page: {
+    margin: 0,
     padding: 4,
     fontWeight: 400,
     fontSize: 10,
@@ -49,14 +51,22 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
   },
-  depositNumber: {
+  receiptNumber: {
     textAlign: "right",
     color: "white",
   },
-  depositDate: {
+  receiptDate: {
     textAlign: "right",
     color: "white",
     marginBottom: 7,
+  },
+  clientHeader: {
+    width: "100%",
+    fontSize: 14,
+    padding: 7,
+    paddingLeft: 20,
+    margin: 0,
+    borderBottom: "1px solid #000",
   },
   eventClientSection: {
     flexDirection: "row",
@@ -69,14 +79,6 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     marginTop: 0,
     paddingTop: 0,
-  },
-  clientHeader: {
-    width: "100%",
-    fontSize: 14,
-    padding: 7,
-    paddingLeft: 20,
-    margin: 0,
-    borderBottom: "1px solid #000",
   },
   clientSection: {
     flex: 3,
@@ -101,7 +103,12 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     alignItems: "flex-start",
   },
-  clientLabel: { fontWeight: 900, fontSize: 12, color: "black", width: 100 },
+  clientLabel: {
+    fontWeight: 900,
+    fontSize: 12,
+    color: "black",
+    width: 100,
+  },
   clientProp: {
     fontWeight: 500,
     fontSize: 12,
@@ -137,14 +144,6 @@ const styles = StyleSheet.create({
   serviceRowText: {
     paddingBottom: 5,
   },
-  section: {
-    padding: 10,
-    marginBottom: 5,
-  },
-  field: {
-    marginBottom: 5,
-    color: "#404040",
-  },
   label: {
     fontWeight: 900,
     padding: 10,
@@ -157,23 +156,30 @@ const styles = StyleSheet.create({
   },
   paymentField: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    textAlign: "center",
+    textAlign: "right",
     width: "95%",
     marginBottom: 5,
   },
-  paymentLabel: { fontWeight: 900, fontSize: 14, color: "#585858" },
-  paymentLabelAddText: {
-    marginTop: 10,
+  paymentTextField: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "right",
+    width: "95%",
+    marginBottom: 5,
+  },
+  paymentLabel: {
     fontWeight: 900,
     fontSize: 14,
-    fontStyle: "italic",
-    color: "#000000",
+    color: "#585858",
   },
-  paymentProp: { marginLeft: 10, fontSize: 14 },
+  paymentProp: {
+    marginLeft: 10,
+    fontSize: 14,
+  },
   footer: {
-    // marginTop: 10,
     borderTop: "1px solid #000",
     paddingTop: 20,
     paddingLeft: 20,
@@ -181,54 +187,54 @@ const styles = StyleSheet.create({
   },
 });
 
-const EventDepositPDF = ({ event, showLegalInfo = true }) => {
+const EventReceiptPDF = ({ event }) => {
   const logoUrl =
     "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
   const wideHeaderImageUrl =
     "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
 
-  const depositDate = formatDateToLocalAmericaPacific(new Date());
-  const depositNumber = generateUniqueDepositNumber(new Date());
+  const receiptDate = formatDateToLocalAmericaPacific(new Date());
+  const receiptNumber = generateUniqueReceiptNumber(new Date());
+
+  const totalSum = event?.totalSum || 0;
+  const depositSum = event?.depositSum || 0;
+  const finalSum = totalSum - depositSum;
+
   const eventServices = event?.services?.split(", ").map((service) => {
     if (service === "Logistics and Setting of the above equipment") {
       return "Logistics and Setting of the above equipment at the event venue";
     }
     return service;
   });
-  // console.log("event", event);
 
   return (
     <Document>
       <Page size="A4" orientation="portrait" style={styles.page}>
-        {/* Header Section */}
+        {/* Top Section: Logo, Title, Date & Number */}
         <View style={styles.topSection}>
-          <Image
-            src={logoUrl || "../../assets/icons/logo.png"}
-            style={styles.logo}
-          />
-          <Text style={styles.header}>DJ RISE Service Deposit Bill</Text>
+          <Image src={logoUrl} style={styles.logo} />
+          <Text style={styles.header}>DJ RISE Payment Receipt</Text>
           <View>
-            <Text style={styles.depositDate}>
-              Date: {depositDate || "no deposit date"}
+            <Text style={styles.receiptDate}>
+              Date: {receiptDate || "no date"}
             </Text>
-            <Text style={styles.depositNumber}>No. {depositNumber}</Text>
+            <Text style={styles.receiptNumber}>No. {receiptNumber}</Text>
           </View>
         </View>
+
+        {/* Wide banner image */}
         <View>
-          <Image
-            src={wideHeaderImageUrl || "../../assets/pioneerdjset.jpg"}
-            style={styles.wideHeaderImageUrl}
-          />
+          <Image src={wideHeaderImageUrl} style={styles.wideHeaderImageUrl} />
         </View>
 
-        <Text style={styles.clientHeader}>Bill To: </Text>
+        {/* "Paid Receipt Issued To:" */}
+        <Text style={styles.clientHeader}>Paid Receipt Issued To:</Text>
         <View style={styles.eventClientSection}>
-          {/* Client Information Section */}
+          {/* Left side: client info */}
           <View style={styles.clientSection}>
             <View style={styles.clientField}>
               <Text style={styles.clientLabel}>Client Name: </Text>
               <Text style={styles.clientProp}>
-                {" "}
                 {event?.clientName || "no name"}
               </Text>
             </View>
@@ -236,121 +242,119 @@ const EventDepositPDF = ({ event, showLegalInfo = true }) => {
               <View style={styles.clientField}>
                 <Text style={styles.clientLabel}>Company/Venue: </Text>
                 <Text style={styles.clientProp}>
-                  {" "}
-                  {event?.clientCompanyName || "no name"}
+                  {event?.clientCompanyName || "no venue"}
                 </Text>
               </View>
             )}
             <View style={styles.clientField}>
               <Text style={styles.clientLabel}>Phone Number: </Text>
               <Text style={styles.clientProp}>
-                {" "}
-                {event?.phoneNumber || "no phone number"}
+                {event?.phoneNumber || "no phone"}
               </Text>
             </View>
             <View style={styles.clientField}>
               <Text style={styles.clientLabel}>Client Email: </Text>
               <Text style={styles.clientProp}>
-                {" "}
                 {event?.clientEmail || "no email"}
               </Text>
             </View>
             <View style={styles.clientField}>
               <Text style={styles.clientLabel}>Event Address: </Text>
               <Text style={styles.clientProp}>
-                {" "}
                 {event?.address || "no address"}
               </Text>
             </View>
           </View>
 
-          {/* Event Details Section */}
+          {/* Right side: date/times */}
           <View style={styles.dateSection}>
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event Start Date & Time: </Text>
               <Text style={styles.dateProp}>
-                {`${event?.date} ${
+                {`${event?.date || "N/A"} ${
                   convertTo12HourFormat(event?.startTime) || ""
-                }` || "no start date and time"}
+                }`}
               </Text>
             </View>
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event End Date & Time: </Text>
               <Text style={styles.dateProp}>
-                {`${event?.date} ${
+                {`${event?.date || "N/A"} ${
                   convertTo12HourFormat(event?.endTime) || ""
-                }` || "no start date and time"}
+                }`}
               </Text>
             </View>
           </View>
         </View>
-        {/* Services Section */}
-        <View style={styles.serviceSection}>
-          <Text style={styles.label}>DJ Services:</Text>
-          <View style={styles.serviceTable}>
-            {eventServices &&
-            eventServices?.length > 0 &&
-            Array.isArray(eventServices) ? (
-              <>
-                <View style={styles.serviceHeader}>
-                  <Text>Description</Text>
-                  <Text>Amount</Text>
-                </View>
 
-                {eventServices?.map((service, index) => (
-                  <View key={index} style={styles.serviceRow}>
-                    <Text style={styles.serviceRowText}>{service}</Text>
-                  </View>
-                ))}
-              </>
-            ) : (
-              <View style={styles.serviceRow}>
-                <Text>NO SERVICES CHOSEN</Text>
+        {/* Optional list of DJ services again */}
+        {eventServices && eventServices.length > 0 && (
+          <View style={styles.serviceSection}>
+            <Text style={styles.label}>DJ Services:</Text>
+            <View style={styles.serviceTable}>
+              <View style={styles.serviceHeader}>
+                <Text>Description</Text>
+                <Text>Amount</Text>
               </View>
-            )}
-          </View>
-        </View>
-
-        {/* Payment Section */}
-        <View style={styles.paymentSection}>
-          <View style={styles.paymentField}>
-            <Text style={styles.paymentLabel}>
-              Deposit Required to Confirm Booking:{" "}
-            </Text>
-            <Text style={styles.paymentProp}>
-              ${event?.depositSum || "No Sum"}
-            </Text>
-          </View>
-          <View style={styles.paymentField}>
-            <Text style={styles.paymentLabelAddText}>
-              After the deposit is made, the confirmation will be sent to your
-              email
-            </Text>
-          </View>
-        </View>
-
-        {/* Footer Section */}
-        {showLegalInfo && (
-          <View style={styles.footer}>
-            <Text style={styles.field}>DJ Rise Legal Information:</Text>
-            <Text style={styles.field}>
-              Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
-            </Text>
-            <Text style={styles.field}>
-              Address: 3410-128 West Cordova Street
-            </Text>
-            <Text style={styles.field}>Phone: +1 (236) 995 - 1120</Text>
-            <Text style={styles.field}>
-              Contact Email: andrewrisedj@gmail.com
-            </Text>
-            <Text style={styles.field}>
-              E-Transfer Email: andriikukharv@gmail.com
-            </Text>
+              {eventServices.map((service, i) => (
+                <View key={i} style={styles.serviceRow}>
+                  <Text style={styles.serviceRowText}>{service}</Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
+
+        {/* Payment totals */}
+        <View style={styles.paymentSection}>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabel}>Total: </Text>
+            <Text style={styles.paymentProp}>${totalSum}</Text>
+          </View>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabel}>Paid Deposit: </Text>
+            <Text style={styles.paymentProp}>${depositSum}</Text>
+          </View>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabel}>Paid Final Payment: </Text>
+            <Text style={styles.paymentProp}>${finalSum}</Text>
+          </View>
+          <View style={styles.paymentField}>
+            <Text style={styles.paymentLabel}>
+              The Final and Total amount received:{" "}
+            </Text>
+            <Text style={styles.paymentProp}>${totalSum}</Text>
+          </View>
+        </View>
+
+        <View>
+          <View style={styles.paymentTextField}>
+            <Text style={styles.paymentLabelAddText}>
+              This receipt confirms that all payments have been received in
+              full.
+            </Text>
+          </View>
+          <View style={styles.paymentTextField}>
+            <Text style={styles.paymentLabelAddText}>
+              Thank you for your business
+            </Text>
+          </View>
+        </View>
+
+        {/* Footer with legal info */}
+        <View style={styles.footer}>
+          <Text>DJ Rise Legal Information:</Text>
+          <Text>
+            Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
+          </Text>
+          <Text>Address: 3410-128 West Cordova Street</Text>
+          <Text>Phone: +1 (236) 995 - 1120</Text>
+          <Text>Contact Email: andrewrisedj@gmail.com</Text>
+          <Text>E-Transfer Email: andriikukharv@gmail.com</Text>
+        </View>
       </Page>
     </Document>
   );
 };
 
-export default EventDepositPDF;
+export default EventReceiptPDF;

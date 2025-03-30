@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   useAddEventMutation,
   useUpdateEventMutation,
-} from "../../services/event";
+} from "../../../services/event";
 import {
   TextField,
   Button,

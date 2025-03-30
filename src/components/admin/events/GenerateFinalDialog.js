@@ -21,8 +21,8 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 
-import { useUploadFinalMutation } from "../../services/event";
-import { generateUniqueFileName } from "../helpers/utils";
+import { useUploadFinalMutation } from "../../../services/event";
+import { generateUniqueFileName } from "../../helpers/utils";
 import EventFinalPDF from "./EventFinalPDF";
 
 const GenerateFinalDialog = ({ open, onClose, event, refetchEvents }) => {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAddVideoLinkMutation } from "../../services/video";
+import { useAddVideoLinkMutation } from "../../../services/video";
 import { TextField, Button, Container, Alert } from "@mui/material";
 
 function VideoLinkAdd({ onAddSuccess, refetchVideoLinks }) {

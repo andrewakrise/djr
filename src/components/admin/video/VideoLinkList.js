@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   useGetAllVideoLinksQuery,
   useDeleteVideoLinkMutation,
-} from "../../services/video";
+} from "../../../services/video";
 import { Link } from "react-router-dom";
 import {
   Typography,

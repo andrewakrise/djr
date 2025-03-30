@@ -22,8 +22,8 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 import EventDepositPDF from "./EventDepositPDF";
-import { useUploadDepositMutation } from "../../services/event";
-import { generateUniqueFileName } from "../helpers/utils";
+import { useUploadDepositMutation } from "../../../services/event";
+import { generateUniqueFileName } from "../../helpers/utils";
 
 const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);

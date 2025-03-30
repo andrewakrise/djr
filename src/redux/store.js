@@ -6,6 +6,7 @@ import authApi from "../services/auth";
 import videoApi from "../services/video";
 import eventApi from "../services/event";
 import reviewApi from "../services/review";
+import galleryApi from "../services/gallery";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     [videoApi.reducerPath]: videoApi.reducer,
     [eventApi.reducerPath]: eventApi.reducer,
     [reviewApi.reducerPath]: reviewApi.reducer,
+    [galleryApi.reducerPath]: galleryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -21,7 +23,8 @@ const store = configureStore({
       .concat(authApi.middleware)
       .concat(videoApi.middleware)
       .concat(eventApi.middleware)
-      .concat(reviewApi.middleware),
+      .concat(reviewApi.middleware)
+      .concat(galleryApi.middleware),
 });
 
 setupListeners(store.dispatch);
