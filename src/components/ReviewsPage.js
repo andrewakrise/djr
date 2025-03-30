@@ -478,6 +478,26 @@ function ReviewsPage() {
                 />
               )}
               <Box
+                sx={{
+                  width: "100%",
+                  maxWidth: "50rem",
+                  mt: 2,
+                  mb: 1,
+                  textAlign: "center",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "rgba(255, 255, 255, 0.7)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  Please use the same email address you used for booking or
+                  communication with DJ Rise.
+                </Typography>
+              </Box>
+              <Box
                 id="review-form"
                 component="form"
                 onSubmit={handleSubmit}
