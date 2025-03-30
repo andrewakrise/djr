@@ -301,38 +301,61 @@ function GalleryPage() {
                 },
               }}
             >
-              <CardMedia
-                component={item.mediaType === "video" ? "video" : "img"}
-                image={item.url}
-                alt={item.title}
-                controls={item.mediaType === "video"}
-                playsInline
-                muted={false}
-                ref={(el) => {
-                  if (item.mediaType === "video") {
-                    videoRefs.current[item._id] = el;
-                  }
-                }}
-                onPlay={() => {
-                  setActiveVideoId(item._id);
-                }}
-                onPause={() => {
-                  if (activeVideoId === item._id) {
-                    setActiveVideoId(null);
-                  }
-                }}
-                onEnded={() => {
-                  if (activeVideoId === item._id) {
-                    setActiveVideoId(null);
-                  }
-                }}
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                  display: "block",
-                }}
-              />
+              {item.mediaType === "video" ? (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <video
+                    src={item.url}
+                    controls
+                    playsInline
+                    muted={false}
+                    ref={(el) => {
+                      if (el) {
+                        videoRefs.current[item._id] = el;
+                      }
+                    }}
+                    onPlay={() => {
+                      setActiveVideoId(item._id);
+                    }}
+                    onPause={() => {
+                      if (activeVideoId === item._id) {
+                        setActiveVideoId(null);
+                      }
+                    }}
+                    onEnded={() => {
+                      if (activeVideoId === item._id) {
+                        setActiveVideoId(null);
+                      }
+                    }}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      width: "auto",
+                      height: "auto",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Box>
+              ) : (
+                <CardMedia
+                  component="img"
+                  image={item.url}
+                  alt={item.title}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+              )}
             </Box>
           ))}
         </Slider>
