@@ -18,7 +18,7 @@ import { NotificationProvider } from "./context/NotificationContext";
 function App() {
   return (
     <NotificationProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

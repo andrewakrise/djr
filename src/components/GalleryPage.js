@@ -24,7 +24,7 @@ import logo from "../assets/icons/garder-table-setup.JPG";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight, Movie } from "@mui/icons-material";
 
 function GalleryPage() {
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
@@ -359,6 +359,7 @@ function GalleryPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    position: "relative",
                   }}
                 >
                   <video
@@ -390,8 +391,28 @@ function GalleryPage() {
                       width: "auto",
                       height: "auto",
                       objectFit: "contain",
+                      backgroundColor: "#000",
                     }}
                   />
+                  <Typography
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      color: "white",
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "4px",
+                      fontSize: "0.9rem",
+                      pointerEvents: "none",
+                      opacity: activeVideoId === item._id ? 0 : 1,
+                      transition: "opacity 0.3s ease",
+                      display: isMobile ? "block" : "none",
+                    }}
+                  >
+                    Click to play
+                  </Typography>
                 </Box>
               ) : (
                 <CardMedia
@@ -441,19 +462,45 @@ function GalleryPage() {
                   }}
                 >
                   {item.mediaType === "video" ? (
-                    <video
-                      src={item.url}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
+                    <Box
+                      sx={{
+                        position: "relative",
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
                       }}
-                      muted
-                      playsInline
-                    />
+                    >
+                      <video
+                        src={item.url}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          backgroundColor: "#000",
+                        }}
+                        muted
+                        playsInline
+                      />
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: "white",
+                          backgroundColor: "rgba(0, 0, 0, 0.5)",
+                          padding: "0.3rem 0.6rem",
+                          borderRadius: "4px",
+                          fontSize: "0.7rem",
+                          pointerEvents: "none",
+                          display: isMobile ? "block" : "none",
+                        }}
+                      >
+                        Click to play
+                      </Typography>
+                    </Box>
                   ) : (
                     <CardMedia
                       component="img"
@@ -494,20 +541,54 @@ function GalleryPage() {
               onClick={() => handleThumbnailClick(index)}
             >
               {item.mediaType === "video" ? (
-                <video
-                  src={item.url}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "4px",
-                  }}
-                  muted
-                  playsInline
-                />
+                <>
+                  <video
+                    src={item.url}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "4px",
+                      backgroundColor: "#000",
+                    }}
+                    muted
+                    playsInline
+                  />
+                  <Typography
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      color: "white",
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      padding: "0.3rem 0.6rem",
+                      borderRadius: "4px",
+                      fontSize: "1rem",
+                      pointerEvents: "none",
+                      display: isMobile ? "block" : "none",
+                    }}
+                  >
+                    Click to play
+                  </Typography>
+                  <Movie
+                    sx={{
+                      position: "absolute",
+                      top: isMobile ? "15%" : "15%",
+                      left: isMobile ? "15%" : "15%",
+                      transform: "translate(-50%, -50%)",
+                      color: "white",
+                      // backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      padding: "0.3rem 0rem",
+                      borderRadius: "4px",
+                      fontSize: isMobile ? "2.5rem" : "3.5rem",
+                      pointerEvents: "none",
+                    }}
+                  />
+                </>
               ) : (
                 <CardMedia
                   component="img"
