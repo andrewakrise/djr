@@ -8,11 +8,6 @@ import {
   CardContent,
   Typography,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
   CircularProgress,
 } from "@mui/material";
 import {
@@ -22,48 +17,27 @@ import {
 } from "@mui/icons-material";
 import {
   useGetAllGalleryMediaQuery,
-  useAddGalleryMediaMutation,
-  useUpdateGalleryMediaMutation,
   useDeleteGalleryMediaMutation,
 } from "../../../services/gallery";
 import { useNotification } from "../../../context/NotificationContext";
 import ConfirmationDialog from "../../helpers/ConfirmationDialog";
+import GalleryAddEditDialog from "./GalleryAddEditDialog";
+import { gradient } from "../../helpers/utils";
 
 const GalleryAdmin = () => {
-  const { data: galleryItems, isLoading } = useGetAllGalleryMediaQuery();
-  console.log("galleryItems", galleryItems);
-  const [addGalleryMedia] = useAddGalleryMediaMutation();
-  const [updateGalleryMedia] = useUpdateGalleryMediaMutation();
+  const {
+    data: galleryItems,
+    isLoading,
+    refetch,
+  } = useGetAllGalleryMediaQuery();
   const [deleteGalleryMedia] = useDeleteGalleryMediaMutation();
   const [openDialog, setOpenDialog] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    tags: "",
-    media: null,
-  });
   const { showNotification } = useNotification();
 
   const handleOpenDialog = (item = null) => {
-    if (item) {
-      setFormData({
-        title: item.title,
-        description: item.description,
-        tags: item.tags.join(", "),
-        media: null,
-      });
-      setSelectedItem(item);
-    } else {
-      setFormData({
-        title: "",
-        description: "",
-        tags: "",
-        media: null,
-      });
-      setSelectedItem(null);
-    }
+    setSelectedItem(item);
     setOpenDialog(true);
   };
 
@@ -72,50 +46,12 @@ const GalleryAdmin = () => {
     setSelectedItem(null);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, media: e.target.files[0] }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const submitData = new FormData();
-      submitData.append("title", formData.title);
-      submitData.append("description", formData.description);
-      submitData.append("tags", formData.tags);
-      if (formData.media) {
-        submitData.append("media", formData.media);
-      }
-
-      if (selectedItem) {
-        await updateGalleryMedia({
-          id: selectedItem._id,
-          formData: submitData,
-        }).unwrap();
-        showNotification("Gallery item updated successfully", "success");
-      } else {
-        await addGalleryMedia(submitData).unwrap();
-        showNotification("Gallery item added successfully", "success");
-      }
-
-      handleCloseDialog();
-    } catch (error) {
-      showNotification(
-        `Failed to ${selectedItem ? "update" : "add"} gallery item`,
-        "error"
-      );
-    }
-  };
-
   const handleDelete = async () => {
     try {
       await deleteGalleryMedia(selectedItem._id).unwrap();
       showNotification("Gallery item deleted successfully", "success");
       setOpenConfirmation(false);
+      refetch();
     } catch (error) {
       showNotification("Failed to delete gallery item", "error");
     }
@@ -148,6 +84,14 @@ const GalleryAdmin = () => {
           color="primary"
           startIcon={<AddIcon />}
           onClick={() => handleOpenDialog()}
+          sx={{
+            background: "linear-gradient(-45deg, #44A08D, #093637)",
+            backgroundSize: "400% 400%",
+            animation: `${gradient} 10s ease infinite`,
+            "&:hover": {
+              background: "linear-gradient(-45deg, #44A08D, #093637)",
+            },
+          }}
         >
           Add New Item
         </Button>
@@ -192,69 +136,19 @@ const GalleryAdmin = () => {
         ))}
       </Grid>
 
-      <Dialog
+      <GalleryAddEditDialog
         open={openDialog}
         onClose={handleCloseDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          {selectedItem ? "Edit Gallery Item" : "Add New Gallery Item"}
-        </DialogTitle>
-        <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2} mt={2}>
-            <TextField
-              label="Title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              fullWidth
-            />
-            <TextField
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              multiline
-              rows={4}
-              fullWidth
-            />
-            <TextField
-              label="Tags (comma-separated)"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              fullWidth
-            />
-            <Button variant="outlined" component="label" fullWidth>
-              Upload Media
-              <input
-                type="file"
-                hidden
-                accept="image/*,video/*"
-                onChange={handleFileChange}
-              />
-            </Button>
-            {formData.media && (
-              <Typography variant="body2">
-                Selected file: {formData.media.name}
-              </Typography>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        refetchGallery={refetch}
+        item={selectedItem}
+      />
 
       <ConfirmationDialog
         open={openConfirmation}
         title="Delete Gallery Item"
         content="Are you sure you want to delete this gallery item? This action cannot be undone."
         onConfirm={handleDelete}
+        onCancel={() => setOpenConfirmation(false)}
         onClose={() => setOpenConfirmation(false)}
       />
     </Box>

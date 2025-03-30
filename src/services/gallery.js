@@ -15,7 +15,7 @@ const galleryApi = createApi({
   tagTypes: ["GalleryMedia"],
   endpoints: (builder) => ({
     getAllGalleryMedia: builder.query({
-      query: ({ page = 1, limit = 12, mediaType, tag } = {}) => ({
+      query: ({ page = 1, limit = 50, mediaType, tag } = {}) => ({
         url: "",
         params: { page, limit, mediaType, tag },
       }),
@@ -43,10 +43,10 @@ const galleryApi = createApi({
       invalidatesTags: [{ type: "GalleryMedia", id: "LIST" }],
     }),
     updateGalleryMedia: builder.mutation({
-      query: ({ id, data }) => ({
+      query: ({ id, formData }) => ({
         url: `${id}`,
         method: "PUT",
-        body: data,
+        body: formData,
       }),
       invalidatesTags: (result, error, { id }) => [
         { type: "GalleryMedia", id },

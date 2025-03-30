@@ -33,6 +33,7 @@ function HomePage() {
     { text: "upcoming events / calendar", href: "/calendar" },
     { text: "audio & video previews", href: "/audio-video-previews" },
     { text: "reviews", href: "/reviews" },
+    { text: "gallery", href: "/gallery" },
   ];
 
   return (

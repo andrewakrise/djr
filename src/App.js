@@ -12,6 +12,7 @@ import PrivateRoute from "./services/routes/PrivateRoute";
 import LoginPage from "./components/auth/LoginPage";
 import SignupPage from "./components/auth/SignupPage";
 import ReviewsPage from "./components/ReviewsPage";
+import GalleryPage from "./components/GalleryPage";
 import { NotificationProvider } from "./context/NotificationContext";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/audio-video-previews" element={<AudioVideoPage />} />
           <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
 
           <Route
             path="/rdj-api"

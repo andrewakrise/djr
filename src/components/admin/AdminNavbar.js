@@ -16,15 +16,9 @@ const AdminNavbar = () => {
         <Button color="inherit" component={Link} to="/">
           HOME
         </Button>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1, mx: 2 }}>
           Admin Dashboard
         </Typography>
-        <Button color="inherit" component={Link} to="/rdj-api/video-links">
-          Videos
-        </Button>
-        <Button color="inherit" component={Link} to="/rdj-api/events">
-          Events
-        </Button>
         <Button onClick={handleLogout} color="secondary">
           Logout
         </Button>
