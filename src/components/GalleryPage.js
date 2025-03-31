@@ -239,19 +239,6 @@ function GalleryPage() {
     };
   }, [stopVideo]);
 
-  if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="200px"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
     <Container
       className="gallery-container"
@@ -323,165 +310,88 @@ function GalleryPage() {
         <IconLinks />
       </Box>
       {/* Featured Media Section */}
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "1200px",
-          mb: 4,
-          px: 2,
-        }}
-      >
-        <Slider ref={sliderRef} {...settings}>
-          {getAlternatedMedia.map((item, index) => (
-            <Box
-              key={item._id}
-              sx={{
-                height: isMobile ? "600px" : "800px",
-                position: "relative",
-                overflow: "hidden",
-                borderRadius: "8px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                "&:hover": {
-                  "& .media-overlay": {
-                    opacity: 1,
-                  },
-                },
-              }}
-            >
-              {item.mediaType === "video" ? (
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: "1200px",
+              mb: 4,
+              px: 2,
+            }}
+          >
+            <Slider ref={sliderRef} {...settings}>
+              {getAlternatedMedia.map((item, index) => (
                 <Box
+                  key={item._id}
                   sx={{
-                    width: "100%",
-                    height: "100%",
+                    height: isMobile ? "600px" : "800px",
+                    position: "relative",
+                    overflow: "hidden",
+                    borderRadius: "8px",
+                    cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    position: "relative",
-                  }}
-                >
-                  <video
-                    src={item.url}
-                    controls
-                    playsInline
-                    muted={false}
-                    ref={(el) => {
-                      if (el) {
-                        videoRefs.current[item._id] = el;
-                      }
-                    }}
-                    onPlay={() => {
-                      setActiveVideoId(item._id);
-                    }}
-                    onPause={() => {
-                      if (activeVideoId === item._id) {
-                        setActiveVideoId(null);
-                      }
-                    }}
-                    onEnded={() => {
-                      if (activeVideoId === item._id) {
-                        setActiveVideoId(null);
-                      }
-                    }}
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      width: "auto",
-                      height: "auto",
-                      objectFit: "contain",
-                      backgroundColor: "#000",
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      color: "white",
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      padding: "0.5rem 1rem",
-                      borderRadius: "4px",
-                      fontSize: "0.9rem",
-                      pointerEvents: "none",
-                      opacity: activeVideoId === item._id ? 0 : 1,
-                      transition: "opacity 0.3s ease",
-                      display: isMobile ? "block" : "none",
-                    }}
-                  >
-                    Click to play
-                  </Typography>
-                </Box>
-              ) : (
-                <CardMedia
-                  component="img"
-                  image={item.url}
-                  alt={item.title}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                    display: "block",
-                  }}
-                />
-              )}
-            </Box>
-          ))}
-        </Slider>
-
-        {/* Thumbnail Navigation */}
-        <Box sx={{ mt: 2, px: 0 }}>
-          <Slider {...thumbnailSettings}>
-            {getAlternatedMedia.map((item, index) => (
-              <Box
-                key={item._id}
-                onClick={() => handleThumbnailClick(index)}
-                sx={{
-                  padding: "0",
-                  cursor: "pointer",
-                  opacity: selectedMediaIndex === index ? 1 : 0.6,
-                  transition: "opacity 0.3s ease",
-                  "&:hover": {
-                    opacity: 1,
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    width: "3rem",
-                    height: "3rem",
-                    position: "relative",
-                    borderRadius: "4px",
-                    overflow: "hidden",
-                    border:
-                      selectedMediaIndex === index
-                        ? "2px solid #44A08D"
-                        : "none",
+                    "&:hover": {
+                      "& .media-overlay": {
+                        opacity: 1,
+                      },
+                    },
                   }}
                 >
                   {item.mediaType === "video" ? (
                     <Box
                       sx={{
-                        position: "relative",
                         width: "100%",
                         height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
                       }}
                     >
                       <video
                         src={item.url}
+                        controls
+                        playsInline
+                        muted={false}
+                        ref={(el) => {
+                          if (el) {
+                            videoRefs.current[item._id] = el;
+                          }
+                        }}
+                        onPlay={() => {
+                          setActiveVideoId(item._id);
+                        }}
+                        onPause={() => {
+                          if (activeVideoId === item._id) {
+                            setActiveVideoId(null);
+                          }
+                        }}
+                        onEnded={() => {
+                          if (activeVideoId === item._id) {
+                            setActiveVideoId(null);
+                          }
+                        }}
                         style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
+                          maxWidth: "100%",
+                          maxHeight: "100%",
+                          width: "auto",
+                          height: "auto",
+                          objectFit: "contain",
                           backgroundColor: "#000",
                         }}
-                        muted
-                        playsInline
                       />
                       <Typography
                         sx={{
@@ -491,10 +401,12 @@ function GalleryPage() {
                           transform: "translate(-50%, -50%)",
                           color: "white",
                           backgroundColor: "rgba(0, 0, 0, 0.5)",
-                          padding: "0.3rem 0.6rem",
+                          padding: "0.5rem 1rem",
                           borderRadius: "4px",
-                          fontSize: "0.7rem",
+                          fontSize: "0.9rem",
                           pointerEvents: "none",
+                          opacity: activeVideoId === item._id ? 0 : 1,
+                          transition: "opacity 0.3s ease",
                           display: isMobile ? "block" : "none",
                         }}
                       >
@@ -507,22 +419,110 @@ function GalleryPage() {
                       image={item.url}
                       alt={item.title}
                       sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
+                        objectFit: "contain",
+                        display: "block",
                       }}
                     />
                   )}
                 </Box>
-              </Box>
-            ))}
-          </Slider>
-        </Box>
-      </Box>
+              ))}
+            </Slider>
 
+            {/* Thumbnail Navigation */}
+            <Box sx={{ mt: 2, px: 0 }}>
+              <Slider {...thumbnailSettings}>
+                {getAlternatedMedia.map((item, index) => (
+                  <Box
+                    key={item._id}
+                    onClick={() => handleThumbnailClick(index)}
+                    sx={{
+                      padding: "0",
+                      cursor: "pointer",
+                      opacity: selectedMediaIndex === index ? 1 : 0.6,
+                      transition: "opacity 0.3s ease",
+                      "&:hover": {
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: "3rem",
+                        height: "3rem",
+                        position: "relative",
+                        borderRadius: "4px",
+                        overflow: "hidden",
+                        border:
+                          selectedMediaIndex === index
+                            ? "2px solid #44A08D"
+                            : "none",
+                      }}
+                    >
+                      {item.mediaType === "video" ? (
+                        <Box
+                          sx={{
+                            position: "relative",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        >
+                          <video
+                            src={item.url}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              backgroundColor: "#000",
+                            }}
+                            muted
+                            playsInline
+                          />
+                          <Typography
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              color: "white",
+                              backgroundColor: "rgba(0, 0, 0, 0.5)",
+                              padding: "0.3rem 0.6rem",
+                              borderRadius: "4px",
+                              fontSize: "0.7rem",
+                              pointerEvents: "none",
+                              display: isMobile ? "block" : "none",
+                            }}
+                          >
+                            Click to play
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <CardMedia
+                          component="img"
+                          image={item.url}
+                          alt={item.title}
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </Slider>
+            </Box>
+          </Box>
+        </>
+      )}
       {/* Grid of Smaller Media Items */}
       <Grid container spacing={2} sx={{ maxWidth: "1200px", px: 2 }}>
         {getAlternatedMedia.map((item, index) => (
