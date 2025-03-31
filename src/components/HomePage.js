@@ -14,7 +14,10 @@ import IconLinks from "./helpers/IconLinks";
 import { gradient } from "./helpers/utils";
 
 // Lazy load the logo image
-const logo = new URL("../assets/icons/Avatar-DJ-vinyl-1.JPG", import.meta.url);
+const logoUrl = new URL(
+  "../assets/icons/Avatar-DJ-vinyl-1.JPG",
+  import.meta.url
+).href;
 
 function HomePage() {
   const linkItems = [
@@ -83,7 +86,7 @@ function HomePage() {
         </Box>
         <Suspense fallback={<CircularProgress />}>
           <Avatar
-            src={logo}
+            src={logoUrl}
             sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
             alt="DJ RISE"
             loading="lazy"
