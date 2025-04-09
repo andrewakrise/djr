@@ -4,6 +4,13 @@ import { Box, Typography, Modal, Button, IconButton } from "@mui/material";
 import { Cancel } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { gradient } from "./utils";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Configure dayjs plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const StyledModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -26,6 +33,39 @@ const StyledModalBox = styled(Box)(({ theme }) => ({
 const EventModal = ({ open, onClose, event }) => {
   if (!event) return;
   // console.log("");
+
+  // Format date based on either new or legacy format
+  let formattedDate;
+  let formattedStartTime;
+  let formattedEndTime;
+
+  if (event?.startDateTime) {
+    formattedDate = dayjs(event.startDateTime)
+      .tz("America/Vancouver")
+      .format("MMMM D, YYYY");
+
+    formattedStartTime = dayjs(event.startDateTime)
+      .tz("America/Vancouver")
+      .format("h:mm A");
+
+    if (event?.endDateTime) {
+      formattedEndTime = dayjs(event.endDateTime)
+        .tz("America/Vancouver")
+        .format("h:mm A");
+    }
+  } else if (event?.date) {
+    formattedDate = dayjs(event.date)
+      .tz("America/Vancouver")
+      .format("MMMM D, YYYY");
+
+    if (event?.startTime) {
+      formattedStartTime = event.startTime;
+    }
+
+    if (event?.endTime) {
+      formattedEndTime = event.endTime;
+    }
+  }
 
   return (
     <Modal
@@ -60,13 +100,16 @@ const EventModal = ({ open, onClose, event }) => {
                   component="div"
                   gutterBottom
                 >
-                  {new Date(event?.date).toLocaleDateString("en-CA", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    timeZone: "America/Vancouver",
-                  })}
+                  {formattedDate}
                 </Typography>
+                {event?.isPublic &&
+                  (formattedStartTime || formattedEndTime) && (
+                    <Typography variant="body1" component="div" gutterBottom>
+                      {formattedStartTime && `Start: ${formattedStartTime}`}
+                      {formattedStartTime && formattedEndTime && " | "}
+                      {formattedEndTime && `End: ${formattedEndTime}`}
+                    </Typography>
+                  )}
               </Box>
               <IconButton
                 onClick={onClose}

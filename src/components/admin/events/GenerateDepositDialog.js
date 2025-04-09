@@ -10,6 +10,8 @@ import {
   Alert,
   FormControlLabel,
   Checkbox,
+  TextField,
+  Box,
 } from "@mui/material";
 import { pdf } from "@react-pdf/renderer";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
@@ -22,8 +24,19 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 import EventDepositPDF from "./EventDepositPDF";
-import { useUploadDepositMutation } from "../../../services/event";
+import {
+  useUploadDepositMutation,
+  useLazyGetDepositQuery,
+} from "../../../services/event";
 import { generateUniqueFileName } from "../../helpers/utils";
+import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Configure dayjs plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);
@@ -77,7 +90,17 @@ const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
       return;
     }
 
-    const fileName = generateUniqueFileName(event?.date, "Deposit Bill");
+    // Use the new datetime format for the filename if available
+    let fileName;
+    if (event?.startDateTime) {
+      const formattedDate = dayjs(event.startDateTime)
+        .tz("America/Vancouver")
+        .format("YYYY-MM-DD");
+      fileName = generateUniqueFileName(formattedDate, "Contract-Deposit");
+    } else {
+      fileName = generateUniqueFileName(event?.date, "Contract-Deposit");
+    }
+
     // console.log("fileName", fileName)
     const formData = new FormData();
     formData.append("pdfDeposit", pdfBlob, `${fileName}.pdf`);
@@ -93,7 +116,7 @@ const GenerateDepositDialog = ({ open, onClose, event, refetchEvents }) => {
       onClose();
     } else {
       setError(
-        `Error uploading Deposit: ${
+        `Error uploading deposit: ${
           result?.error.data?.msg || "Error on the Server"
         }`
       );

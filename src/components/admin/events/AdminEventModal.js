@@ -11,6 +11,12 @@ import {
 import { Cancel } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { gradient } from "../../helpers/utils";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const StyledModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -34,6 +40,25 @@ const AdminEventModal = ({ open, onClose, event }) => {
   if (!event) return null;
 
   console.log("event", event);
+
+  // Format date and time using the new datetime fields if available
+  const formattedDate = event?.startDateTime
+    ? dayjs(event.startDateTime).tz("America/Vancouver").format("MMMM D, YYYY")
+    : new Date(event?.date).toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "America/Vancouver",
+      });
+
+  const formattedStartTime = event?.startDateTime
+    ? dayjs(event.startDateTime).tz("America/Vancouver").format("h:mm A")
+    : event?.startTime;
+
+  const formattedEndTime = event?.endDateTime
+    ? dayjs(event.endDateTime).tz("America/Vancouver").format("h:mm A")
+    : event?.endTime;
+
   return (
     <Modal
       open={open}
@@ -80,12 +105,7 @@ const AdminEventModal = ({ open, onClose, event }) => {
           component="div"
           gutterBottom
         >
-          {new Date(event?.date).toLocaleDateString("en-CA", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            timeZone: "America/Vancouver",
-          })}
+          {formattedDate}
         </Typography>
 
         {event?.imageUrl && (
@@ -139,10 +159,10 @@ const AdminEventModal = ({ open, onClose, event }) => {
         <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
 
         <Typography variant="body1" gutterBottom>
-          <strong>Event Start Time:</strong> {event?.startTime || "N/A"}
+          <strong>Event Start Time:</strong> {formattedStartTime || "N/A"}
         </Typography>
         <Typography variant="body1" gutterBottom>
-          <strong>Event End Time:</strong> {event?.endTime || "N/A"}
+          <strong>Event End Time:</strong> {formattedEndTime || "N/A"}
         </Typography>
 
         <Divider sx={{ my: 2, borderColor: "#ffffff" }} />

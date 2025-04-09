@@ -17,15 +17,16 @@ import {
   Autocomplete,
 } from "@mui/material";
 import dayjs from "dayjs";
-import dayjsPluginUTC from "dayjs-plugin-utc";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  DatePicker,
-  TimePicker,
-  LocalizationProvider,
-} from "@mui/x-date-pickers";
-dayjs.extend(dayjsPluginUTC);
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
+// Configure dayjs plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   const [addEvent] = useAddEventMutation();
@@ -33,9 +34,12 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
 
   const [title, setTitle] = useState(event?.title || "");
   const [description, setDescription] = useState(event?.description || "");
-  const [date, setDate] = useState(event?.date ? event.date.split("T")[0] : "");
-  const [startTime, setStartTime] = useState(event?.startTime || null);
-  const [endTime, setEndTime] = useState(event?.endTime || null);
+  const [startDateTime, setStartDateTime] = useState(
+    event?.startDateTime ? dayjs(event.startDateTime) : null
+  );
+  const [endDateTime, setEndDateTime] = useState(
+    event?.endDateTime ? dayjs(event.endDateTime) : null
+  );
   const [location, setLocation] = useState(event?.location || "");
   const [address, setAddress] = useState(event?.address || "");
   const [clientName, setClientName] = useState(event?.clientName || "");
@@ -102,9 +106,8 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     if (event) {
       setTitle(event?.title);
       setDescription(event?.description);
-      setDate(event?.date.split("T")[0]);
-      setStartTime(event?.startTime ? dayjs(event?.startTime, "HH:mm") : null);
-      setEndTime(event?.endTime ? dayjs(event?.endTime, "HH:mm") : null);
+      setStartDateTime(event.startDateTime ? dayjs(event.startDateTime) : null);
+      setEndDateTime(event.endDateTime ? dayjs(event.endDateTime) : null);
       setLocation(event?.location);
       setAddress(event?.address);
       setClientName(event?.clientName);
@@ -125,11 +128,56 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       }
     }
   }, [event]);
-  // console.log("services", services);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    if (!title) {
+      setError("Title is required");
+      return;
+    }
+
+    if (!startDateTime) {
+      setError("Start date and time is required");
+      return;
+    }
+
+    if (!endDateTime) {
+      setError("End date and time is required");
+      return;
+    }
+
+    if (!location) {
+      setError("Location is required");
+      return;
+    }
+
+    if (!address) {
+      setError("Address is required");
+      return;
+    }
+
+    if (!clientName) {
+      setError("Client name is required");
+      return;
+    }
+
+    if (!clientEmail) {
+      setError("Client email is required");
+      return;
+    }
+
+    if (!phoneNumber) {
+      setError("Phone number is required");
+      return;
+    }
+
+    if (services.length === 0) {
+      setError("At least one service is required");
+      return;
+    }
 
     if (!isValidEmail(clientEmail)) {
       setError("Invalid email format");
@@ -141,14 +189,6 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     }
     if (totalSum < 0 || depositSum < 0) {
       setError("Total sum and deposit sum must be positive numbers");
-      return;
-    }
-    if (!services.length) {
-      setError("Please select at least one service");
-      return;
-    }
-    if (!startTime || !endTime) {
-      setError("Start time and end time are required");
       return;
     }
 
@@ -168,7 +208,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       uniqueServices.push("Logistics and Setting of the above equipment");
     }
 
-    let customizedServices = uniqueServices.map((service) => {
+    const customizedServices = uniqueServices.map((service) => {
       if (service === "DJing Services" && (djingHours || djingMinutes)) {
         return `DJing Services for ${djingHours} hours${
           djingMinutes ? " " + djingMinutes + " minutes" : ""
@@ -199,20 +239,25 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       eventId = event?.id || event?._id;
     }
 
-    const utcDate = dayjs(date).utc().toISOString();
-    const formattedStartTime = dayjs(startTime).format("HH:mm");
-    const formattedEndTime = dayjs(endTime).format("HH:mm");
+    // Format the date and time for the Vancouver timezone
+    const formattedStartDateTime = startDateTime.tz("America/Vancouver");
+    const formattedEndDateTime = endDateTime.tz("America/Vancouver");
+
+    // If end time is earlier than start time, it means the event ends the next day
+    let adjustedEndDateTime = formattedEndDateTime;
+    if (formattedEndDateTime.isBefore(formattedStartDateTime)) {
+      adjustedEndDateTime = formattedEndDateTime.add(1, "day");
+    }
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("date", utcDate);
+    formData.append("startDateTime", formattedStartDateTime.toISOString());
+    formData.append("endDateTime", adjustedEndDateTime.toISOString());
     formData.append("location", location);
     formData.append("address", address);
     if (imageFile) formData.append("image", imageFile);
     formData.append("ticketUrl", ticketUrl);
-    formData.append("startTime", formattedStartTime);
-    formData.append("endTime", formattedEndTime);
     formData.append("clientName", clientName);
     formData.append("clientCompanyName", clientCompanyName);
     formData.append("clientEmail", clientEmail);
@@ -235,9 +280,8 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         setSuccess(`${result?.data?.msg}`);
         setTitle("");
         setDescription("");
-        setDate(null);
-        setStartTime(null);
-        setEndTime(null);
+        setStartDateTime(null);
+        setEndDateTime(null);
         setLocation("");
         setAddress("");
         setClientName("");
@@ -265,8 +309,64 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       }
     } catch (err) {
       setError(
-        `Server error: ${err?.data?.msg || err?.error || "Unknown error"}`
+        err?.data?.msg || err?.error?.data?.msg || "Something went wrong"
       );
+    }
+  };
+
+  // Add this new function to handle start date/time changes
+  const handleStartDateTimeChange = (newValue) => {
+    setStartDateTime(newValue);
+
+    // If we have a valid start date/time, auto-set the end date/time to 2 hours later
+    if (newValue) {
+      const newEndDateTime = newValue.add(2, "hour");
+      setEndDateTime(newEndDateTime);
+
+      // Auto-calculate DJing hours and minutes if DJing Services is selected
+      if (services.includes("DJing Services")) {
+        calculateDjingTime(newValue, newEndDateTime);
+      }
+    }
+  };
+
+  // Add this new function to handle end date/time changes
+  const handleEndDateTimeChange = (newValue) => {
+    setEndDateTime(newValue);
+
+    // Auto-calculate DJing hours and minutes if DJing Services is selected
+    if (services.includes("DJing Services") && startDateTime) {
+      calculateDjingTime(startDateTime, newValue);
+    }
+  };
+
+  // Add this new function to calculate DJing time based on start and end times
+  const calculateDjingTime = (start, end) => {
+    if (!start || !end) return;
+
+    // Calculate the difference in minutes
+    let diffMinutes = end.diff(start, "minute");
+
+    // Handle case where end time is on the next day
+    if (diffMinutes < 0) {
+      diffMinutes += 24 * 60; // Add 24 hours worth of minutes
+    }
+
+    // Convert to hours and minutes
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+
+    setDjingHours(hours.toString());
+    setDjingMinutes(minutes.toString());
+  };
+
+  // Add this new function to handle service selection changes
+  const handleServicesChange = (event, newValue) => {
+    setServices(newValue);
+
+    // If DJing Services is selected and we have both start and end times, calculate DJing time
+    if (newValue.includes("DJing Services") && startDateTime && endDateTime) {
+      calculateDjingTime(startDateTime, endDateTime);
     }
   };
 
@@ -293,32 +393,25 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DateTimePicker"]}>
-            <DatePicker
-              label="Date"
-              value={date ? dayjs(date) : null}
-              onChange={(newValue) => setDate(newValue)}
+            <DateTimePicker
+              label="Start Date and Time"
+              value={startDateTime}
+              onChange={handleStartDateTimeChange}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth margin="normal" required />
+              )}
+              timezone="America/Vancouver"
             />
           </DemoContainer>
-          <DemoContainer components={["TimePicker"]}>
-            <TimePicker
-              label="Start Time"
-              value={startTime ? dayjs(startTime, "HH:mm") : null}
-              onChange={(newValue) => setStartTime(newValue)}
+          <DemoContainer components={["DateTimePicker"]}>
+            <DateTimePicker
+              label="End Date and Time"
+              value={endDateTime}
+              onChange={handleEndDateTimeChange}
               renderInput={(params) => (
-                <TextField {...params} fullWidth margin="normal" />
+                <TextField {...params} fullWidth margin="normal" required />
               )}
-              required
-            />
-          </DemoContainer>
-          <DemoContainer components={["TimePicker"]}>
-            <TimePicker
-              label="End Time"
-              value={endTime ? dayjs(endTime, "HH:mm") : null}
-              onChange={(newValue) => setEndTime(newValue)}
-              renderInput={(params) => (
-                <TextField {...params} fullWidth margin="normal" />
-              )}
-              required
+              timezone="America/Vancouver"
             />
           </DemoContainer>
         </LocalizationProvider>
@@ -377,9 +470,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           multiple
           freeSolo
           value={services}
-          onChange={(event, newValue) => {
-            setServices(newValue);
-          }}
+          onChange={handleServicesChange}
           options={serviceOptions}
           renderInput={(params) => (
             <TextField {...params} label="Services" margin="normal" />

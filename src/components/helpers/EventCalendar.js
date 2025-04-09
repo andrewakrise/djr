@@ -13,6 +13,13 @@ import {
 import { useGetAllConfEventsQuery } from "../../services/event";
 import { Event } from "@mui/icons-material";
 import EventModal from "./EventModal";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Configure dayjs plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const EventCalendar = () => {
   const {
@@ -40,14 +47,46 @@ const EventCalendar = () => {
 
     const now = new Date();
 
-    const futureEvents = events?.filter(
-      (event) => new Date(event?.date) >= now
-    );
-    const pastEvents = events?.filter((event) => new Date(event?.date) < now);
+    // Filter events based on either new or legacy date format
+    const futureEvents = events?.filter((event) => {
+      if (event?.startDateTime) {
+        return new Date(event.startDateTime) >= now;
+      } else if (event?.date) {
+        return new Date(event.date) >= now;
+      }
+      return false;
+    });
 
-    futureEvents?.sort((a, b) => new Date(a?.date) - new Date(b?.date));
+    const pastEvents = events?.filter((event) => {
+      if (event?.startDateTime) {
+        return new Date(event.startDateTime) < now;
+      } else if (event?.date) {
+        return new Date(event.date) < now;
+      }
+      return false;
+    });
 
-    pastEvents?.sort((a, b) => new Date(b?.date) - new Date(a?.date));
+    // Sort future events by date (ascending)
+    futureEvents?.sort((a, b) => {
+      const dateA = a?.startDateTime
+        ? new Date(a.startDateTime)
+        : new Date(a.date);
+      const dateB = b?.startDateTime
+        ? new Date(b.startDateTime)
+        : new Date(b.date);
+      return dateA - dateB;
+    });
+
+    // Sort past events by date (descending)
+    pastEvents?.sort((a, b) => {
+      const dateA = a?.startDateTime
+        ? new Date(a.startDateTime)
+        : new Date(a.date);
+      const dateB = b?.startDateTime
+        ? new Date(b.startDateTime)
+        : new Date(b.date);
+      return dateB - dateA;
+    });
 
     const combinedEvents = [...futureEvents, ...pastEvents];
 
@@ -77,7 +116,7 @@ const EventCalendar = () => {
       </Typography>
     );
   }
-  // console.log("filteredEvents", filteredEvents);
+
   return (
     <Box
       sx={{
@@ -95,13 +134,24 @@ const EventCalendar = () => {
     >
       <List>
         {filteredEvents?.map((event) => {
-          const eventDate = new Date(event?.date);
-          const formattedDate = eventDate?.toLocaleDateString("en-CA", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            timeZone: "America/Vancouver",
-          });
+          // Format date based on either new or legacy format
+          let eventDate;
+          let formattedDate;
+
+          if (event?.startDateTime) {
+            eventDate = dayjs(event.startDateTime)
+              .tz("America/Vancouver")
+              .toDate();
+            formattedDate = dayjs(event.startDateTime)
+              .tz("America/Vancouver")
+              .format("MMMM D, YYYY");
+          } else if (event?.date) {
+            eventDate = dayjs(event.date).tz("America/Vancouver").toDate();
+            formattedDate = dayjs(event.date)
+              .tz("America/Vancouver")
+              .format("MMMM D, YYYY");
+          }
+
           const isFuture = eventDate >= new Date();
 
           return (

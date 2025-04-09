@@ -30,6 +30,13 @@ import {
 } from "../../../services/event";
 import { generateUniqueFileName } from "../../helpers/utils";
 import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Configure dayjs plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);
@@ -83,7 +90,17 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
       return;
     }
 
-    const fileName = generateUniqueFileName(event?.date, "Contract-Invoice");
+    // Use the new datetime format for the filename if available
+    let fileName;
+    if (event?.startDateTime) {
+      const formattedDate = dayjs(event.startDateTime)
+        .tz("America/Vancouver")
+        .format("YYYY-MM-DD");
+      fileName = generateUniqueFileName(formattedDate, "Contract-Invoice");
+    } else {
+      fileName = generateUniqueFileName(event?.date, "Contract-Invoice");
+    }
+
     // console.log("fileName", fileName)
     const formData = new FormData();
     formData.append("pdfInvoice", pdfBlob, `${fileName}.pdf`);

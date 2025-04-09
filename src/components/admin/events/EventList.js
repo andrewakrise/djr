@@ -43,7 +43,10 @@ import ConfirmationDialog from "../../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
 import GenerateDepositDialog from "./GenerateDepositDialog";
 import { saveAs } from "file-saver";
-import { generateUniqueFileName } from "../../helpers/utils";
+import {
+  generateUniqueFileName,
+  convertTo12HourFormat,
+} from "../../helpers/utils";
 import AdminEventModal from "./AdminEventModal";
 import ClientEmailDialog from "../ClientEmailDialog";
 import EventConfirmationDialog from "./EventConfirmationDialog";
@@ -51,6 +54,12 @@ import EventFinalPaymentDialog from "./EventFinalPaymentDialog";
 import GenerateFinalDialog from "./GenerateFinalDialog";
 import EventFinalEmailDialog from "./EventFinalEmailDialog";
 import GenerateReceiptDialog from "./GenerateReceiptDialog";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -387,14 +396,24 @@ function EventList() {
     events?.map((event) => ({
       id: event?._id,
       title: event?.title,
-      date: new Date(event?.date)?.toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        timeZone: "America/Vancouver",
-      }),
-      startTime: event?.startTime,
-      endTime: event?.endTime,
+      startDateTime: event?.startDateTime
+        ? dayjs(event.startDateTime)
+            .tz("America/Vancouver")
+            .format("MMMM D, YYYY h:mm A")
+        : event?.date && event?.startTime
+        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
+            event.startTime
+          )}`
+        : "",
+      endDateTime: event?.endDateTime
+        ? dayjs(event.endDateTime)
+            .tz("America/Vancouver")
+            .format("MMMM D, YYYY h:mm A")
+        : event?.date && event?.endTime
+        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
+            event.endTime
+          )}`
+        : "",
       location: event?.location,
       address: event?.address,
       clientName: event?.clientName,
@@ -466,9 +485,9 @@ function EventList() {
               color="secondary"
               onClick={() =>
                 handleDownloadInvoice(
-                  params.row.id,
-                  params.row.date,
-                  params.row.title
+                  params?.row?.id,
+                  params?.row?.date,
+                  params?.row?.title
                 )
               }
               aria-label="download-invoice"
@@ -494,9 +513,9 @@ function EventList() {
               color="success"
               onClick={() =>
                 handleDownloadDeposit(
-                  params.row.id,
-                  params.row.date,
-                  params.row.title
+                  params?.row?.id,
+                  params?.row?.date,
+                  params?.row?.title
                 )
               }
               aria-label="download-deposit"
@@ -516,12 +535,12 @@ function EventList() {
       headerName: "Public",
       width: 70,
       renderCell: (params) => {
-        const { isPublic } = params.row;
+        const { isPublic } = params?.row;
         return (
           <Tooltip title={isPublic ? "Set to Private" : "Set to Public"}>
             <IconButton
               color={isPublic ? "success" : "warning"}
-              onClick={() => handleTogglePublic({ eventId: params.row.id })}
+              onClick={() => handleTogglePublic({ eventId: params?.row?.id })}
               aria-label="toggle-public"
             >
               {isPublic ? <PublicIcon /> : <PublicOffIcon />}
@@ -584,14 +603,14 @@ function EventList() {
               color="info"
               onClick={() =>
                 handleDownloadFinal(
-                  params.row.id,
-                  params.row.date,
-                  params.row.title
+                  params?.row?.id,
+                  params?.row?.date,
+                  params?.row?.title
                 )
               }
             >
               {isFinalFetching &&
-              currentDownloadingFinalId === params.row.id ? (
+              currentDownloadingFinalId === params?.row?.id ? (
                 <CircularProgress size={24} />
               ) : (
                 <Download />
@@ -601,7 +620,7 @@ function EventList() {
           <Tooltip title="Send Final Bill Email to Client">
             <IconButton
               color="primary"
-              onClick={() => handleOpenFinalEmailDialog(params.row)}
+              onClick={() => handleOpenFinalEmailDialog(params?.row)}
             >
               <EmailIcon />
             </IconButton>
@@ -636,7 +655,7 @@ function EventList() {
                 }
               >
                 {isReceiptFetching &&
-                currentDownloadingReceiptId === params?.row.id ? (
+                currentDownloadingReceiptId === params?.row?.id ? (
                   <CircularProgress size={24} />
                 ) : (
                   <Download />
@@ -655,7 +674,13 @@ function EventList() {
         const confirmed = params?.row?.isConfirmed;
         const fullyPaid = params?.row?.isFullyPaid;
 
-        const eventDate = new Date(params.row.date);
+        let eventDate;
+        if (params?.row?.startDateTime) {
+          eventDate = new Date(params?.row?.startDateTime);
+        } else {
+          eventDate = new Date(params?.row?.date);
+        }
+
         const today = new Date();
         const dateHasPassed = eventDate < today;
         const finalPaymentSum =
@@ -730,16 +755,15 @@ function EventList() {
       width: 150,
     },
     { field: "title", headerName: "Title", width: 150 },
-    { field: "date", headerName: "Date", width: 150 },
     {
-      field: "startTime",
-      headerName: "Start Time",
-      width: 100,
+      field: "startDateTime",
+      headerName: "Start Date & Time",
+      width: 180,
     },
     {
-      field: "endTime",
-      headerName: "End Time",
-      width: 100,
+      field: "endDateTime",
+      headerName: "End Date & Time",
+      width: 180,
     },
     {
       field: "clientCompanyName",
@@ -765,13 +789,14 @@ function EventList() {
       field: "totalSum",
       headerName: "Total Sum",
       width: 100,
-      valueGetter: (value, row) => (row.totalSum ? `$${row.totalSum}` : ""),
+      valueGetter: (value, row) => (row?.totalSum ? `$${row?.totalSum}` : ""),
     },
     {
       field: "depositSum",
       headerName: "Deposit Sum",
       width: 100,
-      valueGetter: (value, row) => (row.depositSum ? `$${row.depositSum}` : ""),
+      valueGetter: (value, row) =>
+        row?.depositSum ? `$${row?.depositSum}` : "",
     },
   ];
 

@@ -25,8 +25,21 @@ const eventApi = createApi({
             return {
               ...event,
               date: event.startDateTime,
-              startTime: new Date(event.startDateTime).toLocaleTimeString(),
-              endTime: new Date(event.endDateTime).toLocaleTimeString(),
+              startTime: new Date(event.startDateTime).toLocaleTimeString(
+                "en-US",
+                {
+                  hour12: false,
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "America/Vancouver",
+                }
+              ),
+              endTime: new Date(event.endDateTime).toLocaleTimeString("en-US", {
+                hour12: false,
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "America/Vancouver",
+              }),
             };
           }
           // Otherwise, use old format
@@ -44,8 +57,21 @@ const eventApi = createApi({
             return {
               ...event,
               date: event.startDateTime,
-              startTime: new Date(event.startDateTime).toLocaleTimeString(),
-              endTime: new Date(event.endDateTime).toLocaleTimeString(),
+              startTime: new Date(event.startDateTime).toLocaleTimeString(
+                "en-US",
+                {
+                  hour12: false,
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "America/Vancouver",
+                }
+              ),
+              endTime: new Date(event.endDateTime).toLocaleTimeString("en-US", {
+                hour12: false,
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "America/Vancouver",
+              }),
             };
           }
           // Otherwise, use old format
@@ -55,42 +81,20 @@ const eventApi = createApi({
     }),
     addEvent: builder.mutation({
       query: (formData) => {
-        // Convert date and time strings to ISO datetime strings
-        const startDateTime = new Date(
-          `${formData.date}T${formData.startTime}`
-        );
-        const endDateTime = new Date(`${formData.date}T${formData.endTime}`);
-
-        // If end time is earlier than start time, it means the event ends the next day
-        if (endDateTime < startDateTime) {
-          endDateTime.setDate(endDateTime.getDate() + 1);
-        }
-
-        const updatedFormData = new FormData();
-        for (let [key, value] of formData.entries()) {
-          if (key === "date" || key === "startTime" || key === "endTime") {
-            continue; // Skip these fields as we'll add them as datetime
-          }
-          updatedFormData.append(key, value);
-        }
-
-        // Add both old and new format fields
-        updatedFormData.append("date", formData.date);
-        updatedFormData.append("startTime", formData.startTime);
-        updatedFormData.append("endTime", formData.endTime);
-        updatedFormData.append("startDateTime", startDateTime.toISOString());
-        updatedFormData.append("endDateTime", endDateTime.toISOString());
-
+        // The formData already contains startDateTime and endDateTime as ISO strings
+        // We don't need to do any conversion here
         return {
           url: "create-one",
           method: "POST",
-          body: updatedFormData,
+          body: formData,
         };
       },
       invalidatesTags: ["Event"],
     }),
     updateEvent: builder.mutation({
       query: ({ eventId, data }) => {
+        // If data is FormData, we don't need to do any conversion
+        // The component has already handled the datetime conversion
         return {
           url: `update-one/${eventId}`,
           method: "PUT",
