@@ -99,7 +99,7 @@ const IconLinks = () => {
           }}
         >
           <Link
-            href="https://vimeo.com/risedj/"
+            href="https://www.youtube.com/@vandjrise/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
@@ -107,17 +107,7 @@ const IconLinks = () => {
               textDecoration: "none",
             }}
           >
-            <Box
-              component="img"
-              src={vimeoSVGIcon}
-              alt="Vimeo"
-              sx={{
-                width: "auto",
-                height: "calc(1rem + 2.5vmin)",
-                color: "#FFF",
-              }}
-            />
-            {/* <YouTube sx={{ width: "auto", height: "calc(1rem + 3vmin)" }} /> */}
+            <YouTube sx={{ width: "auto", height: "calc(1.7rem + 3vmin)" }} />
           </Link>
         </Box>
       </Grid>

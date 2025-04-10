@@ -35,8 +35,8 @@ function HomePage() {
       href: "https://www.mixcloud.com/andrewrisedj",
     },
     {
-      text: "vimeo.com videos / dj mixes",
-      href: "https://vimeo.com/risedj",
+      text: "youtube channel / dj mixes",
+      href: "https://www.youtube.com/@vandjrise",
     },
   ];
 
