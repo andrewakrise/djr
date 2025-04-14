@@ -10,14 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Heroku CLI
-        run: |
-          npm install -g heroku
-          heroku --version
 
-      - uses: akhileshns/heroku-deploy@v3.12.14
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g heroku
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.14
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "djrise"
           heroku_email: "andriikukharv@gmail.com"
           healthcheck: "https://djrise-81215364f79c.herokuapp.com/"
+          buildpack: heroku/nodejs
+          dontuseforce: true
