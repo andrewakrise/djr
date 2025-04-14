@@ -63,15 +63,16 @@ function GalleryPage() {
   }, [galleryItems]);
 
   // Simple video control function
-  const stopAllVideos = useCallback(() => {
-    Object.values(videoRefs.current).forEach((video) => {
-      if (video && !video.paused) {
+  const stopVideo = useCallback(() => {
+    if (activeVideoId && videoRefs.current[activeVideoId]) {
+      const video = videoRefs.current[activeVideoId];
+      if (!video.paused) {
         video.pause();
         video.currentTime = 0;
       }
-    });
+    }
     setActiveVideoId(null);
-  }, []);
+  }, [activeVideoId]);
 
   // Video ref callback
   const videoRef = useCallback((element, id) => {
@@ -87,7 +88,6 @@ function GalleryPage() {
     (event, id) => {
       const type = event.type;
       if (type === "play") {
-        stopAllVideos();
         setActiveVideoId(id);
       } else if (
         (type === "pause" || type === "ended") &&
@@ -96,7 +96,7 @@ function GalleryPage() {
         setActiveVideoId(null);
       }
     },
-    [activeVideoId, stopAllVideos]
+    [activeVideoId]
   );
 
   // Render video component
@@ -219,16 +219,16 @@ function GalleryPage() {
       slidesToShow: 1,
       slidesToScroll: 1,
       beforeChange: (current, next) => {
-        stopAllVideos();
+        stopVideo();
         setSelectedMediaIndex(next);
       },
       afterChange: (current) => {
-        stopAllVideos();
+        stopVideo();
       },
       prevArrow: <CustomPrevArrow />,
       nextArrow: <CustomNextArrow />,
     }),
-    [stopAllVideos]
+    [stopVideo]
   );
 
   // Basic thumbnail settings
@@ -267,31 +267,11 @@ function GalleryPage() {
     []
   );
 
-  // Update popup handlers
-  const handlePopupOpen = useCallback(
-    (item) => {
-      stopAllVideos();
-      setSelectedPopupItem(item);
-      setOpenPopup(true);
-    },
-    [stopAllVideos]
-  );
-
-  const handlePopupClose = useCallback(() => {
-    stopAllVideos();
-    setOpenPopup(false);
-    setSelectedPopupItem(null);
-  }, [stopAllVideos]);
-
-  // Update thumbnail click handler
-  const handleThumbnailClick = useCallback(
-    (index) => {
-      stopAllVideos();
-      setSelectedMediaIndex(index);
-      sliderRef.current?.slickGoTo(index);
-    },
-    [stopAllVideos]
-  );
+  // Simple thumbnail click handler
+  const handleThumbnailClick = useCallback((index) => {
+    setSelectedMediaIndex(index);
+    sliderRef.current?.slickGoTo(index);
+  }, []);
 
   // Improved ResizeObserver implementation
   useEffect(() => {
@@ -304,7 +284,7 @@ function GalleryPage() {
 
       resizeTimeoutRef.current = setTimeout(() => {
         if (isSubscribed && sliderRef.current) {
-          stopAllVideos();
+          stopVideo();
           const currentIndex = sliderRef.current.innerSlider.state.currentSlide;
           sliderRef.current.slickGoTo(currentIndex, true);
         }
@@ -334,9 +314,9 @@ function GalleryPage() {
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
       }
-      stopAllVideos();
+      stopVideo();
     };
-  }, [stopAllVideos]);
+  }, [stopVideo]);
 
   // Update the slider rendering
   const renderSliderItem = useCallback(
@@ -427,6 +407,16 @@ function GalleryPage() {
     },
     [selectedMediaIndex, handleThumbnailClick, renderVideo]
   );
+
+  const handlePopupOpen = (item) => {
+    setSelectedPopupItem(item);
+    setOpenPopup(true);
+  };
+
+  const handlePopupClose = () => {
+    setOpenPopup(false);
+    setSelectedPopupItem(null);
+  };
 
   return (
     <Container
@@ -762,13 +752,9 @@ function GalleryPage() {
             (selectedPopupItem.type === "video" ? (
               <Box
                 component="video"
-                ref={(el) => videoRef(el, selectedPopupItem._id)}
                 src={selectedPopupItem.url}
                 controls
                 autoPlay
-                onPlay={(e) => handleVideoEvent(e, selectedPopupItem._id)}
-                onPause={(e) => handleVideoEvent(e, selectedPopupItem._id)}
-                onEnded={(e) => handleVideoEvent(e, selectedPopupItem._id)}
                 sx={{
                   width: "100%",
                   maxHeight: "90vh",
