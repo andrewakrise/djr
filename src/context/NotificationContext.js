@@ -1,11 +1,22 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useMemo } from "react";
 import { Snackbar, Alert } from "@mui/material";
 
-// Create context
-const NotificationContext = createContext();
+// Create context with default value
+const NotificationContext = createContext({
+  showNotification: () => {},
+  hideNotification: () => {},
+});
 
 // Custom hook to use the notification context
-export const useNotification = () => useContext(NotificationContext);
+export const useNotification = () => {
+  const context = useContext(NotificationContext);
+  if (context === undefined) {
+    throw new Error(
+      "useNotification must be used within a NotificationProvider"
+    );
+  }
+  return context;
+};
 
 // Provider component
 export const NotificationProvider = ({ children }) => {
@@ -24,10 +35,10 @@ export const NotificationProvider = ({ children }) => {
   };
 
   const hideNotification = () => {
-    setNotification({
-      ...notification,
+    setNotification((prev) => ({
+      ...prev,
       open: false,
-    });
+    }));
   };
 
   const handleClose = (event, reason) => {
@@ -37,10 +48,17 @@ export const NotificationProvider = ({ children }) => {
     hideNotification();
   };
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = useMemo(
+    () => ({
+      showNotification,
+      hideNotification,
+    }),
+    []
+  );
+
   return (
-    <NotificationContext.Provider
-      value={{ showNotification, hideNotification }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
       <Snackbar
         open={notification.open}

@@ -19,6 +19,26 @@ const galleryApi = createApi({
         url: "",
         params: { page, limit, mediaType, tag },
       }),
+      transformResponse: (response) => ({
+        ...response,
+        media: response.media.map((item) => ({
+          ...item,
+          // Use optimized video URL if available
+          url:
+            item.mediaType === "video" && item.transformedUrls?.length > 0
+              ? item.transformedUrls[0].url
+              : item.url,
+          // Use video thumbnail if available
+          thumbnailUrl:
+            item.mediaType === "video" && item.videoMetadata?.thumbnail
+              ? item.videoMetadata.thumbnail
+              : item.url,
+          isOptimized:
+            item.mediaType === "video"
+              ? item.videoMetadata?.isOptimized || false
+              : true,
+        })),
+      }),
       providesTags: (result) =>
         result?.media
           ? [
@@ -32,6 +52,21 @@ const galleryApi = createApi({
     }),
     getGalleryMediaById: builder.query({
       query: (id) => `${id}`,
+      transformResponse: (response) => ({
+        ...response,
+        url:
+          response.mediaType === "video" && response.transformedUrls?.length > 0
+            ? response.transformedUrls[0].url
+            : response.url,
+        thumbnailUrl:
+          response.mediaType === "video" && response.videoMetadata?.thumbnail
+            ? response.videoMetadata.thumbnail
+            : response.url,
+        isOptimized:
+          response.mediaType === "video"
+            ? response.videoMetadata?.isOptimized || false
+            : true,
+      }),
       providesTags: (result, error, id) => [{ type: "GalleryMedia", id }],
     }),
     addGalleryMedia: builder.mutation({

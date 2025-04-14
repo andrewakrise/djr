@@ -10,5 +10,5 @@ app.get("*", (req, res) => {
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`RISE DJ Frontend server listening on ${port}`);
+  console.log(`DJ RISE Frontend server listening on ${port}`);
 });

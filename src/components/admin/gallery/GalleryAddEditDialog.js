@@ -10,12 +10,17 @@ import {
   Alert,
   Typography,
   IconButton,
+  FormControl,
+  FormControlLabel,
+  Checkbox,
+  CircularProgress,
+  Chip,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import {
-  useAddGalleryMediaMutation,
-  useUpdateGalleryMediaMutation,
-} from "../../../services/gallery";
+  useUploadFileMutation,
+  useUpdateFileMutation,
+} from "../../../services/file";
 import { isNotEmpty, meetsMinLength } from "../../../utils/validation";
 import { gradient } from "../../helpers/utils";
 
@@ -36,11 +41,10 @@ function GalleryAddEditDialog({ open, onClose, refetchGallery, item }) {
     tags: false,
     media: false,
   });
+  const [priorityOptimization, setPriorityOptimization] = useState(false);
 
-  const [addGalleryMedia, { isLoading: isAdding }] =
-    useAddGalleryMediaMutation();
-  const [updateGalleryMedia, { isLoading: isUpdating }] =
-    useUpdateGalleryMediaMutation();
+  const [uploadFile, { isLoading: isAdding }] = useUploadFileMutation();
+  const [updateFile, { isLoading: isUpdating }] = useUpdateFileMutation();
 
   useEffect(() => {
     if (isEditMode && item) {
@@ -62,7 +66,16 @@ function GalleryAddEditDialog({ open, onClose, refetchGallery, item }) {
     }
     setErrorMsg("");
     setSuccessMsg("");
+    setPriorityOptimization(false);
   }, [isEditMode, item]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,184 +96,212 @@ function GalleryAddEditDialog({ open, onClose, refetchGallery, item }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, media: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const isVideo = file.type.startsWith("video/");
+      if (isVideo) {
+        setPriorityOptimization(true);
+      }
+      setFormData((prev) => ({
+        ...prev,
+        media: file,
+      }));
+      setPreviewUrl(URL.createObjectURL(file));
+      setTouchedFields((prev) => ({
+        ...prev,
+        media: true,
+      }));
     }
-  };
-
-  const validateForm = () => {
-    const errors = {};
-
-    if (!isNotEmpty(formData.title)) {
-      errors.title = "Title is required";
-    } else if (!meetsMinLength(formData.title, 3)) {
-      errors.title = "Title must be at least 3 characters long";
-    }
-
-    if (!isNotEmpty(formData.description)) {
-      errors.description = "Description is required";
-    } else if (!meetsMinLength(formData.description, 10)) {
-      errors.description = "Description must be at least 10 characters long";
-    }
-
-    if (!isEditMode && !formData.media) {
-      errors.media = "Media file is required";
-    }
-
-    return errors;
   };
 
   const handleSubmit = async () => {
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setErrorMsg("Please fix the errors before submitting");
-      return;
-    }
-
     try {
-      const submitData = new FormData();
-      submitData.append("title", formData.title);
-      submitData.append("description", formData.description);
-      submitData.append("tags", formData.tags);
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("tags", formData.tags);
+      formDataToSend.append("category", "gallery");
       if (formData.media) {
-        submitData.append("media", formData.media);
+        formDataToSend.append("file", formData.media);
+      }
+      if (priorityOptimization) {
+        formDataToSend.append("priorityOptimization", "true");
       }
 
       if (isEditMode) {
-        await updateGalleryMedia({
+        await updateFile({
           id: item._id,
-          formData: submitData,
+          formData: formDataToSend,
         }).unwrap();
-        setSuccessMsg("Gallery item updated successfully");
       } else {
-        await addGalleryMedia(submitData).unwrap();
-        setSuccessMsg("Gallery item added successfully");
+        await uploadFile(formDataToSend).unwrap();
       }
 
-      refetchGallery();
-      onClose();
-    } catch (error) {
-      console.error("Error:", error);
-      setErrorMsg(
-        error?.data?.msg ||
-          `Failed to ${isEditMode ? "update" : "add"} gallery item`
+      setSuccessMsg(
+        `Media ${isEditMode ? "updated" : "added"} successfully${
+          priorityOptimization ? " and optimization started" : ""
+        }`
       );
+      refetchGallery();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (error) {
+      setErrorMsg(error?.data?.msg || "Error processing media");
     }
   };
 
-  const errors = validateForm();
+  const renderPreview = () => {
+    if (!previewUrl) return null;
+
+    const isVideo =
+      formData.media?.type?.startsWith("video/") || item?.type === "video";
+
+    return (
+      <Box sx={{ mt: 2, position: "relative" }}>
+        <Typography variant="subtitle1" gutterBottom>
+          Preview:
+        </Typography>
+        {isVideo ? (
+          <Box sx={{ position: "relative" }}>
+            <video
+              src={previewUrl}
+              controls
+              preload="metadata"
+              playsInline
+              style={{ maxWidth: "100%", maxHeight: "200px" }}
+            />
+            {item?.videoMetadata && (
+              <Chip
+                label={
+                  item.videoMetadata.isOptimized ? "Optimized" : "Optimizing..."
+                }
+                color={item.videoMetadata.isOptimized ? "success" : "warning"}
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  backgroundColor: "rgba(0, 0, 0, 0.6)",
+                }}
+              />
+            )}
+          </Box>
+        ) : (
+          <img
+            src={previewUrl}
+            alt="Preview"
+            style={{ maxWidth: "100%", maxHeight: "200px" }}
+          />
+        )}
+      </Box>
+    );
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          {isEditMode ? "Edit Gallery Item" : "Add New Gallery Item"}
-          <IconButton onClick={onClose} size="small">
-            <Close />
-          </IconButton>
-        </Box>
+        {isEditMode ? "Edit Media" : "Add New Media"}
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{ position: "absolute", right: 8, top: 8 }}
+        >
+          <Close />
+        </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Box display="flex" flexDirection="column" gap={2} mt={2}>
-          {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-          {successMsg && <Alert severity="success">{successMsg}</Alert>}
+        {errorMsg && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMsg}
+          </Alert>
+        )}
+        {successMsg && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {successMsg}
+          </Alert>
+        )}
 
-          <TextField
-            label="Title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touchedFields.title && !!errors.title}
-            helperText={touchedFields.title && errors.title}
-            fullWidth
-            required
+        <TextField
+          fullWidth
+          label="Title"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touchedFields.title && !isNotEmpty(formData.title)}
+          helperText={
+            touchedFields.title && !isNotEmpty(formData.title)
+              ? "Title is required"
+              : ""
+          }
+          sx={{ mb: 2, mt: 1 }}
+        />
+
+        <TextField
+          fullWidth
+          label="Description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          multiline
+          rows={3}
+          sx={{ mb: 2 }}
+        />
+
+        <TextField
+          fullWidth
+          label="Tags (comma separated)"
+          name="tags"
+          value={formData.tags}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          sx={{ mb: 2 }}
+        />
+
+        <Button variant="outlined" component="label" fullWidth sx={{ mb: 2 }}>
+          {isEditMode ? "Change Media" : "Upload Media"}
+          <input
+            type="file"
+            hidden
+            accept="image/*,video/*"
+            onChange={handleFileChange}
           />
+        </Button>
 
-          <TextField
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={touchedFields.description && !!errors.description}
-            helperText={touchedFields.description && errors.description}
-            multiline
-            rows={4}
-            fullWidth
-            required
+        {formData.media?.type?.startsWith("video/") && (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={priorityOptimization}
+                onChange={(e) => setPriorityOptimization(e.target.checked)}
+              />
+            }
+            label="Priority video optimization"
           />
+        )}
 
-          <TextField
-            label="Tags (comma-separated)"
-            name="tags"
-            value={formData.tags}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            fullWidth
-          />
-
-          <Button
-            variant="outlined"
-            component="label"
-            fullWidth
-            error={touchedFields.media && !!errors.media}
-          >
-            Upload Media
-            <input
-              type="file"
-              hidden
-              accept="image/*,video/*"
-              onChange={handleFileChange}
-            />
-          </Button>
-          {touchedFields.media && errors.media && (
-            <Typography color="error" variant="caption">
-              {errors.media}
-            </Typography>
-          )}
-
-          {previewUrl && (
-            <Box mt={2}>
-              <Typography variant="subtitle2">Preview:</Typography>
-              {formData.media?.type?.startsWith("video/") ? (
-                <video
-                  src={previewUrl}
-                  controls
-                  style={{ maxWidth: "100%", maxHeight: "200px" }}
-                />
-              ) : (
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  style={{ maxWidth: "100%", maxHeight: "200px" }}
-                />
-              )}
-            </Box>
-          )}
-        </Box>
+        {renderPreview()}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
-          color="primary"
-          disabled={isAdding || isUpdating}
+          disabled={isAdding || isUpdating || !isNotEmpty(formData.title)}
           sx={{
             background: "linear-gradient(-45deg, #44A08D, #093637)",
-            backgroundSize: "400% 400%",
-            animation: `${gradient} 10s ease infinite`,
             "&:hover": {
               background: "linear-gradient(-45deg, #44A08D, #093637)",
             },
           }}
         >
-          {isAdding || isUpdating ? "Saving..." : "Save"}
+          {isAdding || isUpdating ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : isEditMode ? (
+            "Update"
+          ) : (
+            "Add"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

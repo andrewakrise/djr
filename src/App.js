@@ -15,55 +15,59 @@ import ReviewsPage from "./components/ReviewsPage";
 import GalleryPage from "./components/GalleryPage";
 import { NotificationProvider } from "./context/NotificationContext";
 
+// Wrap the routes with a component to ensure context is properly initialized
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<HomePage />} />
+    <Route path="/login" element={<LoginPage />} />
+    <Route path="/signup" element={<SignupPage />} />
+    <Route path="/booking" element={<BookingPage />} />
+    <Route path="/calendar" element={<CalendarPage />} />
+    <Route path="/audio-video-previews" element={<AudioVideoPage />} />
+    <Route path="/reviews" element={<ReviewsPage />} />
+    <Route path="/gallery" element={<GalleryPage />} />
+    <Route
+      path="/rdj-api"
+      element={
+        <PrivateRoute>
+          <AdminPage />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/rdj-api/video-links"
+      element={
+        <PrivateRoute>
+          <VideoLinkList />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/rdj-api/events"
+      element={
+        <PrivateRoute>
+          <EventList />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/rdj-api/reviews"
+      element={
+        <PrivateRoute>
+          <ReviewList />
+        </PrivateRoute>
+      }
+    />
+  </Routes>
+);
+
 function App() {
   return (
-    <NotificationProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/booking" element={<BookingPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/audio-video-previews" element={<AudioVideoPage />} />
-          <Route path="/reviews" element={<ReviewsPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-
-          <Route
-            path="/rdj-api"
-            element={
-              <PrivateRoute>
-                <AdminPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/rdj-api/video-links"
-            element={
-              <PrivateRoute>
-                <VideoLinkList />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/rdj-api/events"
-            element={
-              <PrivateRoute>
-                <EventList />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/rdj-api/reviews"
-            element={
-              <PrivateRoute>
-                <ReviewList />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </NotificationProvider>
+    <Router basename={process.env.PUBLIC_URL}>
+      <NotificationProvider>
+        <AppRoutes />
+      </NotificationProvider>
+    </Router>
   );
 }
 
