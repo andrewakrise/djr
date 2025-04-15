@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Fetch entire history to avoid issues with Heroku
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -25,6 +27,17 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Login to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "djrise"
+          heroku_email: "andriikukharv@gmail.com"
+          justlogin: true
+
+      - name: Clear Heroku build cache
+        run: heroku builds:cache:purge -a djrise --confirm djrise
+
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14
         with:
@@ -33,4 +46,5 @@ jobs:
           heroku_email: "andriikukharv@gmail.com"
           healthcheck: "https://djrise-81215364f79c.herokuapp.com/"
           buildpack: heroku/nodejs
-          dontuseforce: true
+          dontuseforce: false
+          usedocker: false
