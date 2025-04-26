@@ -13,6 +13,8 @@ import {
   generateUniqueFinalNumber,
   convertTo12HourFormat,
 } from "../../helpers/utils";
+import pioneerdjset from "../../../assets/pioneerdjset.jpg";
+import logo from "../../../assets/icons/logo.png";
 
 const styles = StyleSheet.create({
   page: {
@@ -179,10 +181,8 @@ const styles = StyleSheet.create({
 });
 
 const EventFinalPDF = ({ event }) => {
-  const logoUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
-  const wideHeaderImageUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
+  const logoUrl = logo;
+  const wideHeaderImageUrl = pioneerdjset;
 
   const finalDate = formatDateToLocalAmericaPacific(new Date());
   const finalNumber = generateUniqueFinalNumber(new Date());

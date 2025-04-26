@@ -12,8 +12,9 @@ import {
   formatDateToLocalAmericaPacific,
   generateUniqueReceiptNumber,
   convertTo12HourFormat,
-  generateUniqueFileName,
 } from "../../helpers/utils";
+import logo from "../../../assets/icons/logo.png";
+import pioneerdjset from "../../../assets/pioneerdjset.jpg";
 
 const styles = StyleSheet.create({
   page: {
@@ -188,10 +189,8 @@ const styles = StyleSheet.create({
 });
 
 const EventReceiptPDF = ({ event }) => {
-  const logoUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
-  const wideHeaderImageUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
+  const logoUrl = logo;
+  const wideHeaderImageUrl = pioneerdjset;
 
   const receiptDate = formatDateToLocalAmericaPacific(new Date());
   const receiptNumber = generateUniqueReceiptNumber(new Date());
@@ -212,7 +211,10 @@ const EventReceiptPDF = ({ event }) => {
       <Page size="A4" orientation="portrait" style={styles.page}>
         {/* Top Section: Logo, Title, Date & Number */}
         <View style={styles.topSection}>
-          <Image src={logoUrl} style={styles.logo} />
+          <Image
+            src={logoUrl || "../../../assets/icons/logo.png"}
+            style={styles.logo}
+          />
           <Text style={styles.header}>DJ RISE Payment Receipt</Text>
           <View>
             <Text style={styles.receiptDate}>
@@ -224,7 +226,10 @@ const EventReceiptPDF = ({ event }) => {
 
         {/* Wide banner image */}
         <View>
-          <Image src={wideHeaderImageUrl} style={styles.wideHeaderImageUrl} />
+          <Image
+            src={wideHeaderImageUrl || "../../../assets/pioneerdjset.jpg"}
+            style={styles.wideHeaderImageUrl}
+          />
         </View>
 
         {/* "Paid Receipt Issued To:" */}

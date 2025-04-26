@@ -15,6 +15,8 @@ import {
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import pioneerdjset from "../../../assets/pioneerdjset.jpg";
+import logo from "../../../assets/icons/logo.png";
 
 // Configure dayjs plugins
 dayjs.extend(utc);
@@ -188,10 +190,8 @@ const styles = StyleSheet.create({
 });
 
 const EventDepositPDF = ({ event, showLegalInfo = true }) => {
-  const logoUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
-  const wideHeaderImageUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
+  const logoUrl = logo;
+  const wideHeaderImageUrl = pioneerdjset;
 
   const depositDate = formatDateToLocalAmericaPacific(new Date());
   const depositNumber = generateUniqueDepositNumber(new Date());
@@ -246,7 +246,7 @@ const EventDepositPDF = ({ event, showLegalInfo = true }) => {
         </View>
         <View>
           <Image
-            src={wideHeaderImageUrl || "../../assets/pioneerdjset.jpg"}
+            src={wideHeaderImageUrl || "../../../assets/pioneerdjset.jpg"}
             style={styles.wideHeaderImageUrl}
           />
         </View>

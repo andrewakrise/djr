@@ -17,6 +17,8 @@ import {
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import pioneerdjset from "../../../assets/pioneerdjset.jpg";
+import logo from "../../../assets/icons/logo.png";
 
 // Configure dayjs plugins
 dayjs.extend(utc);
@@ -189,10 +191,8 @@ const styles = StyleSheet.create({
 });
 
 const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
-  const logoUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733183729/djr-be/v88cmm9ewl3wprln5ztq.png";
-  const wideHeaderImageUrl =
-    "https://res.cloudinary.com/vandjscloud/image/upload/v1733184485/djr-be/xyrsbbhakq2xsu0dyhcc.jpg";
+  const logoUrl = logo;
+  const wideHeaderImageUrl = pioneerdjset;
 
   const invoiceDate = formatDateToLocalAmericaPacific(new Date());
   const invoiceNumber = generateUniqueInvoiceNumber(new Date());
@@ -234,7 +234,7 @@ const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
         {/* Header Section */}
         <View style={styles.topSection}>
           <Image
-            src={logoUrl || "../../assets/icons/logo.png"}
+            src={logoUrl || "../../../assets/icons/logo.png"}
             style={styles.logo}
           />
           <Text style={styles.header}>DJ RISE Service Contract/Invoice</Text>
@@ -247,7 +247,7 @@ const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
         </View>
         <View>
           <Image
-            src={wideHeaderImageUrl || "../../assets/pioneerdjset.jpg"}
+            src={wideHeaderImageUrl || "../../../assets/pioneerdjset.jpg"}
             style={styles.wideHeaderImageUrl}
           />
         </View>
