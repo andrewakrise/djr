@@ -114,21 +114,29 @@ function ReviewAddEditDialog({ open, onClose, refetchReviews, review }) {
     setErrorMsg("");
     setSuccessMsg("");
 
-    if (
-      !formData.email ||
-      !formData.name ||
-      !formData.eventDate ||
-      !formData.message ||
-      !formData.rate
-    ) {
-      setErrorMsg("Please fill in all required fields.");
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setErrorMsg("Please enter a valid email address.");
-      return;
+    if (formData.isImageOnly) {
+      // Only require image for image-only reviews
+      if (!imageFile && !previewImage) {
+        setErrorMsg("Please upload an image for image-only review.");
+        return;
+      }
+    } else {
+      // Standard validation for normal reviews
+      if (
+        !formData.email ||
+        !formData.name ||
+        !formData.eventDate ||
+        !formData.message ||
+        !formData.rate
+      ) {
+        setErrorMsg("Please fill in all required fields.");
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        setErrorMsg("Please enter a valid email address.");
+        return;
+      }
     }
 
     try {
@@ -213,6 +221,120 @@ function ReviewAddEditDialog({ open, onClose, refetchReviews, review }) {
         >
           {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
           {successMsg && <Alert severity="success">{successMsg}</Alert>}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.isImageOnly}
+                onChange={handleChange}
+                name="isImageOnly"
+              />
+            }
+            label="Image Only Review"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.isVerified}
+                onChange={handleChange}
+                name="isVerified"
+              />
+            }
+            label="Verified"
+          />
+          {formData.isImageOnly ? (
+            <Box>
+              <Typography variant="body1">Review Image:</Typography>
+              {previewImage && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem",
+                    mt: 1,
+                  }}
+                >
+                  <Avatar
+                    src={previewImage}
+                    alt="Review Image"
+                    sx={{ width: 100, height: 100 }}
+                    variant="rounded"
+                  />
+                  <Button variant="contained" component="label">
+                    Change Image
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </Button>
+                </Box>
+              )}
+              {!previewImage && (
+                <Button variant="contained" component="label" sx={{ mt: 1 }}>
+                  Upload Image
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </Button>
+              )}
+            </Box>
+          ) : (
+            <>
+              <TextField
+                label="Message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                multiline
+                rows={4}
+                required
+              />
+              <Box>
+                <Typography variant="body1">Review Image:</Typography>
+                {previewImage && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1rem",
+                      mt: 1,
+                    }}
+                  >
+                    <Avatar
+                      src={previewImage}
+                      alt="Review Image"
+                      sx={{ width: 100, height: 100 }}
+                      variant="rounded"
+                    />
+                    <Button variant="contained" component="label">
+                      Change Image
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                    </Button>
+                  </Box>
+                )}
+                {!previewImage && (
+                  <Button variant="contained" component="label" sx={{ mt: 1 }}>
+                    Upload Image
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </Button>
+                )}
+              </Box>
+            </>
+          )}
           <TextField
             label="Email"
             name="email"
@@ -245,15 +367,6 @@ function ReviewAddEditDialog({ open, onClose, refetchReviews, review }) {
             value={formData.eventName}
             onChange={handleChange}
           />
-          <TextField
-            label="Message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            multiline
-            rows={4}
-            required
-          />
           <Box>
             <Typography variant="body1">Rating:</Typography>
             <StarRating
@@ -281,66 +394,6 @@ function ReviewAddEditDialog({ open, onClose, refetchReviews, review }) {
             }
             label="Will Recommend"
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.isVerified}
-                onChange={handleChange}
-                name="isVerified"
-              />
-            }
-            label="Verified"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.isImageOnly}
-                onChange={handleChange}
-                name="isImageOnly"
-              />
-            }
-            label="Image Only Review"
-          />
-          <Box>
-            <Typography variant="body1">Review Image:</Typography>
-            {previewImage && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "1rem",
-                  mt: 1,
-                }}
-              >
-                <Avatar
-                  src={previewImage}
-                  alt="Review Image"
-                  sx={{ width: 100, height: 100 }}
-                  variant="rounded"
-                />
-                <Button variant="contained" component="label">
-                  Change Image
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </Button>
-              </Box>
-            )}
-            {!previewImage && (
-              <Button variant="contained" component="label" sx={{ mt: 1 }}>
-                Upload Image
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-              </Button>
-            )}
-          </Box>
         </Box>
       </DialogContent>
       <DialogActions>

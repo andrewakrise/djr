@@ -1,6 +1,6 @@
 // src/components/helpers/ReviewModal.js
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
+import { useGetReviewImageUrlQuery } from "../../services/review";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 const StyledModalBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -27,6 +29,16 @@ const StyledModalBox = styled(Box)(({ theme }) => ({
 }));
 
 function ReviewModal({ open, onClose, review }) {
+  // Only fetch signed URL if needed
+  const shouldFetch = Boolean(
+    open && review?.isImageOnly && review?.image?.public_id
+  );
+  const { data, isLoading } = useGetReviewImageUrlQuery(
+    shouldFetch ? review._id : skipToken,
+    { skip: !shouldFetch }
+  );
+  const signedImageUrl = data?.url || "";
+
   if (!review) return null;
 
   return (
@@ -52,17 +64,19 @@ function ReviewModal({ open, onClose, review }) {
             textAlign: review.isImageOnly ? "center" : "left",
           }}
         >
-          {review.isImageOnly && review.image && review.image.url && (
-            <Avatar
-              src={review.image?.url}
-              alt={review.name}
-              sx={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "1rem",
-              }}
-            />
-          )}
+          {review.isImageOnly &&
+            review.image &&
+            (signedImageUrl || review.image.url) && (
+              <Avatar
+                src={signedImageUrl || review.image.url}
+                alt={review.name}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "1rem",
+                }}
+              />
+            )}
           {!review.isImageOnly && (
             <Box>
               <Typography variant="body1">{review?.message}</Typography>

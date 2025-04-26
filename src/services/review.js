@@ -77,6 +77,9 @@ const reviewApi = createApi({
             ]
           : [{ type: "Review", id: "LIST" }],
     }),
+    getReviewImageUrl: builder.query({
+      query: (reviewId) => `${reviewId}/image-url`,
+    }),
   }),
 });
 
@@ -88,6 +91,7 @@ export const {
   useUpdateReviewMutation,
   useDeleteReviewMutation,
   useGetAllVerifiedReviewsQuery,
+  useGetReviewImageUrlQuery,
 } = reviewApi;
 
 export default reviewApi;
