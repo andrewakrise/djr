@@ -11,6 +11,7 @@ import {
   useUploadFinalMutation,
   useLazyGetFinalQuery,
   useLazyGetReceiptQuery,
+  useGetEventImageUrlQuery,
 } from "../../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../../services/emails";
 import {
@@ -24,6 +25,7 @@ import {
   Alert,
   CircularProgress,
   Tooltip,
+  Avatar,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EventAddEdit from "./EventAddEdit";
@@ -60,6 +62,25 @@ import timezone from "dayjs/plugin/timezone";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const EventAvatar = ({ eventId, alt, fallback }) => {
+  const { data, isLoading } = useGetEventImageUrlQuery(eventId, {
+    skip: !eventId,
+  });
+  return (
+    <Avatar
+      alt={alt}
+      src={isLoading ? fallback : data?.url || fallback}
+      sx={{
+        width: 56,
+        height: 56,
+        border: "1px solid #093637",
+        borderRadius: 0,
+        mr: 2,
+      }}
+    />
+  );
+};
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();

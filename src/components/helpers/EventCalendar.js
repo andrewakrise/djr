@@ -10,16 +10,39 @@ import {
   Avatar,
   CircularProgress,
 } from "@mui/material";
-import { useGetAllConfEventsQuery } from "../../services/event";
+import {
+  useGetAllConfEventsQuery,
+  useGetEventImageUrlQuery,
+} from "../../services/event";
 import { Event } from "@mui/icons-material";
 import EventModal from "./EventModal";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-
+import privateParty2 from "../../assets/private-party-2.png";
+import privateParty3 from "../../assets/private-party-3.png";
 // Configure dayjs plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const EventAvatar = ({ eventId, alt, fallback }) => {
+  const { data, isLoading } = useGetEventImageUrlQuery(eventId, {
+    skip: !eventId,
+  });
+  return (
+    <Avatar
+      alt={alt}
+      src={isLoading ? fallback : data?.url || fallback}
+      sx={{
+        width: 56,
+        height: 56,
+        border: "1px solid #093637",
+        borderRadius: 0,
+        mr: 2,
+      }}
+    />
+  );
+};
 
 const EventCalendar = () => {
   const {
@@ -175,16 +198,10 @@ const EventCalendar = () => {
               >
                 <ListItemAvatar>
                   {event?.image?.url ? (
-                    <Avatar
+                    <EventAvatar
+                      eventId={event._id}
                       alt={event?.title}
-                      src={event?.image?.url}
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        border: "1px solid #093637",
-                        borderRadius: 0,
-                        mr: 2,
-                      }}
+                      fallback={privateParty2 || privateParty3}
                     />
                   ) : (
                     <Avatar

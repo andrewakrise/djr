@@ -217,6 +217,10 @@ const eventApi = createApi({
         body: { eventId, customNote },
       }),
     }),
+    getEventImageUrl: builder.query({
+      query: (eventId) => `/${eventId}/image-url`,
+      providesTags: ["Event"],
+    }),
   }),
 });
 
@@ -243,6 +247,7 @@ export const {
   useGetReceiptQuery,
   useLazyGetReceiptQuery,
   useSendFinalBillEmailMutation,
+  useGetEventImageUrlQuery,
 } = eventApi;
 
 export default eventApi;

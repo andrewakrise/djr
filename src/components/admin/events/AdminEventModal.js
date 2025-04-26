@@ -14,6 +14,8 @@ import { gradient } from "../../helpers/utils";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { useGetEventImageUrlQuery } from "../../../services/event";
+import privateParty2 from "../../../assets/private-party-2.png";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -37,6 +39,10 @@ const StyledModalBox = styled(Box)(({ theme }) => ({
 }));
 
 const AdminEventModal = ({ open, onClose, event }) => {
+  const { data: imageUrlData } = useGetEventImageUrlQuery(event?.id, {
+    skip: !event?.id,
+  });
+
   if (!event) return null;
 
   console.log("event", event);
@@ -108,10 +114,10 @@ const AdminEventModal = ({ open, onClose, event }) => {
           {formattedDate}
         </Typography>
 
-        {event?.imageUrl && (
+        {event && (
           <Box sx={{ mb: 2 }}>
             <img
-              src={event?.imageUrl}
+              src={imageUrlData?.url || privateParty2}
               alt={`${event?.title} Poster`}
               style={{
                 width: "100%",
