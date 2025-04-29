@@ -189,7 +189,7 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
-              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-ucc-birthday-party-old-school-hip-hop-rnb%2F"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-ucc-birthday-party-old-school-hip-hop-rnb%2F"
             />
           </Box>
           <Box
@@ -210,7 +210,7 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
-              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-kids-bowl-club-oct-23-2024%2F"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-kids-bowl-club-oct-23-2024%2F"
             />
           </Box>
           <Box
@@ -231,7 +231,7 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
-              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-vgc-student-party-july-07-2024%2F"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-vgc-student-party-july-07-2024%2F"
             />
           </Box>
           <Box
@@ -252,7 +252,7 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
-              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-00s-rnb-disco-hits%2F"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-00s-rnb-disco-hits%2F"
             />
           </Box>
           <Box
@@ -273,7 +273,7 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
-              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Frise-dj-nice-house-music-001%2F"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Frise-dj-nice-house-music-001%2F"
             />
           </Box>
           <Box
@@ -294,7 +294,7 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
-              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fandrewrisedj%2Fdj-rise-oldies-dance-promo-mix%2F"
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-oldies-dance-promo-mix%2F"
             />
           </Box>
           {isLoading ? (
