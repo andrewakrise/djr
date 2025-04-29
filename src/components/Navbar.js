@@ -108,7 +108,7 @@ const Navbar = () => {
           }}
         >
           <Link
-            href="https://www.mixcloud.com/andrewrisedj/"
+            href="https://www.mixcloud.com/vandjrise/"
             target="_blank"
             rel="noopener noreferrer"
             sx={{
