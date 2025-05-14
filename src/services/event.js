@@ -145,10 +145,16 @@ const eventApi = createApi({
       providesTags: ["Event"],
     }),
     confirmEvent: builder.mutation({
-      query: ({ eventId, sendEmail }) => ({
+      query: ({ eventId, sendEmail, attachDepositReceipt }) => ({
         url: `confirm-event`,
         method: "POST",
-        body: { eventId, sendEmail },
+        body: {
+          eventId,
+          sendEmail,
+          ...(attachDepositReceipt !== undefined
+            ? { attachDepositReceipt }
+            : {}),
+        },
       }),
       invalidatesTags: ["Event"],
     }),
@@ -221,6 +227,23 @@ const eventApi = createApi({
       query: (eventId) => `/${eventId}/image-url`,
       providesTags: ["Event"],
     }),
+    uploadDepositReceipt: builder.mutation({
+      query: ({ eventId, formData }) => ({
+        url: `upload-deposit-receipt/${eventId}`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Event"],
+    }),
+    getDepositReceipt: builder.query({
+      query: (eventId) => ({
+        url: `deposit-receipt/${eventId}`,
+        method: "GET",
+        responseHandler: (response) => response.blob(),
+      }),
+      skip: (eventId) => !eventId,
+      providesTags: ["Event"],
+    }),
   }),
 });
 
@@ -248,6 +271,9 @@ export const {
   useLazyGetReceiptQuery,
   useSendFinalBillEmailMutation,
   useGetEventImageUrlQuery,
+  useUploadDepositReceiptMutation,
+  useGetDepositReceiptQuery,
+  useLazyGetDepositReceiptQuery,
 } = eventApi;
 
 export default eventApi;

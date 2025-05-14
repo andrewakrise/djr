@@ -57,6 +57,15 @@ export const generateUniqueReceiptNumber = (date) => {
   return `FNL-RCPT-${formattedDate}`;
 };
 
+export const generateUniqueDepositReceiptNumber = (date) => {
+  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return `DPT-RCPT-${formattedDate}`;
+};
+
 export const generateUniqueFileName = (title, date, fileFormat) => {
   const sanitizedFileName = `${title} at ${formatDateToLocalAmericaPacific(
     date

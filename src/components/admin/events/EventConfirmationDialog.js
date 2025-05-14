@@ -1,5 +1,5 @@
 // ./EventConfirmationDialog.js
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -25,6 +25,8 @@ function EventConfirmationDialog({
   isConfirmEventFetching,
   confirmMode,
 }) {
+  const [attachDepositReceipt, setAttachDepositReceipt] = useState(false);
+
   const handleConfirm = async () => {
     if (!event?.id) {
       setError("No event selected");
@@ -34,7 +36,11 @@ function EventConfirmationDialog({
     try {
       const result = await onConfirmEvent(
         confirmMode === "confirm"
-          ? { eventId: event.id, sendEmail: sendConfirmationEmail }
+          ? {
+              eventId: event.id,
+              sendEmail: sendConfirmationEmail,
+              attachDepositReceipt,
+            }
           : { eventId: event.id }
       );
       if (result?.data) {
@@ -63,15 +69,28 @@ function EventConfirmationDialog({
             : "Are you sure you want to unconfirm this event?"}
         </Typography>
         {confirmMode === "confirm" && (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={sendConfirmationEmail}
-                onChange={(e) => setSendConfirmationEmail(e.target.checked)}
+          <>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sendConfirmationEmail}
+                  onChange={(e) => setSendConfirmationEmail(e.target.checked)}
+                />
+              }
+              label="Send confirmation email to client"
+            />
+            {sendConfirmationEmail && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={attachDepositReceipt}
+                    onChange={(e) => setAttachDepositReceipt(e.target.checked)}
+                  />
+                }
+                label="Attach deposit receipt PDF to confirmation email"
               />
-            }
-            label="Send confirmation email to client"
-          />
+            )}
+          </>
         )}
       </DialogContent>
       <DialogActions>

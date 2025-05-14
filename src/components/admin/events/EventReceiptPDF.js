@@ -215,7 +215,7 @@ const EventReceiptPDF = ({ event }) => {
             src={logoUrl || "../../../assets/icons/logo.png"}
             style={styles.logo}
           />
-          <Text style={styles.header}>DJ RISE Payment Receipt</Text>
+          <Text style={styles.header}>DJ RISE Final Payment Receipt</Text>
           <View>
             <Text style={styles.receiptDate}>
               Date: {receiptDate || "no date"}
@@ -238,7 +238,7 @@ const EventReceiptPDF = ({ event }) => {
           {/* Left side: client info */}
           <View style={styles.clientSection}>
             <View style={styles.clientField}>
-              <Text style={styles.clientLabel}>Client Name: </Text>
+              <Text style={styles.clientLabel}>Name: </Text>
               <Text style={styles.clientProp}>
                 {event?.clientName || "no name"}
               </Text>
@@ -258,7 +258,7 @@ const EventReceiptPDF = ({ event }) => {
               </Text>
             </View>
             <View style={styles.clientField}>
-              <Text style={styles.clientLabel}>Client Email: </Text>
+              <Text style={styles.clientLabel}>Email: </Text>
               <Text style={styles.clientProp}>
                 {event?.clientEmail || "no email"}
               </Text>
@@ -349,9 +349,7 @@ const EventReceiptPDF = ({ event }) => {
         {/* Footer with legal info */}
         <View style={styles.footer}>
           <Text>DJ Rise Legal Information:</Text>
-          <Text>
-            Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
-          </Text>
+          <Text>Legal Name: Andrii Kukhar</Text>
           <Text>Address: 3410-128 West Cordova Street</Text>
           <Text>Phone: +1 (236) 995 - 1120</Text>
           <Text>Contact Email: andrewrisedj@gmail.com</Text>

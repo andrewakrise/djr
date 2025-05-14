@@ -237,7 +237,7 @@ const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
             src={logoUrl || "../../../assets/icons/logo.png"}
             style={styles.logo}
           />
-          <Text style={styles.header}>DJ RISE Service Contract/Invoice</Text>
+          <Text style={styles.header}>DJ RISE Services Contract/Invoice</Text>
           <View>
             <Text style={styles.invoiceDate}>
               Date: {invoiceDate || "no invoice date"}
@@ -256,7 +256,7 @@ const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
           {/* Client Information Section */}
           <View style={styles.clientSection}>
             <View style={styles.clientField}>
-              <Text style={styles.clientLabel}>Client Name: </Text>
+              <Text style={styles.clientLabel}>Name: </Text>
               <Text style={styles.clientProp}>
                 {" "}
                 {event?.clientName || "no name"}
@@ -279,7 +279,7 @@ const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
               </Text>
             </View>
             <View style={styles.clientField}>
-              <Text style={styles.clientLabel}>Client Email: </Text>
+              <Text style={styles.clientLabel}>Email: </Text>
               <Text style={styles.clientProp}>
                 {" "}
                 {event?.clientEmail || "no email"}
@@ -360,9 +360,7 @@ const EventInvoicePDF = ({ event, showLegalInfo = true }) => {
         {showLegalInfo && (
           <View style={styles.footer}>
             <Text style={styles.field}>DJ Rise Legal Information:</Text>
-            <Text style={styles.field}>
-              Full Name: Andrew Kukhar || Business legal name: Andrii Kukhar
-            </Text>
+            <Text style={styles.field}>Legal Name: Andrii Kukhar</Text>
             <Text style={styles.field}>
               Address: 3410-128 West Cordova Street
             </Text>

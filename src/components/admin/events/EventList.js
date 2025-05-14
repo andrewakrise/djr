@@ -59,6 +59,8 @@ import GenerateReceiptDialog from "./GenerateReceiptDialog";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import GenerateDepositReceiptDialog from "./GenerateDepositReceiptDialog";
+import { useLazyGetDepositReceiptQuery } from "../../../services/event";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -142,6 +144,18 @@ function EventList() {
   const [openGenerateReceiptDialog, setOpenGenerateReceiptDialog] =
     useState(false);
   const [eventForReceipt, setEventForReceipt] = useState(null);
+
+  const [
+    openGenerateDepositReceiptDialog,
+    setOpenGenerateDepositReceiptDialog,
+  ] = useState(false);
+  const [eventForDepositReceipt, setEventForDepositReceipt] = useState(null);
+  const [triggerGetDepositReceipt, { isFetching: isDepositReceiptFetching }] =
+    useLazyGetDepositReceiptQuery();
+  const [
+    currentDownloadingDepositReceiptId,
+    setCurrentDownloadingDepositReceiptId,
+  ] = useState(null);
 
   const handleDialogOpen = () => {
     setOpenAddEventForm(true);
@@ -413,6 +427,47 @@ function EventList() {
     setEventForReceipt(null);
   };
 
+  const handleOpenGenerateDepositReceiptDialog = (event) => {
+    setEventForDepositReceipt(event);
+    setOpenGenerateDepositReceiptDialog(true);
+  };
+
+  const handleCloseGenerateDepositReceiptDialog = () => {
+    setEventForDepositReceipt(null);
+    setOpenGenerateDepositReceiptDialog(false);
+  };
+
+  const handleDownloadDepositReceipt = async (
+    eventId,
+    eventDate,
+    eventTitle
+  ) => {
+    try {
+      setCurrentDownloadingDepositReceiptId(eventId);
+      const result = await triggerGetDepositReceipt(eventId).unwrap();
+      if (!result) {
+        throw new Error("Failed to download deposit receipt");
+      }
+      if (result.type === "application/json") {
+        const textData = await result.text();
+        const jsonData = JSON.parse(textData);
+        setError(jsonData.msg || "No deposit receipt file available.");
+        return;
+      }
+      const blob = new Blob([result], { type: "application/pdf" });
+      const fileName = generateUniqueFileName(
+        eventTitle,
+        eventDate,
+        "Deposit Receipt"
+      );
+      saveAs(blob, `${fileName}.pdf`);
+    } catch (error) {
+      setError(`Error downloading deposit receipt: ${error.message}`);
+    } finally {
+      setCurrentDownloadingDepositReceiptId(null);
+    }
+  };
+
   const rows =
     events?.map((event) => ({
       id: event?._id,
@@ -584,6 +639,46 @@ function EventList() {
             <EmailIcon />
           </IconButton>
         </Tooltip>
+      ),
+    },
+    {
+      field: "depositReceipt",
+      headerName: "Dpst Receipt",
+      width: 100,
+      renderCell: (params) => (
+        <>
+          <Tooltip title="Generate Deposit Receipt">
+            <IconButton
+              color="primary"
+              onClick={() =>
+                handleOpenGenerateDepositReceiptDialog(params?.row)
+              }
+              aria-label="generate-deposit-receipt"
+            >
+              <PictureAsPdfIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Download Deposit Receipt">
+            <IconButton
+              color="primary"
+              onClick={() =>
+                handleDownloadDepositReceipt(
+                  params?.row?.id,
+                  params?.row?.date,
+                  params?.row?.title
+                )
+              }
+              aria-label="download-deposit-receipt"
+            >
+              {isDepositReceiptFetching &&
+              currentDownloadingDepositReceiptId === params?.row?.id ? (
+                <CircularProgress size={20} />
+              ) : (
+                <Download />
+              )}
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
     {
@@ -980,6 +1075,12 @@ function EventList() {
         open={openGenerateReceiptDialog}
         onClose={handleCloseGenerateReceiptDialog}
         event={eventForReceipt}
+        refetchEvents={refetch}
+      />
+      <GenerateDepositReceiptDialog
+        open={openGenerateDepositReceiptDialog}
+        onClose={handleCloseGenerateDepositReceiptDialog}
+        event={eventForDepositReceipt}
         refetchEvents={refetch}
       />
     </Box>
