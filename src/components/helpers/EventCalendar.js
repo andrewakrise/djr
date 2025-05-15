@@ -66,7 +66,7 @@ const EventCalendar = () => {
   };
 
   const getFilteredEvents = (events) => {
-    if (!events) return [];
+    if (!events) return { futureEvents: [], pastEvents: [] };
 
     const now = new Date();
 
@@ -111,18 +111,11 @@ const EventCalendar = () => {
       return dateB - dateA;
     });
 
-    const combinedEvents = [...futureEvents, ...pastEvents];
-
-    if (combinedEvents?.length >= 7) {
-      return combinedEvents?.slice(0, 7);
-    } else if (combinedEvents?.length >= 5) {
-      return combinedEvents;
-    } else {
-      return combinedEvents;
-    }
+    return { futureEvents, pastEvents };
   };
 
-  const filteredEvents = getFilteredEvents(events);
+  const filtered = getFilteredEvents(events);
+  const { futureEvents, pastEvents } = filtered;
 
   if (isLoading) {
     return (
@@ -155,8 +148,14 @@ const EventCalendar = () => {
         boxShadow: 3,
       }}
     >
-      <List>
-        {filteredEvents?.map((event) => {
+      <List
+        sx={{
+          maxHeight: 750,
+          overflowY: "auto",
+          width: "100%",
+        }}
+      >
+        {futureEvents?.map((event) => {
           // Format date based on either new or legacy format
           let eventDate;
           let formattedDate;
@@ -208,6 +207,84 @@ const EventCalendar = () => {
                       sx={{
                         bgcolor: "#fff",
                         color: isFuture ? "#093637" : "#093637",
+                        mr: 2,
+                      }}
+                    >
+                      <Event />
+                    </Avatar>
+                  )}
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" sx={{ color: "#093637" }}>
+                      {event?.title}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" sx={{ color: "#093637" }}>
+                      {formattedDate}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            </React.Fragment>
+          );
+        })}
+        {futureEvents.length > 0 && pastEvents.length > 0 && (
+          <Box sx={{ my: 2, textAlign: "center" }}>
+            <Typography variant="caption" sx={{ color: "#888" }}>
+              — Past Events —
+            </Typography>
+          </Box>
+        )}
+        {pastEvents?.map((event) => {
+          // Format date based on either new or legacy format
+          let eventDate;
+          let formattedDate;
+
+          if (event?.startDateTime) {
+            eventDate = dayjs(event.startDateTime)
+              .tz("America/Vancouver")
+              .toDate();
+            formattedDate = dayjs(event.startDateTime)
+              .tz("America/Vancouver")
+              .format("MMMM D, YYYY");
+          } else if (event?.date) {
+            eventDate = dayjs(event.date).tz("America/Vancouver").toDate();
+            formattedDate = dayjs(event.date)
+              .tz("America/Vancouver")
+              .format("MMMM D, YYYY");
+          }
+
+          const isFuture = false;
+
+          return (
+            <React.Fragment key={event?._id}>
+              <ListItem
+                alignItems="flex-start"
+                button
+                onClick={() => handleEventClick(event)}
+                sx={{
+                  backgroundColor: "rgba(130, 192, 204, 0.75)",
+                  borderRadius: "0.25rem",
+                  mb: 1,
+                  "&:hover": {
+                    backgroundColor: "rgba(122, 181, 187, 0.85)",
+                  },
+                }}
+              >
+                <ListItemAvatar>
+                  {event?.image?.url ? (
+                    <EventAvatar
+                      eventId={event._id}
+                      alt={event?.title}
+                      fallback={privateParty2 || privateParty3}
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        bgcolor: "#fff",
+                        color: "#093637",
                         mr: 2,
                       }}
                     >

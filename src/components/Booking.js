@@ -1,10 +1,9 @@
 import React from "react";
-import { Container, Typography, Box, Avatar } from "@mui/material";
-import IconLinks from "./helpers/IconLinks";
-import BackButton from "./helpers/BackButton";
+import { Container, Typography, Box } from "@mui/material";
 import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/boat-science-world.JPG";
 import FormPage from "./FormPage";
+import HeaderSection from "./helpers/HeaderSection";
 
 function BookingPage() {
   return (
@@ -27,7 +26,6 @@ function BookingPage() {
         fontSize: "calc(0.75rem + 2vmin)",
       }}
     >
-      <BackButton />
       <Box
         spacing={2}
         sx={{
@@ -41,42 +39,12 @@ function BookingPage() {
           m: "0",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            mb: 1,
-            fontSize: "calc(0.5rem + 1.2vmin)",
-            gap: "1rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-            }}
-            variant="h3"
-          >
-            DJ RISE
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-            }}
-            variant="h3"
-          >
-            BOOKING
-          </Typography>
-        </Box>
-        <Avatar
-          src={logo}
-          sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-          alt="RISE DJ"
+        <HeaderSection
+          mainTitle="DJ RISE"
+          subTitle="BOOKING"
+          logo={logo}
+          avatarAlt="DJ RISE"
         />
-        <IconLinks />
         <Box
           sx={{
             width: "100%",

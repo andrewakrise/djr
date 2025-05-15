@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Container, Typography, Box, Avatar, Button } from "@mui/material";
 import { useGetAllVideoLinksQuery } from "../services/video";
 import IconLinks from "./helpers/IconLinks";
-import BackButton from "./helpers/BackButton";
 import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/boat-science-world.JPG";
+import HeaderSection from "./helpers/HeaderSection";
 
 function AudioVideoPage() {
   const [showMoreVideos, setShowMoreVideos] = useState(false);
@@ -110,7 +110,6 @@ function AudioVideoPage() {
           fontSize: "calc(0.75rem + 2vmin)",
         }}
       >
-        <BackButton />
         <Box
           sx={{
             display: "flex",
@@ -120,28 +119,16 @@ function AudioVideoPage() {
             width: "100%",
             maxWidth: "40rem",
             p: "1rem",
-            m: "0",
+            mt: -3,
+            mb: 1,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-              mb: 2,
-            }}
-            variant="h3"
-          >
-            DJ RISE
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-            }}
-            variant="h3"
-          >
-            AUDIOS & VIDEOS
-          </Typography>
+          <HeaderSection
+            mainTitle="DJ RISE"
+            subTitle="AUDIOS & VIDEOS"
+            logo={logo}
+            avatarAlt="DJ RISE"
+          />
         </Box>
         <Avatar
           src={logo}

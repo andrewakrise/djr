@@ -24,11 +24,10 @@ import {
 } from "../services/review";
 import StarRating from "./helpers/StarRating";
 import ReviewModal from "./helpers/ReviewModal";
-import IconLinks from "./helpers/IconLinks";
-import BackButton from "./helpers/BackButton";
 import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/boat-science-world.JPG";
 import { KeyboardArrowDown } from "@mui/icons-material";
+import HeaderSection from "./helpers/HeaderSection";
 
 const ITEMS_PER_PAGE = 50;
 
@@ -210,7 +209,6 @@ function ReviewsPage() {
           padding: "2rem 0 2rem 0",
         }}
       >
-        <BackButton />
         <Box
           spacing={2}
           sx={{
@@ -224,42 +222,12 @@ function ReviewsPage() {
             m: "0",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              mb: 1,
-              fontSize: "calc(0.5rem + 1.2vmin)",
-              gap: "1rem",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "calc(2rem + 2vmin)",
-                letterSpacing: "0.5rem",
-              }}
-              variant="h3"
-            >
-              DJ RISE
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: "calc(2rem + 2vmin)",
-                letterSpacing: "0.5rem",
-              }}
-              variant="h3"
-            >
-              REVIEWS
-            </Typography>
-          </Box>
-          <Avatar
-            src={logo}
-            sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-            alt="RISE DJ"
+          <HeaderSection
+            mainTitle="DJ RISE"
+            subTitle="REVIEWS"
+            logo={logo}
+            avatarAlt="DJ RISE"
           />
-          <IconLinks />
           <Box
             sx={{
               width: "100%",

@@ -1,17 +1,15 @@
-import React, { Suspense, lazy } from "react";
+import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   Container,
   Typography,
   Box,
-  Avatar,
   Link,
-  CircularProgress,
   Divider,
 } from "@mui/material";
 import { ArrowRightAlt, OpenInNew } from "@mui/icons-material";
-import IconLinks from "./helpers/IconLinks";
 import { gradient } from "./helpers/utils";
+import HeaderSection from "./helpers/HeaderSection";
 
 // Lazy load the logo image
 const logoUrl = new URL(
@@ -73,26 +71,7 @@ function HomePage() {
           m: "0",
         }}
       >
-        <Box sx={{ mb: 1, fontSize: "calc(0.5rem + 1.2vmin)" }}>
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-            }}
-            variant="h3"
-          >
-            DJ RISE
-          </Typography>
-        </Box>
-        <Suspense fallback={<CircularProgress />}>
-          <Avatar
-            src={logoUrl}
-            sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-            alt="DJ RISE"
-            loading="lazy"
-          />
-        </Suspense>
-        <IconLinks />
+        <HeaderSection mainTitle="DJ RISE" logo={logoUrl} avatarAlt="DJ RISE" />
         <Box
           sx={{
             width: "100%",

@@ -5,23 +5,15 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import {
-  Container,
-  Box,
-  CircularProgress,
-  Avatar,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Container, Box, CircularProgress, useTheme } from "@mui/material";
 import { useGetFilesByCategoryQuery } from "../services/file";
 import { gradient } from "./helpers/utils";
-import IconLinks from "./helpers/IconLinks";
-import BackButton from "./helpers/BackButton";
 import SquareGalleryView from "./helpers/SquareGalleryView";
 import SquareViewDialog from "./helpers/SquareViewDialog";
 import logo from "../assets/icons/garder-table-setup.JPG";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import HeaderSection from "./helpers/HeaderSection";
 
 function GalleryPage() {
   const [activeVideoId, setActiveVideoId] = useState(null);
@@ -174,7 +166,6 @@ function GalleryPage() {
         padding: "2rem 0",
       }}
     >
-      <BackButton />
       <Box
         spacing={2}
         sx={{
@@ -188,42 +179,12 @@ function GalleryPage() {
           m: "0",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            mb: 1,
-            fontSize: "calc(0.5rem + 1.2vmin)",
-            gap: "1rem",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-            }}
-            variant="h3"
-          >
-            DJ RISE
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "calc(2rem + 2vmin)",
-              letterSpacing: "0.5rem",
-            }}
-            variant="h3"
-          >
-            GALLERY
-          </Typography>
-        </Box>
-        <Avatar
-          src={logo}
-          sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-          alt="RISE DJ"
+        <HeaderSection
+          mainTitle="DJ RISE"
+          subTitle="GALLERY"
+          logo={logo}
+          avatarAlt="DJ RISE"
         />
-        <IconLinks />
       </Box>
 
       {/* Featured Media Section */}
