@@ -45,8 +45,6 @@ const AdminEventModal = ({ open, onClose, event }) => {
 
   if (!event) return null;
 
-  console.log("event", event);
-
   // Format date and time using the new datetime fields if available
   const formattedDate = event?.startDateTime
     ? dayjs(event.startDateTime).tz("America/Vancouver").format("MMMM D, YYYY")
@@ -194,6 +192,61 @@ const AdminEventModal = ({ open, onClose, event }) => {
         <Typography variant="body1" gutterBottom>
           <strong>Deposit Required:</strong> ${event?.depositSum || "N/A"}
         </Typography>
+
+        {/* Expenses Section */}
+        {event?.expenses && (
+          <>
+            <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
+            <Typography variant="body1" gutterBottom>
+              <strong>Expenses:</strong>
+              {(() => {
+                const e = event.expenses;
+                const total =
+                  (Number(e.equipment) || 0) +
+                  (Number(e.car) || 0) +
+                  (Number(e.food) || 0) +
+                  (Array.isArray(e.other)
+                    ? e.other.reduce(
+                        (sum, o) => sum + (Number(o.amount) || 0),
+                        0
+                      )
+                    : 0);
+                return (
+                  <span style={{ marginLeft: 8 }}>
+                    ${total.toFixed(2).replace(/\.00$/, "")}
+                  </span>
+                );
+              })()}
+            </Typography>
+            {typeof event.expenses.equipment === "number" &&
+              event.expenses.equipment > 0 && (
+                <Typography variant="body2" gutterBottom>
+                  Equipment: ${event.expenses.equipment}
+                </Typography>
+              )}
+            {typeof event.expenses.car === "number" &&
+              event.expenses.car > 0 && (
+                <Typography variant="body2" gutterBottom>
+                  Car/Rental Car: ${event.expenses.car}
+                </Typography>
+              )}
+            {typeof event.expenses.food === "number" &&
+              event.expenses.food > 0 && (
+                <Typography variant="body2" gutterBottom>
+                  Food/Lunch: ${event.expenses.food}
+                </Typography>
+              )}
+            {Array.isArray(event.expenses.other) &&
+              event.expenses.other.length > 0 && (
+                <Typography variant="body2" gutterBottom>
+                  Other:{" "}
+                  {event.expenses.other
+                    .map((o, idx) => `${o.description}: $${o.amount}`)
+                    .join(", ")}
+                </Typography>
+              )}
+          </>
+        )}
 
         {event?.isConfirmed && !event?.isFullyPaid && (
           <Typography variant="body1" gutterBottom>

@@ -185,8 +185,9 @@ function EventList() {
     }
   };
 
-  const handleEdit = (event) => {
-    setSelectedEvent(event);
+  const handleEdit = (row) => {
+    const originalEvent = events?.find((e) => e._id === row.id);
+    setSelectedEvent(originalEvent || row);
     handleDialogOpen();
   };
 
@@ -314,8 +315,9 @@ function EventList() {
     }
   };
 
-  const handleOpenPreviewDialog = (event) => {
-    setEventForPreview(event);
+  const handleOpenPreviewDialog = (row) => {
+    const originalEvent = events?.find((e) => e._id === row.id);
+    setEventForPreview(originalEvent || row);
     setOpenPreviewDialog(true);
   };
 
@@ -507,6 +509,10 @@ function EventList() {
       isPublic: event?.isPublic,
       isConfirmed: event?.isConfirmed,
       isFullyPaid: event?.isFullyPaid,
+      equipmentExpense: event?.expenses?.equipment || 0,
+      carExpense: event?.expenses?.car || 0,
+      foodExpense: event?.expenses?.food || 0,
+      otherExpenses: event?.expenses?.other || [],
     })) || [];
 
   const columns = [
@@ -913,6 +919,38 @@ function EventList() {
       width: 100,
       valueGetter: (value, row) =>
         row?.depositSum ? `$${row?.depositSum}` : "",
+    },
+    {
+      field: "equipmentExpense",
+      headerName: "Equipment $",
+      width: 110,
+      valueGetter: (value, row) =>
+        row?.equipmentExpense ? `$${row.equipmentExpense}` : "",
+    },
+    {
+      field: "carExpense",
+      headerName: "Car $",
+      width: 90,
+      valueGetter: (value, row) =>
+        row?.carExpense ? `$${row.carExpense}` : "",
+    },
+    {
+      field: "foodExpense",
+      headerName: "Food $",
+      width: 90,
+      valueGetter: (value, row) =>
+        row?.foodExpense ? `$${row.foodExpense}` : "",
+    },
+    {
+      field: "otherExpenses",
+      headerName: "Other Exp.",
+      width: 160,
+      valueGetter: (value, row) =>
+        row?.otherExpenses && row.otherExpenses.length > 0
+          ? row.otherExpenses
+              .map((o) => `${o.description}: $${o.amount}`)
+              .join(", ")
+          : "",
     },
   ];
 

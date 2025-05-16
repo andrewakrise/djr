@@ -68,6 +68,14 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     guestCount: "",
     withStands: false,
   });
+  const [expenses, setExpenses] = useState({
+    equipment: event?.expenses?.equipment || 0,
+    car: event?.expenses?.car || 0,
+    food: event?.expenses?.food || 0,
+    other: event?.expenses?.other || [],
+  });
+  const [otherDescription, setOtherDescription] = useState("");
+  const [otherAmount, setOtherAmount] = useState(0);
 
   const serviceOptions = [
     "DJing Services",
@@ -126,6 +134,12 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
       } else {
         setServices([]);
       }
+      setExpenses({
+        equipment: event?.expenses?.equipment || 0,
+        car: event?.expenses?.car || 0,
+        food: event?.expenses?.food || 0,
+        other: event?.expenses?.other || [],
+      });
     }
   }, [event]);
 
@@ -267,6 +281,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     });
     formData.append("totalSum", totalSum);
     formData.append("depositSum", depositSum);
+    formData.append("expenses", JSON.stringify(expenses));
 
     try {
       let result;
@@ -304,6 +319,14 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         });
         setImageFile(null);
         setTicketUrl("");
+        setExpenses({
+          equipment: 0,
+          car: 0,
+          food: 0,
+          other: [],
+        });
+        setOtherDescription("");
+        setOtherAmount(0);
         onAddSuccess();
         refetchEvents();
       }
@@ -367,6 +390,20 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     // If DJing Services is selected and we have both start and end times, calculate DJing time
     if (newValue.includes("DJing Services") && startDateTime && endDateTime) {
       calculateDjingTime(startDateTime, endDateTime);
+    }
+  };
+
+  const handleAddOtherExpense = () => {
+    if (otherDescription && otherAmount > 0) {
+      setExpenses((prev) => ({
+        ...prev,
+        other: [
+          ...(prev.other || []),
+          { description: otherDescription, amount: Number(otherAmount) },
+        ],
+      }));
+      setOtherDescription("");
+      setOtherAmount(0);
     }
   };
 
@@ -658,6 +695,117 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           }}
           required
         />
+        {/* Expenses Section */}
+        <div style={{ margin: "24px 0 8px 0" }}>
+          <strong>Expenses (for admin/tax):</strong>
+          {(() => {
+            const total =
+              (Number(expenses.equipment) || 0) +
+              (Number(expenses.car) || 0) +
+              (Number(expenses.food) || 0) +
+              (Array.isArray(expenses.other)
+                ? expenses.other.reduce(
+                    (sum, o) => sum + (Number(o.amount) || 0),
+                    0
+                  )
+                : 0);
+            return (
+              <span style={{ marginLeft: 8 }}>
+                ${total.toFixed(2).replace(/\.00$/, "")}
+              </span>
+            );
+          })()}
+        </div>
+        <TextField
+          label="Equipment Expense"
+          type="number"
+          value={expenses.equipment}
+          onChange={(e) =>
+            setExpenses((prev) => ({
+              ...prev,
+              equipment: Number(e.target.value),
+            }))
+          }
+          fullWidth
+          margin="normal"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+        />
+        <TextField
+          label="Car/Rental Car Expense"
+          type="number"
+          value={expenses.car}
+          onChange={(e) =>
+            setExpenses((prev) => ({ ...prev, car: Number(e.target.value) }))
+          }
+          fullWidth
+          margin="normal"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+        />
+        <TextField
+          label="Food/Lunch Expense"
+          type="number"
+          value={expenses.food}
+          onChange={(e) =>
+            setExpenses((prev) => ({ ...prev, food: Number(e.target.value) }))
+          }
+          fullWidth
+          margin="normal"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+            marginBottom: 8,
+          }}
+        >
+          <TextField
+            label="Other Expense Description"
+            value={otherDescription}
+            onChange={(e) => setOtherDescription(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Amount"
+            type="number"
+            value={otherAmount}
+            onChange={(e) => setOtherAmount(e.target.value)}
+            margin="normal"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
+            style={{ width: 120 }}
+          />
+          <Button
+            variant="outlined"
+            onClick={handleAddOtherExpense}
+            style={{ height: 56, marginTop: 16 }}
+          >
+            Add
+          </Button>
+        </div>
+        {expenses.other && expenses.other.length > 0 && (
+          <div style={{ marginBottom: 8 }}>
+            <strong>Other Expenses:</strong>
+            <ul style={{ margin: 0, paddingLeft: 20 }}>
+              {expenses.other.map((item, idx) => (
+                <li key={idx}>
+                  {item.description}: ${item.amount}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <TextField
           label="Ticket URL"
           variant="outlined"
