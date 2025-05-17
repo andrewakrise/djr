@@ -65,7 +65,11 @@ function App() {
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <NotificationProvider>
-        <AppRoutes />
+        <div className="app">
+          <div className="app-main">
+            <AppRoutes />
+          </div>
+        </div>
       </NotificationProvider>
     </Router>
   );

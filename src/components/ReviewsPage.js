@@ -1,5 +1,3 @@
-// src/components/ReviewsPage.js
-
 import React, { useState } from "react";
 import {
   createTheme,
