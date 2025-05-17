@@ -50,7 +50,7 @@ function AdminPage() {
         maxWidth={false}
         sx={{
           textAlign: "center",
-          backgroundColor: "#282c34",
+          backgroundColor: "transparent",
           height: "calc(100% - 3rem)",
           width: "100%",
           display: "flex",
