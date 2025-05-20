@@ -1,0 +1,82 @@
+.rbc-header {
+  font-size: 0.9rem !important;
+  font-weight: 500;
+}
+
+/* Optionally, make today cell border more visible */
+.rbc-today-greenish {
+  border: 2px solid rgb(86, 199, 176) !important;
+}
+
+.rbc-event {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  line-height: 0.35 !important;
+  white-space: normal !important;
+}
+
+.rbc-date-cell {
+  padding-top: 0.25rem !important;
+  padding-right: 0.25rem !important;
+  padding-left: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+  flex: 1 !important;
+  text-align: right !important;
+  vertical-align: top !important;
+}
+
+.rbc-month-view .rbc-date-cell,
+.rbc-month-view .rbc-date-cell.rbc-now,
+.rbc-month-view .rbc-date-cell.rbc-off-range {
+  position: relative !important;
+  padding: 0.05rem 0.25rem !important; /* top right bottom left */
+  min-width: 0 !important;
+  min-height: 0 !important;
+  text-align: right !important;
+  vertical-align: top !important;
+  line-height: 0.35 !important;
+}
+
+.rbc-month-view .rbc-date-cell > a,
+.rbc-month-view .rbc-date-cell > div {
+  position: absolute !important;
+  top: 0.05rem !important;
+  right: 0.25rem !important;
+  left: auto !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0.35 !important;
+  background: none !important;
+  border: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: inline !important;
+  z-index: 2;
+}
+
+/* Toolbar view mode and navigation buttons */
+.rbc-toolbar .rbc-btn-group button {
+  color: #fff !important;
+  background: transparent !important;
+  border: 1px solid #fff !important;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.rbc-toolbar .rbc-btn-group button.rbc-active {
+  color: #222 !important;
+  background: #fff !important;
+  border: 1px solid #fff !important;
+}
+
+.rbc-toolbar .rbc-btn-group button:not(.rbc-active):hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+}

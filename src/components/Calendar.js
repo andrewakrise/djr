@@ -4,8 +4,12 @@ import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/garder-table-setup.JPG";
 import EventCalendar from "./helpers/EventCalendar";
 import HeaderSection from "./helpers/HeaderSection";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import CalendarView from "./helpers/CalendarView";
 
 function CalendarPage() {
+  const isDesktop = useMediaQuery("(min-width:900px)");
+
   return (
     <Container
       maxWidth={false}
@@ -72,7 +76,7 @@ function CalendarPage() {
               justifyContent: "center",
             }}
           >
-            <EventCalendar />
+            {isDesktop ? <CalendarView /> : <EventCalendar />}
           </Box>
         </Box>
       </Box>
