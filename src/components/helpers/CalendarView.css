@@ -156,3 +156,19 @@
 .rbc-agenda-view td {
   border-color: var(--calendar-border-grey) !important;
 }
+
+/* Prevent toolbar from wrapping to column on small screens */
+.rbc-toolbar {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .rbc-toolbar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+  .rbc-toolbar-label {
+    font-size: 0.95rem !important;
+  }
+}

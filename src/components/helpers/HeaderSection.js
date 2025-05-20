@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Avatar } from "@mui/material";
+import { Box, Typography, Avatar, useMediaQuery } from "@mui/material";
 import BackButton from "./BackButton";
 import IconLinks from "./IconLinks";
 
@@ -18,62 +18,149 @@ const HeaderSection = ({
   logo,
   avatarAlt = "DJ RISE",
   sx = {},
-}) => (
-  <Box
-    spacing={2}
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      width: "100%",
-      maxWidth: "40rem",
-      p: "1rem",
-      m: 0,
-      ...sx,
-    }}
-  >
-    {subTitle && <BackButton />}
+}) => {
+  const isMobile = useMediaQuery("(max-width:900px)");
+
+  return (
     <Box
+      spacing={2}
       sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        mt: -5,
-        mb: 1,
-        fontSize: "calc(0.5rem + 1.2vmin)",
-        gap: "1rem",
+        width: "100%",
+        maxWidth: "40rem",
+        p: "1rem",
+        m: 0,
+        ...sx,
       }}
     >
-      <Typography
-        sx={{
-          fontSize: "calc(2rem + 1vmin)",
-          letterSpacing: "0.5rem",
-        }}
-        variant="h3"
-      >
-        {mainTitle}
-      </Typography>
-      {subTitle && (
-        <Typography
+      {isMobile ? (
+        <Box
           sx={{
-            fontSize: "calc(1.5rem + 1vmin)",
-            letterSpacing: "0.5rem",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            mb: 2,
           }}
-          variant="h3"
         >
-          {subTitle}
-        </Typography>
+          {/* Left: BackButton or empty space, fixed width */}
+          <Box
+            sx={{
+              width: "3.5rem",
+              height: "3.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {subTitle ? <BackButton /> : null}
+          </Box>
+          {/* Center: Titles, flex 1, centered */}
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              px: 1,
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "1.2rem",
+                letterSpacing: "0.2rem",
+                fontWeight: 700,
+                lineHeight: 1.1,
+                textAlign: "center",
+              }}
+              variant="h3"
+            >
+              {mainTitle}
+            </Typography>
+            {subTitle && (
+              <Typography
+                sx={{
+                  fontSize: "1rem",
+                  letterSpacing: "0.15rem",
+                  fontWeight: 500,
+                  lineHeight: 1.1,
+                  textAlign: "center",
+                }}
+                variant="h3"
+              >
+                {subTitle}
+              </Typography>
+            )}
+          </Box>
+          {/* Right: Avatar, fixed width */}
+          <Box
+            sx={{
+              width: "3.5rem",
+              height: "3.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Avatar
+              src={logo}
+              sx={{ width: "3.5rem", height: "3.5rem" }}
+              alt={avatarAlt}
+            />
+          </Box>
+        </Box>
+      ) : (
+        <>
+          {subTitle && <BackButton />}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              mt: -5,
+              mb: 1,
+              fontSize: "calc(0.5rem + 1.2vmin)",
+              gap: "1rem",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "calc(2rem + 1vmin)",
+                letterSpacing: "0.5rem",
+              }}
+              variant="h3"
+            >
+              {mainTitle}
+            </Typography>
+            {subTitle && (
+              <Typography
+                sx={{
+                  fontSize: "calc(1.5rem + 1vmin)",
+                  letterSpacing: "0.5rem",
+                }}
+                variant="h3"
+              >
+                {subTitle}
+              </Typography>
+            )}
+          </Box>
+          <Avatar
+            src={logo}
+            sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
+            alt={avatarAlt}
+          />
+        </>
       )}
+      <IconLinks />
     </Box>
-    <Avatar
-      src={logo}
-      sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
-      alt={avatarAlt}
-    />
-    <IconLinks />
-  </Box>
-);
+  );
+};
 
 export default HeaderSection;

@@ -12,15 +12,7 @@ import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { useGetAllConfEventsQuery } from "../../services/event";
 import EventModal from "./EventModal";
 import { enUS } from "date-fns/locale";
-import {
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-} from "date-fns";
+import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";

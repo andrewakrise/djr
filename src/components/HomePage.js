@@ -1,12 +1,6 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import {
-  Container,
-  Typography,
-  Box,
-  Link,
-  Divider,
-} from "@mui/material";
+import { Container, Typography, Box, Link, Divider } from "@mui/material";
 import { ArrowRightAlt, OpenInNew } from "@mui/icons-material";
 import { gradient } from "./helpers/utils";
 import HeaderSection from "./helpers/HeaderSection";
