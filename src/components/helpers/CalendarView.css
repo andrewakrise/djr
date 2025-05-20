@@ -169,6 +169,19 @@
     flex-wrap: nowrap !important;
   }
   .rbc-toolbar-label {
-    font-size: 0.95rem !important;
+    font-size: 0.75rem !important;
+  }
+  .calendar-view-today-button {
+    font-weight: 400;
+    padding: 0.35rem 0.25rem !important;
+  }
+
+  .calendar-view-back-button,
+  .calendar-view-next-button {
+    padding: 0.075rem 0.25rem !important;
+    margin: 0 !important;
+  }
+  .calendar-view-view-button {
+    padding: 0.35rem 0.25rem !important;
   }
 }

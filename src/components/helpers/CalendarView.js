@@ -89,6 +89,7 @@ const CustomToolbar = (toolbar) => (
           minHeight: 0,
           minWidth: 0,
         }}
+        className="calendar-view-today-button"
       >
         Today
       </Button>
@@ -125,6 +126,7 @@ const CustomToolbar = (toolbar) => (
             minWidth: 0,
             p: "2px 8px",
           }}
+          className="calendar-view-view-button"
         >
           {view.charAt(0).toUpperCase() + view.slice(1)}
         </Button>
