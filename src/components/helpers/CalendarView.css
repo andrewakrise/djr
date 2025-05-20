@@ -1,11 +1,17 @@
+:root {
+  --calendar-border-grey: #6a6a6a;
+}
+
 .rbc-header {
   font-size: 0.9rem !important;
   font-weight: 500;
+  border-right: 1px solid var(--calendar-border-grey) !important;
+  border-bottom: 1px solid var(--calendar-border-grey) !important;
 }
 
 /* Optionally, make today cell border more visible */
 .rbc-today-greenish {
-  border: 2px solid rgb(86, 199, 176) !important;
+  border: 1px solid rgb(86, 199, 176) !important;
 }
 
 .rbc-event {
@@ -28,6 +34,8 @@
   flex: 1 !important;
   text-align: right !important;
   vertical-align: top !important;
+  border-right: 1px solid var(--calendar-border-grey) !important;
+  border-bottom: 1px solid var(--calendar-border-grey) !important;
 }
 
 .rbc-month-view .rbc-date-cell,
@@ -65,18 +73,86 @@
 .rbc-toolbar .rbc-btn-group button {
   color: #fff !important;
   background: transparent !important;
-  border: 1px solid #fff !important;
+  border: 1px solid var(--calendar-border-grey) !important;
   font-weight: 500;
   transition: background 0.2s, color 0.2s;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.rbc-toolbar button {
+  color: #fff !important;
+  background: transparent !important;
+  border: 1px solid var(--calendar-border-grey) !important;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.calendar-view-back-button,
+.calendar-view-next-button {
+  padding: 0.05rem 0.5rem !important;
+  margin: 0 !important;
 }
 
 .rbc-toolbar .rbc-btn-group button.rbc-active {
   color: #222 !important;
   background: #fff !important;
-  border: 1px solid #fff !important;
+  border: 1px solid var(--calendar-border-grey) !important;
 }
 
 .rbc-toolbar .rbc-btn-group button:not(.rbc-active):hover {
   background: rgba(255, 255, 255, 0.15) !important;
   color: #fff !important;
+  border: 1px solid var(--calendar-border-grey) !important;
+}
+
+.rbc-header + .rbc-header {
+  border-left: 1px solid var(--calendar-border-grey) !important;
+}
+
+/* Calendar grid and cell borders - greyish */
+.rbc-month-view,
+.rbc-month-row,
+.rbc-row-content,
+.rbc-day-bg {
+  border-color: var(--calendar-border-grey) !important;
+}
+
+.rbc-off-range-bg {
+  background: #2b2f35 !important; /* or any color you prefer */
+  opacity: 0.75; /* optional: make it slightly faded */
+}
+
+/* Agenda view: date column */
+.rbc-agenda-date-cell {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  font-family: inherit !important;
+  letter-spacing: 0.02em;
+}
+
+/* Agenda view: time column */
+.rbc-agenda-time-cell {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #b0b3b8 !important;
+  font-family: inherit !important;
+  letter-spacing: 0.02em;
+}
+
+/* Agenda view: event title/description */
+.rbc-agenda-event-cell {
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+  font-family: inherit !important;
+  letter-spacing: 0.02em;
+}
+
+/* Agenda view: match all borders to calendar-border-grey */
+.rbc-agenda-view table,
+.rbc-agenda-view th,
+.rbc-agenda-view td {
+  border-color: var(--calendar-border-grey) !important;
 }

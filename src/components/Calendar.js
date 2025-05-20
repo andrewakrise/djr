@@ -2,7 +2,6 @@ import React from "react";
 import { Container, Typography, Box } from "@mui/material";
 import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/garder-table-setup.JPG";
-import EventCalendar from "./helpers/EventCalendar";
 import HeaderSection from "./helpers/HeaderSection";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import CalendarView from "./helpers/CalendarView";
@@ -76,7 +75,14 @@ function CalendarPage() {
               justifyContent: "center",
             }}
           >
-            {isDesktop ? <CalendarView /> : <EventCalendar />}
+            {isDesktop ? (
+              <CalendarView
+                viewMode="month"
+                allowedViews={["month", "agenda"]}
+              />
+            ) : (
+              <CalendarView viewMode="agenda" allowedViews={["agenda"]} />
+            )}
           </Box>
         </Box>
       </Box>
