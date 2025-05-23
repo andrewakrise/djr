@@ -112,7 +112,7 @@ const AdminEventModal = ({ open, onClose, event }) => {
           {formattedDate}
         </Typography>
 
-        {event && (
+        {/* {event && (
           <Box sx={{ mb: 2 }}>
             <img
               src={imageUrlData?.url || privateParty2}
@@ -124,7 +124,7 @@ const AdminEventModal = ({ open, onClose, event }) => {
               }}
             />
           </Box>
-        )}
+        )} */}
 
         <Typography id="event-details-description" sx={{ mt: 2 }}>
           {event?.description}
