@@ -473,31 +473,41 @@ function EventList() {
   const rows =
     events?.map((event) => ({
       id: event?._id,
-      title: event?.title,
-      startDateTime: event?.startDateTime
-        ? dayjs(event.startDateTime)
-            .tz("America/Vancouver")
-            .format("MMMM D, YYYY h:mm A")
-        : event?.date && event?.startTime
-        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
-            event.startTime
-          )}`
-        : "",
-      endDateTime: event?.endDateTime
-        ? dayjs(event.endDateTime)
-            .tz("America/Vancouver")
-            .format("MMMM D, YYYY h:mm A")
-        : event?.date && event?.endTime
-        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
-            event.endTime
-          )}`
-        : "",
-      location: event?.location,
-      address: event?.address,
-      clientName: event?.clientName,
-      clientCompanyName: event?.clientCompanyName,
-      clientEmail: event?.clientEmail,
-      phoneNumber: event?.phoneNumber,
+      eventSummary: {
+        title: event?.title,
+        clientName: event?.clientName,
+        startDateTime: event?.startDateTime
+          ? dayjs(event.startDateTime)
+              .tz("America/Vancouver")
+              .format("MMMM D, YYYY h:mm A")
+          : event?.date && event?.startTime
+          ? `${dayjs(event.date).format(
+              "MMMM D, YYYY"
+            )} ${convertTo12HourFormat(event.startTime)}`
+          : "",
+        endDateTime: event?.endDateTime
+          ? dayjs(event.endDateTime)
+              .tz("America/Vancouver")
+              .format("MMMM D, YYYY h:mm A")
+          : event?.date && event?.endTime
+          ? `${dayjs(event.date).format(
+              "MMMM D, YYYY"
+            )} ${convertTo12HourFormat(event.endTime)}`
+          : "",
+      },
+      clientInfo: {
+        clientCompanyName: event?.clientCompanyName,
+        clientEmail: event?.clientEmail,
+        phoneNumber: event?.phoneNumber,
+        location: event?.location,
+        address: event?.address,
+      },
+      expensesSummary: {
+        equipmentExpense: event?.expenses?.equipment || 0,
+        carExpense: event?.expenses?.car || 0,
+        foodExpense: event?.expenses?.food || 0,
+        otherExpenses: event?.expenses?.other || [],
+      },
       services: event?.services.join(", "),
       totalSum: event?.totalSum,
       depositSum: event?.depositSum,
@@ -509,13 +519,64 @@ function EventList() {
       isPublic: event?.isPublic,
       isConfirmed: event?.isConfirmed,
       isFullyPaid: event?.isFullyPaid,
-      equipmentExpense: event?.expenses?.equipment || 0,
-      carExpense: event?.expenses?.car || 0,
-      foodExpense: event?.expenses?.food || 0,
-      otherExpenses: event?.expenses?.other || [],
     })) || [];
 
   const columns = [
+    {
+      field: "eventSummary",
+      headerName: "Event / Client / Date",
+      width: 200,
+      renderCell: (params) => {
+        const { title, clientName, startDateTime, endDateTime } =
+          params.value || {};
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              whiteSpace: "pre-line",
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              {title}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#b0bec5" }}>
+              {clientName}
+            </Typography>
+            <Typography variant="body2">
+              {startDateTime}
+              {endDateTime ? `\n${endDateTime}` : ""}
+            </Typography>
+          </Box>
+        );
+      },
+    },
+    {
+      field: "clientInfo",
+      headerName: "Client Info",
+      width: 220,
+      renderCell: (params) => {
+        const { clientCompanyName, clientEmail, phoneNumber } =
+          params.value || {};
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              whiteSpace: "pre-line",
+            }}
+          >
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {clientCompanyName}
+            </Typography>
+            <Typography variant="body2" sx={{ color: "#b0bec5" }}>
+              {clientEmail}
+            </Typography>
+            <Typography variant="body2">{phoneNumber}</Typography>
+          </Box>
+        );
+      },
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -872,42 +933,6 @@ function EventList() {
       },
     },
     {
-      field: "clientName",
-      headerName: "Client Name",
-      width: 150,
-    },
-    { field: "title", headerName: "Title", width: 150 },
-    {
-      field: "startDateTime",
-      headerName: "Start Date & Time",
-      width: 180,
-    },
-    {
-      field: "endDateTime",
-      headerName: "End Date & Time",
-      width: 180,
-    },
-    {
-      field: "clientCompanyName",
-      headerName: "Company/Venue",
-      width: 150,
-    },
-    {
-      field: "clientEmail",
-      headerName: "Client Email",
-      width: 200,
-    },
-    {
-      field: "phoneNumber",
-      headerName: "Phone Number",
-      width: 150,
-    },
-    {
-      field: "services",
-      headerName: "Services",
-      width: 200,
-    },
-    {
       field: "totalSum",
       headerName: "Total Sum",
       width: 100,
@@ -921,36 +946,35 @@ function EventList() {
         row?.depositSum ? `$${row?.depositSum}` : "",
     },
     {
-      field: "equipmentExpense",
-      headerName: "Equipment $",
-      width: 110,
-      valueGetter: (value, row) =>
-        row?.equipmentExpense ? `$${row.equipmentExpense}` : "",
-    },
-    {
-      field: "carExpense",
-      headerName: "Car $",
-      width: 90,
-      valueGetter: (value, row) =>
-        row?.carExpense ? `$${row.carExpense}` : "",
-    },
-    {
-      field: "foodExpense",
-      headerName: "Food $",
-      width: 90,
-      valueGetter: (value, row) =>
-        row?.foodExpense ? `$${row.foodExpense}` : "",
-    },
-    {
       field: "otherExpenses",
-      headerName: "Other Exp.",
-      width: 160,
-      valueGetter: (value, row) =>
-        row?.otherExpenses && row.otherExpenses.length > 0
-          ? row.otherExpenses
-              .map((o) => `${o.description}: $${o.amount}`)
-              .join(", ")
-          : "",
+      headerName: "Expenses",
+      width: 200,
+      renderCell: (params) => {
+        const { equipmentExpense, carExpense, foodExpense, otherExpenses } =
+          params.row.expensesSummary || {};
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              whiteSpace: "pre-line",
+            }}
+          >
+            <Typography variant="body2">
+              Equipment: ${equipmentExpense}
+            </Typography>
+            <Typography variant="body2">Car: ${carExpense}</Typography>
+            <Typography variant="body2">Food: ${foodExpense}</Typography>
+            {otherExpenses &&
+              otherExpenses.length > 0 &&
+              otherExpenses.map((o, idx) => (
+                <Typography variant="body2" key={idx}>
+                  {o.description}: ${o.amount}
+                </Typography>
+              ))}
+          </Box>
+        );
+      },
     },
   ];
 
@@ -1019,11 +1043,19 @@ function EventList() {
             pageSize={10}
             rowsPerPageOptions={[10, 25, 50]}
             disableSelectionOnClick
+            getRowHeight={() => "auto"}
             sx={{
               ".MuiDataGrid-cell": {
                 whiteSpace: "normal",
                 wordWrap: "break-word",
                 color: "#ffffff",
+                borderRight: "1px solid #374151",
+              },
+              ".MuiDataGrid-columnHeaders": {
+                borderBottom: "1px solid #374151",
+              },
+              ".MuiDataGrid-cell:last-of-type": {
+                borderRight: "none",
               },
             }}
           />
