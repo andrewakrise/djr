@@ -62,7 +62,7 @@ const AdminEventModal = ({ open, onClose, event }) => {
   const formattedEndTime = event?.endDateTime
     ? dayjs(event.endDateTime).tz("America/Vancouver").format("h:mm A")
     : event?.endTime;
-
+  // console.log("event", event);
   return (
     <Modal
       open={open}
@@ -183,8 +183,34 @@ const AdminEventModal = ({ open, onClose, event }) => {
         <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
 
         <Typography variant="body1" gutterBottom>
-          <strong>Services:</strong> {event?.services || "N/A"}
+          <strong>Services:</strong>
         </Typography>
+        {(() => {
+          const eventServices = Array.isArray(event?.services)
+            ? event?.services?.map((service) => {
+                if (
+                  service === "Logistics and Setting of the above equipment"
+                ) {
+                  return "Logistics and Setting of the above equipment at the event venue";
+                }
+                return service;
+              })
+            : [];
+
+          return eventServices && eventServices?.length > 0 ? (
+            <Box sx={{ ml: 2 }}>
+              {eventServices?.map((service, index) => (
+                <Typography key={index} variant="body2" gutterBottom>
+                  • {service}
+                </Typography>
+              ))}
+            </Box>
+          ) : (
+            <Typography variant="body2" gutterBottom sx={{ ml: 2 }}>
+              NO SERVICES CHOSEN
+            </Typography>
+          );
+        })()}
 
         <Typography variant="body1" gutterBottom>
           <strong>Total Sum:</strong> ${event?.totalSum || "N/A"}
