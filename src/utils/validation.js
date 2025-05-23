@@ -24,14 +24,14 @@ export const isValidEmail = (email) => {
  */
 export const isValidFutureDate = (date) => {
   if (!date) return false;
+  const selectedDate = new Date(date);
+  if (isNaN(selectedDate.getTime())) return false;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
-  const selectedDate = new Date(date);
   selectedDate.setHours(0, 0, 0, 0);
 
-  return selectedDate >= today;
+  return selectedDate > today;
 };
 
 /**

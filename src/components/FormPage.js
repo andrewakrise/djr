@@ -210,24 +210,13 @@ const Form = () => {
       ...values,
       date: newValue,
     });
-
-    // Validate field when the user selects a date
-    if (touchedFields.date) {
-      setErrors({
-        ...errors,
-        date: validateField("date", newValue),
-      });
-    }
   };
 
   const handleDateBlur = () => {
-    // Mark field as touched when focusing out
     setTouchedFields({
       ...touchedFields,
       date: true,
     });
-
-    // Validate field on blur
     setErrors({
       ...errors,
       date: validateField("date", values.date),
