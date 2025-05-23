@@ -554,7 +554,7 @@ function EventList() {
     {
       field: "clientInfo",
       headerName: "Client Info",
-      width: 220,
+      width: 140,
       renderCell: (params) => {
         const { clientCompanyName, clientEmail, phoneNumber } =
           params.value || {};
