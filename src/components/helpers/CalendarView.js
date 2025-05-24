@@ -73,10 +73,10 @@ const CustomToolbar = (toolbar) => (
         aria-label="Back"
         onClick={() => toolbar.onNavigate("PREV")}
         size="small"
-        sx={{ color: "#fff", p: 0, m: 0, verticalAlign: "middle" }}
+        sx={{ color: "#fff", p: 0, m: 0, verticalAlign: "end" }}
         className="calendar-view-back-button"
       >
-        <ArrowBackIosNewIcon fontSize="small" color="white" />
+        <ArrowBackIosNewIcon fontSize="1rem" color="white" />
       </IconButton>
       <Button
         onClick={() => toolbar.onNavigate("TODAY")}
@@ -97,10 +97,10 @@ const CustomToolbar = (toolbar) => (
         aria-label="Next"
         onClick={() => toolbar.onNavigate("NEXT")}
         size="small"
-        sx={{ color: "#fff", p: 0, m: 0, verticalAlign: "middle" }}
+        sx={{ color: "#fff", p: 0, m: 0, verticalAlign: "end" }}
         className="calendar-view-next-button"
       >
-        <ArrowForwardIosIcon fontSize="small" color="white" />
+        <ArrowForwardIosIcon fontSize="1rem" color="white" />
       </IconButton>
     </div>
     <span
@@ -135,42 +135,78 @@ const CustomToolbar = (toolbar) => (
   </div>
 );
 
-const CustomAgendaEvent = ({ event }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-      padding: "0.5rem 0",
-      position: "relative",
-    }}
-  >
-    <Avatar
-      src={event?.image}
-      alt={event?.title}
-      sx={{
-        width: 40,
-        height: 40,
-        border: "1px solid #093637",
-        borderRadius: 0,
-        mr: 2,
-        flexShrink: 0,
+const CustomAgendaEvent = ({ event }) => {
+  const today = dayjs().startOf("day");
+  const eventDate = dayjs(event.start).startOf("day");
+
+  // Check if this is today's event
+  const isToday = eventDate.isSame(today);
+
+  // Check if this is the next upcoming event (future event closest to today)
+  const isUpcoming = eventDate.isAfter(today);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "0.5rem 0",
+        position: "relative",
+        backgroundColor: isToday
+          ? "rgba(86, 199, 176, 0.2)"
+          : isUpcoming
+          ? "rgba(68, 160, 141, 0.15)"
+          : "transparent",
+        borderRadius: isToday || isUpcoming ? "4px" : "0",
+        borderLeft: isToday
+          ? "4px solid rgba(86, 199, 176, 0.9)"
+          : isUpcoming
+          ? "3px solid rgba(68, 160, 141, 0.7)"
+          : "none",
+        transition: "all 0.2s ease",
       }}
-    />
-    <span style={{ fontWeight: 600, color: "#fff", fontSize: "1rem" }}>
-      {event?.title}
-    </span>
-    <Divider
-      sx={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        bgcolor: "var(--calendar-border-grey)",
-      }}
-    />
-  </div>
-);
+    >
+      <Avatar
+        src={event?.image}
+        alt={event?.title}
+        sx={{
+          width: 40,
+          height: 40,
+          border: isToday
+            ? "2px solid rgba(86, 199, 176, 0.8)"
+            : "1px solid #093637",
+          borderRadius: 0,
+          mr: 2,
+          flexShrink: 0,
+          boxShadow: isToday ? "0 0 8px rgba(86, 199, 176, 0.4)" : "none",
+        }}
+      />
+      <span
+        style={{
+          fontWeight: isToday ? 700 : 600,
+          color: isToday ? "rgba(86, 199, 176, 1)" : "#fff",
+          fontSize: "1rem",
+          textShadow: isToday ? "0 1px 3px rgba(0, 0, 0, 0.3)" : "none",
+        }}
+      >
+        {isToday && "🎵 "}
+        {event?.title}
+      </span>
+      <Divider
+        sx={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bgcolor: isToday
+            ? "rgba(86, 199, 176, 0.3)"
+            : "var(--calendar-border-grey)",
+        }}
+      />
+    </div>
+  );
+};
 
 const CalendarView = ({
   viewMode = "month",
@@ -243,6 +279,16 @@ const CalendarView = ({
     });
   }, [events]);
 
+  // Find the next upcoming event
+  const nextUpcomingEvent = useMemo(() => {
+    if (!calendarEvents) return null;
+    const today = dayjs().startOf("day");
+    const futureEvents = calendarEvents
+      .filter((event) => dayjs(event.start).startOf("day").isAfter(today))
+      .sort((a, b) => new Date(a.start) - new Date(b.start));
+    return futureEvents.length > 0 ? futureEvents[0] : null;
+  }, [calendarEvents]);
+
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
     setOpenModal(true);
@@ -256,14 +302,44 @@ const CalendarView = ({
   const dayPropGetter = (date) => {
     const today = dayjs().startOf("day");
     const cell = dayjs(date).startOf("day");
+
+    // Check if this date has events
+    const dateString = date.toDateString();
+    const hasEvents = calendarEvents.some(
+      (event) => event.start.toDateString() === dateString
+    );
+
+    // Count events for this date
+    const eventCount = calendarEvents.filter(
+      (event) => event.start.toDateString() === dateString
+    ).length;
+
     if (cell.isSame(today)) {
       return {
         style: {
-          backgroundColor: "rgba(86, 199, 176, 0.5)",
+          backgroundColor: hasEvents
+            ? "rgba(86, 199, 176, 0.8)"
+            : "rgba(86, 199, 176, 0.6)",
+          boxShadow: "inset 0 0 0 2px rgba(86, 199, 176, 0.9)",
         },
-        className: "rbc-today-greenish",
+        className: "rbc-today-enhanced",
       };
     }
+
+    if (hasEvents) {
+      return {
+        style: {
+          backgroundColor:
+            eventCount > 1
+              ? "rgba(68, 160, 141, 0.5)"
+              : "rgba(68, 160, 141, 0.3)",
+          borderLeft: "1px solid rgba(86, 199, 176, 0.8)",
+        },
+        className:
+          eventCount > 1 ? "rbc-has-multiple-events" : "rbc-has-events",
+      };
+    }
+
     return {};
   };
 
@@ -278,6 +354,102 @@ const CalendarView = ({
       minWidth: 0,
     },
   });
+
+  // Create enhanced agenda event component with access to next upcoming event
+  const EnhancedAgendaEvent = useMemo(() => {
+    return ({ event }) => {
+      const today = dayjs().startOf("day");
+      const eventDate = dayjs(event.start).startOf("day");
+
+      // Check if this is today's event
+      const isToday = eventDate.isSame(today);
+
+      // Check if this is the next upcoming event specifically
+      const isNextUpcoming =
+        nextUpcomingEvent &&
+        event.start.getTime() === nextUpcomingEvent.start.getTime() &&
+        event.title === nextUpcomingEvent.title;
+
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            padding: "0.5rem 0",
+            position: "relative",
+            backgroundColor: isToday
+              ? "rgba(86, 199, 176, 0.25)"
+              : isNextUpcoming
+              ? "rgba(68, 160, 141, 0.2)"
+              : "transparent",
+            borderRadius: isToday || isNextUpcoming ? "6px" : "0",
+            borderLeft: isToday
+              ? "4px solid rgba(86, 199, 176, 0.9)"
+              : isNextUpcoming
+              ? "3px solid rgba(68, 160, 141, 0.8)"
+              : "none",
+            transition: "all 0.2s ease",
+            transform: isToday || isNextUpcoming ? "translateX(2px)" : "none",
+          }}
+        >
+          <Avatar
+            src={event?.image}
+            alt={event?.title}
+            sx={{
+              width: 40,
+              height: 40,
+              border: isToday
+                ? "2px solid rgba(86, 199, 176, 0.9)"
+                : isNextUpcoming
+                ? "2px solid rgba(68, 160, 141, 0.8)"
+                : "1px solid #093637",
+              borderRadius: 0,
+              mr: 2,
+              flexShrink: 0,
+              boxShadow: isToday
+                ? "0 0 12px rgba(86, 199, 176, 0.5)"
+                : isNextUpcoming
+                ? "0 0 8px rgba(68, 160, 141, 0.4)"
+                : "none",
+            }}
+          />
+          <span
+            style={{
+              fontWeight: isToday ? 700 : isNextUpcoming ? 650 : 600,
+              color: isToday
+                ? "rgba(86, 199, 176, 1)"
+                : isNextUpcoming
+                ? "rgba(68, 160, 141, 1)"
+                : "#fff",
+              fontSize: isToday || isNextUpcoming ? "1.05rem" : "1rem",
+              textShadow:
+                isToday || isNextUpcoming
+                  ? "0 1px 3px rgba(0, 0, 0, 0.3)"
+                  : "none",
+            }}
+          >
+            {isToday && "🎵 "}
+            {isNextUpcoming && "⭐ "}
+            {event?.title}
+          </span>
+          <Divider
+            sx={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bgcolor: isToday
+                ? "rgba(86, 199, 176, 0.4)"
+                : isNextUpcoming
+                ? "rgba(68, 160, 141, 0.3)"
+                : "var(--calendar-border-grey)",
+            }}
+          />
+        </div>
+      );
+    };
+  }, [nextUpcomingEvent]);
 
   if (isLoading) {
     return (
@@ -316,7 +488,7 @@ const CalendarView = ({
         components={{
           event: EventComponent,
           toolbar: CustomToolbar,
-          agenda: { event: CustomAgendaEvent },
+          agenda: { event: EnhancedAgendaEvent },
         }}
         dayPropGetter={dayPropGetter}
         eventPropGetter={eventPropGetter}
