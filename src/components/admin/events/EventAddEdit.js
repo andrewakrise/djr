@@ -15,6 +15,10 @@ import {
   MenuItem,
   InputAdornment,
   Autocomplete,
+  FormControlLabel,
+  Switch,
+  Box,
+  Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -76,6 +80,11 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
   });
   const [otherDescription, setOtherDescription] = useState("");
   const [otherAmount, setOtherAmount] = useState(0);
+
+  // Boolean toggles
+  const [isPublic, setIsPublic] = useState(event?.isPublic || false);
+  const [isConfirmed, setIsConfirmed] = useState(event?.isConfirmed || false);
+  const [isFullyPaid, setIsFullyPaid] = useState(event?.isFullyPaid || false);
 
   const serviceOptions = [
     "DJing Services",
@@ -140,6 +149,9 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         food: event?.expenses?.food || 0,
         other: event?.expenses?.other || [],
       });
+      setIsPublic(event?.isPublic || false);
+      setIsConfirmed(event?.isConfirmed || false);
+      setIsFullyPaid(event?.isFullyPaid || false);
     }
   }, [event]);
 
@@ -283,6 +295,11 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     formData.append("depositSum", depositSum);
     formData.append("expenses", JSON.stringify(expenses));
 
+    // Add boolean fields
+    formData.append("isPublic", isPublic);
+    formData.append("isConfirmed", isConfirmed);
+    formData.append("isFullyPaid", isFullyPaid);
+
     try {
       let result;
       if (event) {
@@ -327,6 +344,9 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         });
         setOtherDescription("");
         setOtherAmount(0);
+        setIsPublic(false);
+        setIsConfirmed(false);
+        setIsFullyPaid(false);
         onAddSuccess();
         refetchEvents();
       }
@@ -695,6 +715,46 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           }}
           required
         />
+
+        {/* Boolean Toggle Section */}
+        <Box sx={{ mt: 3, mb: 2 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Event Status
+          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Public Event (visible to clients)"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isConfirmed}
+                  onChange={(e) => setIsConfirmed(e.target.checked)}
+                  color="warning"
+                />
+              }
+              label="Confirmed (deposit received)"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isFullyPaid}
+                  onChange={(e) => setIsFullyPaid(e.target.checked)}
+                  color="success"
+                />
+              }
+              label="Fully Paid (final payment received)"
+            />
+          </Box>
+        </Box>
+
         {/* Expenses Section */}
         <div style={{ margin: "24px 0 8px 0" }}>
           <strong>Expenses (for admin/tax):</strong>

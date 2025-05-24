@@ -8,7 +8,6 @@ import {
   useUnconfirmEventMutation,
   useFinalPaymentEventMutation,
   useTogglePublicMutation,
-  useUploadFinalMutation,
   useLazyGetFinalQuery,
   useLazyGetReceiptQuery,
   useGetEventImageUrlQuery,
@@ -526,6 +525,56 @@ function EventList() {
         : null,
     })) || [];
 
+  const eventDateRows =
+    events?.map((event) => ({
+      id: event?._id,
+      title: event?.title,
+      clientName: event?.clientName,
+      startDateTime: event?.startDateTime
+        ? dayjs(event.startDateTime)
+            .tz("America/Vancouver")
+            .format("MMMM D, YYYY h:mm A")
+        : event?.date && event?.startTime
+        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
+            event.startTime
+          )}`
+        : "",
+      endDateTime: event?.endDateTime
+        ? dayjs(event.endDateTime)
+            .tz("America/Vancouver")
+            .format("MMMM D, YYYY h:mm A")
+        : event?.date && event?.endTime
+        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
+            event.endTime
+          )}`
+        : "",
+      clientCompanyName: event?.clientCompanyName,
+      clientEmail: event?.clientEmail,
+      phoneNumber: event?.phoneNumber,
+      location: event?.location,
+      address: event?.address,
+      equipmentExpense: event?.expenses?.equipment || 0,
+      carExpense: event?.expenses?.car || 0,
+      foodExpense: event?.expenses?.food || 0,
+      otherExpenses: event?.expenses?.other || [],
+      services: event?.services.join(", "),
+      totalSum: event?.totalSum,
+      depositSum: event?.depositSum,
+      imageUrl: event?.image?.url || "",
+      description: event?.description,
+      ticketUrl: event?.ticketUrl,
+      pdfInvoice: event?.pdfInvoice,
+      pdfDeposit: event?.pdfDeposit,
+      isPublic: event?.isPublic,
+      isConfirmed: event?.isConfirmed,
+      isFullyPaid: event?.isFullyPaid,
+      eventDate: event?.startDateTime
+        ? dayjs(event.startDateTime).tz("America/Vancouver").startOf("day")
+        : event?.date
+        ? dayjs(event.date).tz("America/Vancouver").startOf("day")
+        : null,
+    })) || [];
+
   const today = dayjs().tz("America/Vancouver").startOf("day");
   const todayEvents = rows?.filter(
     (row) => row.eventDate && row.eventDate.isSame(today)
@@ -577,7 +626,7 @@ function EventList() {
     {
       field: "clientInfo",
       headerName: "Client Info",
-      width: 140,
+      width: 150,
       renderCell: (params) => {
         const { clientCompanyName, clientEmail, phoneNumber } =
           params.value || {};
@@ -603,274 +652,362 @@ function EventList() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 200,
+      width: 300,
       renderCell: (params) => {
-        return (
-          <>
-            <IconButton
-              color="primary"
-              onClick={() => handleEdit(params?.row)}
-              aria-label="edit"
-            >
-              <Edit />
-            </IconButton>
-            <IconButton
-              color="error"
-              onClick={() => handleDelete(params?.row?.id)}
-              aria-label="delete"
-            >
-              <Delete />
-            </IconButton>
-
-            <IconButton
-              color="info"
-              onClick={() => handleOpenPreviewDialog(params?.row)}
-              aria-label="preview"
-            >
-              <VisibilityIcon />
-            </IconButton>
-            <Tooltip
-              title={params?.row?.isPublic ? "Set to Private" : "Set to Public"}
-            >
-              <IconButton
-                color={params?.row?.isPublic ? "success" : "warning"}
-                onClick={() => handleTogglePublic({ eventId: params?.row?.id })}
-                aria-label="toggle-public"
-              >
-                {params?.row?.isPublic ? <PublicIcon /> : <PublicOffIcon />}
-              </IconButton>
-            </Tooltip>
-          </>
+        // Get the original event data
+        const originalEvent = eventDateRows?.find(
+          (e) => e?.id === params?.row?.id
         );
-      },
-    },
-    {
-      field: "invoice",
-      headerName: "Inv/Dep",
-      width: 200,
-      renderCell: (params) => (
-        <>
-          <Tooltip title="Generate Invoice">
-            <IconButton
-              color="secondary"
-              onClick={() => handleOpenGenerateInvoiceDialog(params?.row)}
-              aria-label="generate-invoice"
-            >
-              <PictureAsPdfIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Download Invoice">
-            <IconButton
-              color="secondary"
-              onClick={() =>
-                handleDownloadInvoice(
-                  params?.row?.id,
-                  params?.row?.date,
-                  params?.row?.title
-                )
-              }
-              aria-label="download-invoice"
-            >
-              {isFetching && currentDownloadingId === params?.row?.id ? (
-                <CircularProgress />
-              ) : (
-                <Download />
-              )}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Generate Deposit">
-            <IconButton
-              color="success"
-              onClick={() => handleOpenGenerateDepositDialog(params?.row)}
-              aria-label="generate-invoice"
-            >
-              <PictureAsPdfIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Download Deposit">
-            <IconButton
-              color="success"
-              onClick={() =>
-                handleDownloadDeposit(
-                  params?.row?.id,
-                  params?.row?.date,
-                  params?.row?.title
-                )
-              }
-              aria-label="download-deposit"
-            >
-              {isDepositFetching && currentDownloadingId === params?.row?.id ? (
-                <CircularProgress />
-              ) : (
-                <Download />
-              )}
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
-    },
+        const eventData = originalEvent;
 
-    {
-      field: "email",
-      headerName: "Email",
-      width: 55,
-      renderCell: (params) => (
-        <Tooltip title="Send Email to Client">
-          <IconButton
-            color="primary"
-            onClick={() => handleOpenEmailDialog(params?.row)}
-            aria-label="send-email"
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 0.5,
+              py: 1,
+            }}
           >
-            <EmailIcon />
-          </IconButton>
-        </Tooltip>
-      ),
-    },
-    {
-      field: "depositReceipt",
-      headerName: "Dpst Receipt",
-      width: 100,
-      renderCell: (params) => (
-        <>
-          <Tooltip title="Generate Deposit Receipt">
-            <IconButton
-              color="primary"
-              onClick={() =>
-                handleOpenGenerateDepositReceiptDialog(params?.row)
-              }
-              aria-label="generate-deposit-receipt"
+            {/* Line 1: Basic Actions */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                borderBottom: "1px solid #374151",
+                pb: 0.5,
+              }}
             >
-              <PictureAsPdfIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Download Deposit Receipt">
-            <IconButton
-              color="primary"
-              onClick={() =>
-                handleDownloadDepositReceipt(
-                  params?.row?.id,
-                  params?.row?.date,
-                  params?.row?.title
-                )
-              }
-              aria-label="download-deposit-receipt"
-            >
-              {isDepositReceiptFetching &&
-              currentDownloadingDepositReceiptId === params?.row?.id ? (
-                <CircularProgress size={20} />
-              ) : (
-                <Download />
-              )}
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
-    },
-    {
-      field: "Confirm",
-      headerName: "Confirm",
-      width: 70,
-      renderCell: (params) => {
-        const confirmed = params?.row?.isConfirmed;
-        return (
-          <Tooltip title="Confirm the Event payment reaceived">
-            <IconButton
-              color="warning"
-              onClick={() => handleConfirmEventClick(params?.row)}
-              aria-label="confirm-event"
-            >
-              {confirmed ? <CheckCircle /> : <Unpublished />}
-            </IconButton>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      field: "finalBill",
-      headerName: "Final Bill",
-      width: 150,
-      renderCell: (params) => (
-        <>
-          <Tooltip title="Generate Final Bill">
-            <IconButton
-              color="warning"
-              onClick={() => handleOpenGenerateFinalDialog(params?.row)}
-            >
-              <PictureAsPdfIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Download Final Bill">
-            <IconButton
-              color="info"
-              onClick={() =>
-                handleDownloadFinal(
-                  params?.row?.id,
-                  params?.row?.date,
-                  params?.row?.title
-                )
-              }
-            >
-              {isFinalFetching &&
-              currentDownloadingFinalId === params?.row?.id ? (
-                <CircularProgress size={24} />
-              ) : (
-                <Download />
-              )}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Send Final Bill Email to Client">
-            <IconButton
-              color="primary"
-              onClick={() => handleOpenFinalEmailDialog(params?.row)}
-            >
-              <EmailIcon />
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
-    },
-    {
-      field: "actionsReceipt",
-      headerName: "Receipt",
-      width: 130,
-      renderCell: (params) => {
-        return (
-          <>
-            <Tooltip title="Generate Paid Receipt">
+              <Typography
+                variant="caption"
+                sx={{
+                  minWidth: "45px",
+                  fontSize: "10px",
+                  color: "#9ca3af",
+                  fontWeight: 600,
+                }}
+              >
+                Setup:
+              </Typography>
               <IconButton
                 color="primary"
-                onClick={() => handleOpenGenerateReceiptDialog(params?.row)}
+                onClick={() => handleEdit(params?.row)}
+                aria-label="edit"
+                size="small"
               >
-                <PictureAsPdfIcon />
+                <Edit />
               </IconButton>
-            </Tooltip>
-            <Tooltip title="Download Paid Receipt">
               <IconButton
-                color="success"
-                onClick={() =>
-                  handleDownloadReceipt(
-                    params?.row?.id,
-                    params?.row?.date,
-                    params?.row?.title
-                  )
+                color="error"
+                onClick={() => handleDelete(params?.row?.id)}
+                aria-label="delete"
+                size="small"
+              >
+                <Delete />
+              </IconButton>
+              <IconButton
+                color="info"
+                onClick={() => handleOpenPreviewDialog(params?.row)}
+                aria-label="preview"
+                size="small"
+              >
+                <VisibilityIcon />
+              </IconButton>
+              <Tooltip
+                title={
+                  params?.row?.isPublic ? "Set to Private" : "Set to Public"
                 }
               >
-                {isReceiptFetching &&
-                currentDownloadingReceiptId === params?.row?.id ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  <Download />
-                )}
-              </IconButton>
-            </Tooltip>
-          </>
+                <IconButton
+                  color={params?.row?.isPublic ? "success" : "warning"}
+                  onClick={() =>
+                    handleTogglePublic({ eventId: params?.row?.id })
+                  }
+                  aria-label="toggle-public"
+                  size="small"
+                >
+                  {params?.row?.isPublic ? <PublicIcon /> : <PublicOffIcon />}
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Line 2: Invoice/Deposit & Email */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                borderBottom: "1px solid #374151",
+                pb: 0.5,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  minWidth: "45px",
+                  fontSize: "10px",
+                  color: "#9ca3af",
+                  fontWeight: 600,
+                }}
+              >
+                Bills:
+              </Typography>
+              <Tooltip title="Generate Invoice">
+                <IconButton
+                  color="secondary"
+                  onClick={() => handleOpenGenerateInvoiceDialog(eventData)}
+                  aria-label="generate-invoice"
+                  size="small"
+                >
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Download Invoice">
+                <IconButton
+                  color="secondary"
+                  onClick={() =>
+                    handleDownloadInvoice(
+                      params?.row?.id,
+                      eventData?.startDateTime || eventData?.date,
+                      eventData?.title
+                    )
+                  }
+                  aria-label="download-invoice"
+                  size="small"
+                >
+                  {isFetching && currentDownloadingId === params?.row?.id ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <Download />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Generate Deposit">
+                <IconButton
+                  color="success"
+                  onClick={() => handleOpenGenerateDepositDialog(eventData)}
+                  aria-label="generate-deposit"
+                  size="small"
+                >
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Download Deposit">
+                <IconButton
+                  color="success"
+                  onClick={() =>
+                    handleDownloadDeposit(
+                      params?.row?.id,
+                      eventData?.startDateTime || eventData?.date,
+                      eventData?.title
+                    )
+                  }
+                  aria-label="download-deposit"
+                  size="small"
+                >
+                  {isDepositFetching &&
+                  currentDownloadingId === params?.row?.id ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <Download />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Send Email to Client">
+                <IconButton
+                  color="primary"
+                  onClick={() => handleOpenEmailDialog(eventData)}
+                  aria-label="send-email"
+                  size="small"
+                >
+                  <EmailIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Line 3: Deposit Receipt & Confirm */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                borderBottom: "1px solid #374151",
+                pb: 0.5,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  minWidth: "45px",
+                  fontSize: "10px",
+                  color: "#9ca3af",
+                  fontWeight: 600,
+                }}
+              >
+                Deposit:
+              </Typography>
+              <Tooltip title="Generate Deposit Receipt">
+                <IconButton
+                  color="primary"
+                  onClick={() =>
+                    handleOpenGenerateDepositReceiptDialog(eventData)
+                  }
+                  aria-label="generate-deposit-receipt"
+                  size="small"
+                >
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Download Deposit Receipt">
+                <IconButton
+                  color="primary"
+                  onClick={() =>
+                    handleDownloadDepositReceipt(
+                      params?.row?.id,
+                      eventData?.startDateTime || eventData?.date,
+                      eventData?.title
+                    )
+                  }
+                  aria-label="download-deposit-receipt"
+                  size="small"
+                >
+                  {isDepositReceiptFetching &&
+                  currentDownloadingDepositReceiptId === params?.row?.id ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <Download />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Confirm the Event payment received">
+                <IconButton
+                  color="warning"
+                  onClick={() => handleConfirmEventClick(params?.row)}
+                  aria-label="confirm-event"
+                  size="small"
+                >
+                  {params?.row?.isConfirmed ? <CheckCircle /> : <Unpublished />}
+                </IconButton>
+              </Tooltip>
+            </Box>
+
+            {/* Line 4: Final Bill & Receipt */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  minWidth: "45px",
+                  fontSize: "10px",
+                  color: "#9ca3af",
+                  fontWeight: 600,
+                }}
+              >
+                Final:
+              </Typography>
+              <Tooltip title="Generate Final Bill">
+                <IconButton
+                  color="warning"
+                  onClick={() => handleOpenGenerateFinalDialog(eventData)}
+                  size="small"
+                >
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Download Final Bill">
+                <IconButton
+                  color="info"
+                  onClick={() =>
+                    handleDownloadFinal(
+                      params?.row?.id,
+                      eventData?.startDateTime || eventData?.date,
+                      eventData?.title
+                    )
+                  }
+                  size="small"
+                >
+                  {isFinalFetching &&
+                  currentDownloadingFinalId === params?.row?.id ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <Download />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Send Final Bill Email to Client">
+                <IconButton
+                  color="primary"
+                  onClick={() => handleOpenFinalEmailDialog(eventData)}
+                  size="small"
+                >
+                  <EmailIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Generate Paid Receipt">
+                <IconButton
+                  color="primary"
+                  onClick={() => handleOpenGenerateReceiptDialog(eventData)}
+                  size="small"
+                >
+                  <PictureAsPdfIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Download Paid Receipt">
+                <IconButton
+                  color="success"
+                  onClick={() =>
+                    handleDownloadReceipt(
+                      params?.row?.id,
+                      eventData?.startDateTime || eventData?.date,
+                      eventData?.title
+                    )
+                  }
+                  size="small"
+                >
+                  {isReceiptFetching &&
+                  currentDownloadingReceiptId === params?.row?.id ? (
+                    <CircularProgress size={16} />
+                  ) : (
+                    <Download />
+                  )}
+                </IconButton>
+              </Tooltip>
+              {/* Final Payment Button - only show if confirmed but not fully paid */}
+              <Tooltip
+                title={`${
+                  params?.row?.isConfirmed && params?.row?.isFullyPaid
+                    ? "Final payment received ✓"
+                    : "Confirm final payment received"
+                }`}
+              >
+                <IconButton
+                  color="success"
+                  onClick={() =>
+                    handleOpenFinalPaymentDialog({
+                      ...eventData,
+                      id: params?.row?.id,
+                    })
+                  }
+                  size="small"
+                >
+                  <Unpublished />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
         );
       },
     },
     {
       field: "paymentStatus",
       headerName: "Status & Payment",
-      width: 180,
+      width: 200,
       renderCell: (params) => {
         const confirmed = params?.row?.isConfirmed;
         const fullyPaid = params?.row?.isFullyPaid;
@@ -879,23 +1016,26 @@ function EventList() {
 
         // Calculate remaining amount based on payment status
         let remainingAmount = 0;
+        let remainingLabel = "";
         let statusText = "";
         let statusColor = "#ffffff";
 
         if (!confirmed) {
           remainingAmount = depositSum;
+          remainingLabel = "Awaiting Deposit";
           statusText = "Await Deposit";
           statusColor = "#ff9800"; // orange
         } else if (confirmed && !fullyPaid) {
           remainingAmount = totalSum - depositSum;
+          remainingLabel = "Remaining Final";
           statusText = "In Progress";
           statusColor = "#2196f3"; // blue
         } else if (fullyPaid) {
           remainingAmount = 0;
+          remainingLabel = "";
           statusText = "Done";
           statusColor = "#4caf50"; // green
         }
-
         return (
           <Box
             sx={{
@@ -929,7 +1069,7 @@ function EventList() {
                   mt: 0.25,
                 }}
               >
-                Remaining: ${remainingAmount}
+                {remainingLabel}: ${remainingAmount}
               </Typography>
             )}
             {remainingAmount === 0 && fullyPaid && (
@@ -953,7 +1093,7 @@ function EventList() {
     {
       field: "otherExpenses",
       headerName: "Expenses",
-      width: 200,
+      width: 175,
       renderCell: (params) => {
         const { equipmentExpense, carExpense, foodExpense, otherExpenses } =
           params?.row?.expensesSummary || {};

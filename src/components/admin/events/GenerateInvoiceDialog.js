@@ -10,8 +10,6 @@ import {
   Alert,
   FormControlLabel,
   Checkbox,
-  TextField,
-  Box,
 } from "@mui/material";
 import { pdf } from "@react-pdf/renderer";
 import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
@@ -24,12 +22,8 @@ import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import "@react-pdf-viewer/zoom/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
 import EventInvoicePDF from "./EventInvoicePDF";
-import {
-  useUploadInvoiceMutation,
-  useLazyGetInvoiceQuery,
-} from "../../../services/event";
+import { useUploadInvoiceMutation } from "../../../services/event";
 import { generateUniqueFileName } from "../../helpers/utils";
-import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -96,9 +90,24 @@ const GenerateInvoiceDialog = ({ open, onClose, event, refetchEvents }) => {
       const formattedDate = dayjs(event.startDateTime)
         .tz("America/Vancouver")
         .format("YYYY-MM-DD");
-      fileName = generateUniqueFileName(formattedDate, "Contract-Invoice");
+      fileName = generateUniqueFileName(
+        event?.title,
+        formattedDate,
+        "Contract-Invoice"
+      );
+    } else if (event?.date) {
+      // Fallback to old date field if startDateTime is not available
+      fileName = generateUniqueFileName(
+        event?.title,
+        event?.date,
+        "Contract-Invoice"
+      );
     } else {
-      fileName = generateUniqueFileName(event?.date, "Contract-Invoice");
+      fileName = generateUniqueFileName(
+        event?.title,
+        new Date().toISOString().split("T")[0],
+        "Contract-Invoice"
+      );
     }
 
     // console.log("fileName", fileName)

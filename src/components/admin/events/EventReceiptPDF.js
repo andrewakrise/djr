@@ -15,6 +15,12 @@ import {
 } from "../../helpers/utils";
 import logo from "../../../assets/icons/logo.png";
 import pioneerdjset from "../../../assets/pioneerdjset.jpg";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const styles = StyleSheet.create({
   page: {
@@ -206,6 +212,29 @@ const EventReceiptPDF = ({ event }) => {
     return service;
   });
 
+  let formattedStartDate = "";
+  let formattedStartTime = "";
+  let formattedEndDate = "";
+  let formattedEndTime = "";
+
+  if (event?.startDateTime) {
+    formattedStartDate = dayjs(event.startDateTime)
+      .tz("America/Vancouver")
+      .format("MMMM D, YYYY");
+    formattedStartTime = dayjs(event.startDateTime)
+      .tz("America/Vancouver")
+      .format("h:mm A");
+  }
+
+  if (event?.endDateTime) {
+    formattedEndDate = dayjs(event.endDateTime)
+      .tz("America/Vancouver")
+      .format("MMMM D, YYYY");
+    formattedEndTime = dayjs(event.endDateTime)
+      .tz("America/Vancouver")
+      .format("h:mm A");
+  }
+
   return (
     <Document>
       <Page size="A4" orientation="portrait" style={styles.page}>
@@ -276,17 +305,17 @@ const EventReceiptPDF = ({ event }) => {
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event Start Date & Time: </Text>
               <Text style={styles.dateProp}>
-                {`${event?.date || "N/A"} ${
-                  convertTo12HourFormat(event?.startTime) || ""
-                }`}
+                {formattedStartDate && formattedStartTime
+                  ? `${formattedStartDate} ${formattedStartTime}`
+                  : "no start date and time"}
               </Text>
             </View>
             <View style={styles.eventDate}>
               <Text style={styles.dateLabel}>Event End Date & Time: </Text>
               <Text style={styles.dateProp}>
-                {`${event?.date || "N/A"} ${
-                  convertTo12HourFormat(event?.endTime) || ""
-                }`}
+                {formattedEndDate && formattedEndTime
+                  ? `${formattedEndDate} ${formattedEndTime}`
+                  : "no end date and time"}
               </Text>
             </View>
           </View>

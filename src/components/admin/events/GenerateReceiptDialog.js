@@ -15,6 +15,9 @@ import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
 import { zoomPlugin } from "@react-pdf-viewer/zoom";
 import { printPlugin } from "@react-pdf-viewer/print";
 import { getFilePlugin } from "@react-pdf-viewer/get-file";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/toolbar/lib/styles/index.css";
@@ -24,6 +27,9 @@ import "@react-pdf-viewer/print/lib/styles/index.css";
 import { useUploadReceiptMutation } from "../../../services/event";
 import { generateUniqueFileName } from "../../helpers/utils";
 import EventReceiptPDF from "./EventReceiptPDF";
+
+dayjs.extend(timezone);
+dayjs.extend(utc);
 
 const GenerateReceiptDialog = ({ open, onClose, event, refetchEvents }) => {
   const [pdfBlob, setPdfBlob] = useState(null);
@@ -74,8 +80,31 @@ const GenerateReceiptDialog = ({ open, onClose, event, refetchEvents }) => {
     setError("");
     setSuccess("");
 
-    // Generate a name for the saved PDF
-    const fileName = generateUniqueFileName(event?.date, "Paid Receipt");
+    // Generate a name for the saved PDF using the new datetime format
+    let fileName;
+    if (event?.startDateTime) {
+      const formattedDate = dayjs(event.startDateTime)
+        .tz("America/Vancouver")
+        .format("YYYY-MM-DD");
+      fileName = generateUniqueFileName(
+        event?.title,
+        formattedDate,
+        "Paid Receipt"
+      );
+    } else if (event?.date) {
+      // Fallback to old date field if startDateTime is not available
+      fileName = generateUniqueFileName(
+        event?.title,
+        event?.date,
+        "Paid Receipt"
+      );
+    } else {
+      fileName = generateUniqueFileName(
+        event?.title,
+        new Date().toISOString().split("T")[0],
+        "Paid Receipt"
+      );
+    }
 
     const formData = new FormData();
     formData.append("pdfReceipt", pdfBlob, `${fileName}.pdf`);
