@@ -519,7 +519,30 @@ function EventList() {
       isPublic: event?.isPublic,
       isConfirmed: event?.isConfirmed,
       isFullyPaid: event?.isFullyPaid,
+      eventDate: event?.startDateTime
+        ? dayjs(event.startDateTime).tz("America/Vancouver").startOf("day")
+        : event?.date
+        ? dayjs(event.date).tz("America/Vancouver").startOf("day")
+        : null,
     })) || [];
+
+  const today = dayjs().tz("America/Vancouver").startOf("day");
+  const todayEvents = rows?.filter(
+    (row) => row.eventDate && row.eventDate.isSame(today)
+  );
+
+  const upcomingEvents = rows
+    .filter((row) => row.eventDate && row.eventDate.isAfter(today))
+    .sort((a, b) => a.eventDate.valueOf() - b.eventDate.valueOf());
+
+  const nextEventDate =
+    upcomingEvents.length > 0 ? upcomingEvents[0].eventDate : null;
+  const nextEvents = nextEventDate
+    ? rows.filter((row) => row.eventDate && row.eventDate.isSame(nextEventDate))
+    : [];
+
+  const eventsToHighlight = todayEvents.length > 0 ? todayEvents : nextEvents;
+  const highlightedEventIds = eventsToHighlight.map((event) => event.id);
 
   const columns = [
     {
@@ -580,38 +603,51 @@ function EventList() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
-      renderCell: (params) => (
-        <>
-          <IconButton
-            color="primary"
-            onClick={() => handleEdit(params?.row)}
-            aria-label="edit"
-          >
-            <Edit />
-          </IconButton>
-          <IconButton
-            color="error"
-            onClick={() => handleDelete(params?.row?.id)}
-            aria-label="delete"
-          >
-            <Delete />
-          </IconButton>
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <>
+            <IconButton
+              color="primary"
+              onClick={() => handleEdit(params?.row)}
+              aria-label="edit"
+            >
+              <Edit />
+            </IconButton>
+            <IconButton
+              color="error"
+              onClick={() => handleDelete(params?.row?.id)}
+              aria-label="delete"
+            >
+              <Delete />
+            </IconButton>
 
-          <IconButton
-            color="info"
-            onClick={() => handleOpenPreviewDialog(params?.row)}
-            aria-label="preview"
-          >
-            <VisibilityIcon />
-          </IconButton>
-        </>
-      ),
+            <IconButton
+              color="info"
+              onClick={() => handleOpenPreviewDialog(params?.row)}
+              aria-label="preview"
+            >
+              <VisibilityIcon />
+            </IconButton>
+            <Tooltip
+              title={params?.row?.isPublic ? "Set to Private" : "Set to Public"}
+            >
+              <IconButton
+                color={params?.row?.isPublic ? "success" : "warning"}
+                onClick={() => handleTogglePublic({ eventId: params?.row?.id })}
+                aria-label="toggle-public"
+              >
+                {params?.row?.isPublic ? <PublicIcon /> : <PublicOffIcon />}
+              </IconButton>
+            </Tooltip>
+          </>
+        );
+      },
     },
     {
       field: "invoice",
       headerName: "Inv/Dep",
-      width: 180,
+      width: 200,
       renderCell: (params) => (
         <>
           <Tooltip title="Generate Invoice">
@@ -673,25 +709,7 @@ function EventList() {
         </>
       ),
     },
-    {
-      field: "isPublic",
-      headerName: "Public",
-      width: 70,
-      renderCell: (params) => {
-        const { isPublic } = params?.row;
-        return (
-          <Tooltip title={isPublic ? "Set to Private" : "Set to Public"}>
-            <IconButton
-              color={isPublic ? "success" : "warning"}
-              onClick={() => handleTogglePublic({ eventId: params?.row?.id })}
-              aria-label="toggle-public"
-            >
-              {isPublic ? <PublicIcon /> : <PublicOffIcon />}
-            </IconButton>
-          </Tooltip>
-        );
-      },
-    },
+
     {
       field: "email",
       headerName: "Email",
@@ -850,100 +868,87 @@ function EventList() {
       },
     },
     {
-      field: "donePayto",
-      headerName: "Done/Awaiting",
-      width: 120,
+      field: "paymentStatus",
+      headerName: "Status & Payment",
+      width: 180,
       renderCell: (params) => {
         const confirmed = params?.row?.isConfirmed;
         const fullyPaid = params?.row?.isFullyPaid;
+        const totalSum = params?.row?.totalSum || 0;
+        const depositSum = params?.row?.depositSum || 0;
 
-        let eventDate;
-        if (params?.row?.startDateTime) {
-          eventDate = new Date(params?.row?.startDateTime);
-        } else {
-          eventDate = new Date(params?.row?.date);
-        }
-
-        const today = new Date();
-        const dateHasPassed = eventDate < today;
-        const finalPaymentSum =
-          params?.row?.totalSum - params?.row?.depositSum || 0;
+        // Calculate remaining amount based on payment status
+        let remainingAmount = 0;
+        let statusText = "";
+        let statusColor = "#ffffff";
 
         if (!confirmed) {
-          return <Typography variant="body2">Await Deposit</Typography>;
+          remainingAmount = depositSum;
+          statusText = "Await Deposit";
+          statusColor = "#ff9800"; // orange
         } else if (confirmed && !fullyPaid) {
-          return (
-            <Tooltip title="Confirm final payment">
-              <IconButton
-                color="success"
-                onClick={() => handleOpenFinalPaymentDialog(params?.row)}
-              >
-                <Unpublished /> ${finalPaymentSum}
-              </IconButton>
-            </Tooltip>
-          );
-        } else if (dateHasPassed && fullyPaid) {
-          return (
-            <Typography
-              variant="body2"
-              color="success.main"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                gap: "0.5rem",
-                height: "100%",
-              }}
-            >
-              <CheckCircle />
-            </Typography>
-          );
-        }
-      },
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 120,
-      renderCell: (params) => {
-        const confirmed = params?.row?.isConfirmed;
-        const fullyPaid = params?.row?.isFullyPaid;
-
-        if (!confirmed) {
-          return <Typography variant="body2">Await Deposit</Typography>;
-        } else if (confirmed && !fullyPaid) {
-          return <Typography variant="body2">In Progress</Typography>;
+          remainingAmount = totalSum - depositSum;
+          statusText = "In Progress";
+          statusColor = "#2196f3"; // blue
         } else if (fullyPaid) {
-          return (
+          remainingAmount = 0;
+          statusText = "Done";
+          statusColor = "#4caf50"; // green
+        }
+
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              whiteSpace: "pre-line",
+            }}
+          >
             <Typography
               variant="body2"
-              color="success.main"
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                gap: "0.5rem",
-                height: "100%",
+                fontWeight: 600,
+                color: statusColor,
+                mb: 0.5,
               }}
             >
-              Done
+              {statusText}
             </Typography>
-          );
-        }
+            <Typography variant="body2">Total: ${totalSum}</Typography>
+            <Typography variant="body2" mt={0.25}>
+              Deposit: ${depositSum}
+            </Typography>
+            {remainingAmount > 0 && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  color: "#ff5722",
+                  borderTop: "1px solid #374151",
+                  pt: 0.25,
+                  mt: 0.25,
+                }}
+              >
+                Remaining: ${remainingAmount}
+              </Typography>
+            )}
+            {remainingAmount === 0 && fullyPaid && (
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  color: "#4caf50",
+                  borderTop: "1px solid #374151",
+                  pt: 0.5,
+                  mt: 0.5,
+                }}
+              >
+                Paid in Full ✓
+              </Typography>
+            )}
+          </Box>
+        );
       },
-    },
-    {
-      field: "totalSum",
-      headerName: "Total Sum",
-      width: 100,
-      valueGetter: (value, row) => (row?.totalSum ? `$${row?.totalSum}` : ""),
-    },
-    {
-      field: "depositSum",
-      headerName: "Deposit Sum",
-      width: 100,
-      valueGetter: (value, row) =>
-        row?.depositSum ? `$${row?.depositSum}` : "",
     },
     {
       field: "otherExpenses",
@@ -951,7 +956,22 @@ function EventList() {
       width: 200,
       renderCell: (params) => {
         const { equipmentExpense, carExpense, foodExpense, otherExpenses } =
-          params.row.expensesSummary || {};
+          params?.row?.expensesSummary || {};
+
+        // Calculate total expenses
+        const otherExpensesTotal =
+          otherExpenses && otherExpenses.length > 0
+            ? otherExpenses.reduce(
+                (sum, expense) => sum + (Number(expense?.amount) || 0),
+                0
+              )
+            : 0;
+        const totalExpenses =
+          (equipmentExpense || 0) +
+          (carExpense || 0) +
+          (foodExpense || 0) +
+          otherExpensesTotal;
+
         return (
           <Box
             sx={{
@@ -969,9 +989,20 @@ function EventList() {
               otherExpenses.length > 0 &&
               otherExpenses.map((o, idx) => (
                 <Typography variant="body2" key={idx}>
-                  {o.description}: ${o.amount}
+                  {o?.description}: ${o?.amount}
                 </Typography>
               ))}
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 600,
+                borderTop: "1px solid #374151",
+                pt: 0.05,
+                mt: 0.05,
+              }}
+            >
+              Total: ${totalExpenses}
+            </Typography>
           </Box>
         );
       },
@@ -1007,8 +1038,8 @@ function EventList() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "1rem 0",
-        margin: "1rem 0",
+        padding: "0.5rem 0",
+        margin: 0,
         width: "100%",
       }}
     >
@@ -1035,7 +1066,14 @@ function EventList() {
       </Dialog>
       {success && <Alert severity="success">{success}</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
-      <Box sx={{ height: 600, width: "100%", mt: 2, color: "#ffffff" }}>
+      <Box
+        sx={{
+          height: { xs: 600, md: "calc(100vh - 17rem)" },
+          width: "100%",
+          mt: 2,
+          color: "#ffffff",
+        }}
+      >
         {rows?.length > 0 ? (
           <DataGrid
             rows={rows}
@@ -1044,6 +1082,11 @@ function EventList() {
             rowsPerPageOptions={[10, 25, 50]}
             disableSelectionOnClick
             getRowHeight={() => "auto"}
+            getRowClassName={(params) =>
+              highlightedEventIds.includes(params.id)
+                ? "highlighted-event-row"
+                : ""
+            }
             sx={{
               ".MuiDataGrid-cell": {
                 whiteSpace: "normal",
@@ -1056,6 +1099,15 @@ function EventList() {
               },
               ".MuiDataGrid-cell:last-of-type": {
                 borderRight: "none",
+              },
+              "& .highlighted-event-row": {
+                backgroundColor: "rgba(68, 160, 141, 0.2)",
+                "&:hover": {
+                  backgroundColor: "rgba(68, 160, 141, 0.3)",
+                },
+              },
+              "& .highlighted-event-row .MuiDataGrid-cell": {
+                borderRight: "1px solid rgba(68, 160, 141, 0.5)",
               },
             }}
           />
