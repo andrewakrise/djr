@@ -10,7 +10,7 @@ const IconLinks = () => {
       sx={{
         p: "calc(5px + 1vmin)",
         flexGrow: 1,
-        gap: "1rem",
+        gap: "0.5rem",
         maxWidth: "20rem",
         width: "100%",
         minHeight: "100%",

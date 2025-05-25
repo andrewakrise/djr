@@ -23,7 +23,7 @@ const HeaderSection = ({
 
   return (
     <Box
-      spacing={2}
+      spacing={1}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -31,7 +31,7 @@ const HeaderSection = ({
         justifyContent: "center",
         width: "100%",
         maxWidth: "40rem",
-        p: "1rem",
+        p: "0.5rem",
         m: 0,
         ...sx,
       }}
@@ -44,7 +44,7 @@ const HeaderSection = ({
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
-            mb: 2,
+            mb: 0,
           }}
         >
           {/* Left: BackButton or empty space, fixed width */}
@@ -55,6 +55,8 @@ const HeaderSection = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              m: 0,
+              p: 0,
             }}
           >
             {subTitle ? <BackButton /> : null}
@@ -68,6 +70,8 @@ const HeaderSection = ({
               alignItems: "center",
               justifyContent: "center",
               px: 1,
+              py: 0,
+              m: 0,
               width: "100%",
             }}
           >
@@ -153,7 +157,7 @@ const HeaderSection = ({
           </Box>
           <Avatar
             src={logo}
-            sx={{ width: "15rem", height: "15rem", mb: "2rem" }}
+            sx={{ width: "15rem", height: "15rem", mb: "1rem" }}
             alt={avatarAlt}
           />
         </>

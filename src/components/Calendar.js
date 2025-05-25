@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Box } from "@mui/material";
 import { gradient } from "./helpers/utils";
 import logo from "../assets/icons/garder-table-setup.JPG";
 import HeaderSection from "./helpers/HeaderSection";
@@ -30,7 +30,7 @@ function CalendarPage() {
       }}
     >
       <Box
-        spacing={2}
+        spacing={1}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -52,23 +52,15 @@ function CalendarPage() {
           sx={{
             width: "100%",
             maxWidth: "50rem",
-            mt: 2,
+            mt: 0,
+            p: 0,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "calc(1rem + 1vmin)",
-              letterSpacing: "0.2rem",
-              mb: 2,
-            }}
-            variant="body1"
-          >
-            Explore the events below.
-          </Typography>
           <Box
             sx={{
               width: "100%",
-              mt: 5,
+              mt: 0,
+              p: 0,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",

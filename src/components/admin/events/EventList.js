@@ -24,7 +24,6 @@ import {
   Alert,
   CircularProgress,
   Tooltip,
-  Avatar,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import EventAddEdit from "./EventAddEdit";
@@ -39,6 +38,7 @@ import {
   Unpublished,
   Public as PublicIcon,
   PublicOff as PublicOffIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
 import ConfirmationDialog from "../../helpers/ConfirmationDialog";
 import GenerateInvoiceDialog from "./GenerateInvoiceDialog";
@@ -60,28 +60,10 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import GenerateDepositReceiptDialog from "./GenerateDepositReceiptDialog";
 import { useLazyGetDepositReceiptQuery } from "../../../services/event";
+import { gradient } from "../../helpers/utils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-const EventAvatar = ({ eventId, alt, fallback }) => {
-  const { data, isLoading } = useGetEventImageUrlQuery(eventId, {
-    skip: !eventId,
-  });
-  return (
-    <Avatar
-      alt={alt}
-      src={isLoading ? fallback : data?.url || fallback}
-      sx={{
-        width: 56,
-        height: 56,
-        border: "1px solid #093637",
-        borderRadius: 0,
-        mr: 2,
-      }}
-    />
-  );
-};
 
 function EventList() {
   const { data: events, isLoading, isError, refetch } = useGetAllEventsQuery();
@@ -598,6 +580,7 @@ function EventList() {
       field: "eventSummary",
       headerName: "Event / Client / Date",
       width: 225,
+      flex: 0,
       renderCell: (params) => {
         const { title, clientName, startDateTime, endDateTime } =
           params.value || {};
@@ -609,6 +592,8 @@ function EventList() {
               display: "flex",
               flexDirection: "column",
               whiteSpace: "pre-line",
+              width: { xs: "180px", sm: "225px" },
+              maxWidth: { xs: "180px", sm: "225px" },
             }}
           >
             <Typography
@@ -1206,11 +1191,21 @@ function EventList() {
         width: "100%",
       }}
     >
-      <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>
-        Events
-      </Typography>
-      <Button variant="contained" color="primary" onClick={handleDialogOpen}>
-        Add New Event
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={handleDialogOpen}
+        sx={{
+          background: "linear-gradient(-45deg, #44A08D, #093637)",
+          backgroundSize: "400% 400%",
+          animation: `${gradient} 10s ease infinite`,
+          color: "white",
+          "&:hover": {
+            background: "linear-gradient(-45deg, #44A08D, #093637)",
+          },
+        }}
+      >
+        Event
       </Button>
       <Dialog open={openAddEventForm} onClose={handleDialogClose} fullWidth>
         <DialogTitle>
@@ -1231,9 +1226,9 @@ function EventList() {
       {error && <Alert severity="error">{error}</Alert>}
       <Box
         sx={{
-          height: { xs: 600, md: "calc(100vh - 17rem)" },
+          height: { xs: 600, md: "calc(100vh - 12rem)" },
           width: "100%",
-          mt: 2,
+          mt: 1,
           color: "#ffffff",
         }}
       >

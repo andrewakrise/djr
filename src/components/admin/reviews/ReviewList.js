@@ -179,15 +179,12 @@ function ReviewList() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        padding: "1rem 0",
-        margin: "1rem 0",
+        padding: "0.5rem 0",
+        margin: "0",
         width: "100%",
       }}
     >
-      <Typography variant="h4" sx={{ mb: 2, textAlign: "center" }}>
-        Reviews
-      </Typography>
-      <Box sx={{ mb: 2, alignSelf: "center" }}>
+      <Box sx={{ mb: 0, alignSelf: "center" }}>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -202,7 +199,7 @@ function ReviewList() {
             },
           }}
         >
-          Add Review
+          Review
         </Button>
       </Box>
 

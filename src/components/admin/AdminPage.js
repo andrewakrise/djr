@@ -58,7 +58,7 @@ function AdminPage() {
           alignItems: "center",
           justifyContent: "flex-start",
           color: "white",
-          padding: "1rem 0",
+          padding: "0.5rem 0",
           fontSize: "calc(10px + 2vmin)",
         }}
       >
@@ -84,7 +84,7 @@ function AdminPage() {
           </Tabs>
         </Box>
 
-        <Box sx={{ width: "100%", mt: 2 }}>
+        <Box sx={{ width: "100%", m: 0, p: 0 }}>
           {currentTab === 0 && <EventList />}
           {currentTab === 1 && <ReviewList />}
           {currentTab === 2 && <GalleryAdmin />}
