@@ -579,8 +579,7 @@ function EventList() {
     {
       field: "eventSummary",
       headerName: "Event / Client / Date",
-      width: 225,
-      flex: 0,
+      width: window.innerWidth < 768 ? 155 : 225,
       renderCell: (params) => {
         const { title, clientName, startDateTime, endDateTime } =
           params.value || {};
@@ -592,8 +591,6 @@ function EventList() {
               display: "flex",
               flexDirection: "column",
               whiteSpace: "pre-line",
-              width: { xs: "180px", sm: "225px" },
-              maxWidth: { xs: "180px", sm: "225px" },
             }}
           >
             <Typography
