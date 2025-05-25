@@ -144,6 +144,7 @@
   color: #fff !important;
   font-family: inherit !important;
   letter-spacing: 0.02em;
+  width: auto !important;
 }
 
 /* Agenda view: time column */
@@ -153,6 +154,7 @@
   color: #b0b3b8 !important;
   font-family: inherit !important;
   letter-spacing: 0.02em;
+  width: auto !important;
 }
 
 /* Agenda view: event title/description */
@@ -209,6 +211,31 @@
   .rbc-has-events:hover,
   .rbc-has-multiple-events:hover {
     transform: none !important;
+  }
+
+  /* Mobile-specific agenda view styles */
+  .rbc-agenda-date-cell {
+    font-size: 0.7rem !important;
+    width: 60px !important;
+    max-width: 60px !important;
+    min-width: 60px !important;
+    padding: 0.25rem 0.15rem !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.2 !important;
+  }
+
+  .rbc-agenda-time-cell {
+    font-size: 0.65rem !important;
+    width: 50px !important;
+    max-width: 50px !important;
+    min-width: 50px !important;
+    padding: 0.25rem 0.1rem !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.2 !important;
   }
 }
 

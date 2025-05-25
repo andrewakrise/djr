@@ -597,10 +597,12 @@ function EventList() {
     {
       field: "eventSummary",
       headerName: "Event / Client / Date",
-      width: 200,
+      width: 225,
       renderCell: (params) => {
         const { title, clientName, startDateTime, endDateTime } =
           params.value || {};
+        const { clientCompanyName, clientEmail, phoneNumber } =
+          params?.row?.clientInfo || {};
         return (
           <Box
             sx={{
@@ -609,42 +611,63 @@ function EventList() {
               whiteSpace: "pre-line",
             }}
           >
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: { xs: 500, sm: 600 },
+                fontSize: { xs: "0.8rem", sm: "1rem" },
+              }}
+            >
               {title}
             </Typography>
-            <Typography variant="body2" sx={{ color: "#b0bec5" }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#b0bec5",
+                fontSize: { xs: "0.7rem", sm: "0.875rem" },
+              }}
+            >
               {clientName}
             </Typography>
-            <Typography variant="body2">
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: { xs: "0.7rem", sm: "0.875rem" },
+              }}
+            >
               {startDateTime}
               {endDateTime ? `\n${endDateTime}` : ""}
             </Typography>
-          </Box>
-        );
-      },
-    },
-    {
-      field: "clientInfo",
-      headerName: "Client Info",
-      width: 150,
-      renderCell: (params) => {
-        const { clientCompanyName, clientEmail, phoneNumber } =
-          params.value || {};
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              whiteSpace: "pre-line",
-            }}
-          >
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              {clientCompanyName}
-            </Typography>
-            <Typography variant="body2" sx={{ color: "#b0bec5" }}>
-              {clientEmail}
-            </Typography>
-            <Typography variant="body2">{phoneNumber}</Typography>
+
+            {/* Client Info Section */}
+            <Box sx={{ mt: 1, pt: 1, borderTop: "1px solid #374151" }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: { xs: "0.7rem", sm: "0.875rem" },
+                }}
+              >
+                {clientCompanyName}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#b0bec5",
+                  fontSize: { xs: "0.7rem", sm: "0.875rem" },
+                }}
+              >
+                {clientEmail}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: { xs: "0.7rem", sm: "0.875rem" },
+                }}
+              >
+                {phoneNumber}
+              </Typography>
+            </Box>
           </Box>
         );
       },
@@ -652,7 +675,7 @@ function EventList() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 300,
+      width: 275,
       renderCell: (params) => {
         // Get the original event data
         const originalEvent = eventDateRows?.find(
@@ -682,10 +705,10 @@ function EventList() {
               <Typography
                 variant="caption"
                 sx={{
-                  minWidth: "45px",
-                  fontSize: "10px",
+                  minWidth: "2rem",
+                  fontSize: "0.6rem",
                   color: "#9ca3af",
-                  fontWeight: 600,
+                  fontWeight: 500,
                 }}
               >
                 Setup:
@@ -745,10 +768,10 @@ function EventList() {
               <Typography
                 variant="caption"
                 sx={{
-                  minWidth: "45px",
-                  fontSize: "10px",
+                  minWidth: "2rem",
+                  fontSize: "0.6rem",
                   color: "#9ca3af",
-                  fontWeight: 600,
+                  fontWeight: 500,
                 }}
               >
                 Bills:
@@ -839,10 +862,10 @@ function EventList() {
               <Typography
                 variant="caption"
                 sx={{
-                  minWidth: "45px",
-                  fontSize: "10px",
+                  minWidth: "2rem",
+                  fontSize: "0.6rem",
                   color: "#9ca3af",
-                  fontWeight: 600,
+                  fontWeight: 500,
                 }}
               >
                 Deposit:
@@ -903,10 +926,10 @@ function EventList() {
               <Typography
                 variant="caption"
                 sx={{
-                  minWidth: "45px",
-                  fontSize: "10px",
+                  minWidth: "1rem",
+                  fontSize: "0.6rem",
                   color: "#9ca3af",
-                  fontWeight: 600,
+                  fontWeight: 500,
                 }}
               >
                 Final:
