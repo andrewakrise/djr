@@ -38,6 +38,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
 
   const [title, setTitle] = useState(event?.title || "");
   const [description, setDescription] = useState(event?.description || "");
+  const [notes, setNotes] = useState(event?.notes || "");
   const [startDateTime, setStartDateTime] = useState(
     event?.startDateTime ? dayjs(event.startDateTime) : null
   );
@@ -123,6 +124,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     if (event) {
       setTitle(event?.title);
       setDescription(event?.description);
+      setNotes(event?.notes || "");
       setStartDateTime(event.startDateTime ? dayjs(event.startDateTime) : null);
       setEndDateTime(event.endDateTime ? dayjs(event.endDateTime) : null);
       setLocation(event?.location);
@@ -278,6 +280,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("notes", notes);
     formData.append("startDateTime", formattedStartDateTime.toISOString());
     formData.append("endDateTime", adjustedEndDateTime.toISOString());
     formData.append("location", location);
@@ -312,6 +315,7 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
         setSuccess(`${result?.data?.msg}`);
         setTitle("");
         setDescription("");
+        setNotes("");
         setStartDateTime(null);
         setEndDateTime(null);
         setLocation("");
@@ -447,6 +451,17 @@ function EventAddEdit({ event, onAddSuccess, refetchEvents }) {
           multiline
           rows={6}
           margin="normal"
+        />
+        <TextField
+          label="Notes"
+          variant="outlined"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          fullWidth
+          multiline
+          rows={10}
+          margin="normal"
+          helperText="Add any additional notes about equipment, playlist links, special requirements, etc. Line breaks and formatting will be preserved."
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DateTimePicker"]}>

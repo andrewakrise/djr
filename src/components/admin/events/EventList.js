@@ -460,10 +460,10 @@ function EventList() {
         startDateTime: event?.startDateTime
           ? dayjs(event.startDateTime)
               .tz("America/Vancouver")
-              .format("MMMM D, YYYY h:mm A")
+              .format("dddd, MMMM D, YYYY h:mm A")
           : event?.date && event?.startTime
           ? `${dayjs(event.date).format(
-              "MMMM D, YYYY"
+              "dddd, MMMM D, YYYY"
             )} ${convertTo12HourFormat(event.startTime)}`
           : "",
         endDateTime: event?.endDateTime
@@ -494,6 +494,7 @@ function EventList() {
       depositSum: event?.depositSum,
       imageUrl: event?.image?.url || "",
       description: event?.description,
+      notes: event?.notes || "",
       ticketUrl: event?.ticketUrl,
       pdfInvoice: event?.pdfInvoice,
       pdfDeposit: event?.pdfDeposit,
@@ -515,11 +516,11 @@ function EventList() {
       startDateTime: event?.startDateTime
         ? dayjs(event.startDateTime)
             .tz("America/Vancouver")
-            .format("MMMM D, YYYY h:mm A")
+            .format("dddd, MMMM D, YYYY h:mm A")
         : event?.date && event?.startTime
-        ? `${dayjs(event.date).format("MMMM D, YYYY")} ${convertTo12HourFormat(
-            event.startTime
-          )}`
+        ? `${dayjs(event.date).format(
+            "dddd, MMMM D, YYYY"
+          )} ${convertTo12HourFormat(event.startTime)}`
         : "",
       endDateTime: event?.endDateTime
         ? dayjs(event.endDateTime)
@@ -544,6 +545,7 @@ function EventList() {
       depositSum: event?.depositSum,
       imageUrl: event?.image?.url || "",
       description: event?.description,
+      notes: event?.notes || "",
       ticketUrl: event?.ticketUrl,
       pdfInvoice: event?.pdfInvoice,
       pdfDeposit: event?.pdfDeposit,
@@ -579,7 +581,7 @@ function EventList() {
     {
       field: "eventSummary",
       headerName: "Event / Client / Date",
-      width: window.innerWidth < 768 ? 155 : 225,
+      width: window.innerWidth < 768 ? 155 : 400,
       renderCell: (params) => {
         const { title, clientName, startDateTime, endDateTime } =
           params.value || {};
@@ -657,7 +659,7 @@ function EventList() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 275,
+      width: window.innerWidth < 768 ? 275 : 300,
       renderCell: (params) => {
         // Get the original event data
         const originalEvent = eventDateRows?.find(
@@ -1012,7 +1014,7 @@ function EventList() {
     {
       field: "paymentStatus",
       headerName: "Status & Payment",
-      width: 200,
+      width: window.innerWidth < 768 ? 200 : 250,
       renderCell: (params) => {
         const confirmed = params?.row?.isConfirmed;
         const fullyPaid = params?.row?.isFullyPaid;
@@ -1098,7 +1100,7 @@ function EventList() {
     {
       field: "otherExpenses",
       headerName: "Expenses",
-      width: 175,
+      width: window.innerWidth < 768 ? 175 : 200,
       renderCell: (params) => {
         const { equipmentExpense, carExpense, foodExpense, otherExpenses } =
           params?.row?.expensesSummary || {};

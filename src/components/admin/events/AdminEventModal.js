@@ -15,7 +15,6 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { useGetEventImageUrlQuery } from "../../../services/event";
-import privateParty2 from "../../../assets/private-party-2.png";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -47,12 +46,15 @@ const AdminEventModal = ({ open, onClose, event }) => {
 
   // Format date and time using the new datetime fields if available
   const formattedDate = event?.startDateTime
-    ? dayjs(event.startDateTime).tz("America/Vancouver").format("MMMM D, YYYY")
+    ? dayjs(event.startDateTime)
+        .tz("America/Vancouver")
+        .format("dddd, MMMM D, YYYY")
     : new Date(event?.date).toLocaleDateString("en-CA", {
         year: "numeric",
         month: "long",
         day: "numeric",
         timeZone: "America/Vancouver",
+        weekday: "long",
       });
 
   const formattedStartTime = event?.startDateTime
@@ -129,6 +131,29 @@ const AdminEventModal = ({ open, onClose, event }) => {
         <Typography id="event-details-description" sx={{ mt: 2 }}>
           {event?.description}
         </Typography>
+
+        {event?.notes && (
+          <>
+            <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
+            <Typography variant="h6" gutterBottom>
+              <strong>Notes:</strong>
+            </Typography>
+            <Typography
+              sx={{
+                mt: 1,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                fontFamily: "monospace",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                padding: 2,
+                borderRadius: 1,
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+              }}
+            >
+              {event?.notes}
+            </Typography>
+          </>
+        )}
 
         <Divider sx={{ my: 2, borderColor: "#ffffff" }} />
 

@@ -47,7 +47,7 @@ const EventModal = ({ open, onClose, event }) => {
   if (event?.startDateTime) {
     formattedDate = dayjs(event.startDateTime)
       .tz("America/Vancouver")
-      .format("MMMM D, YYYY");
+      .format("dddd, MMMM D, YYYY");
 
     formattedStartTime = dayjs(event.startDateTime)
       .tz("America/Vancouver")
@@ -61,7 +61,7 @@ const EventModal = ({ open, onClose, event }) => {
   } else if (event?.date) {
     formattedDate = dayjs(event.date)
       .tz("America/Vancouver")
-      .format("MMMM D, YYYY");
+      .format("dddd, MMMM D, YYYY");
 
     if (event?.startTime) {
       formattedStartTime = event.startTime;

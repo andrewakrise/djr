@@ -11,7 +11,6 @@ import {
 import {
   formatDateToLocalAmericaPacific,
   generateUniqueReceiptNumber,
-  convertTo12HourFormat,
 } from "../../helpers/utils";
 import logo from "../../../assets/icons/logo.png";
 import pioneerdjset from "../../../assets/pioneerdjset.jpg";
@@ -188,7 +187,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     borderTop: "1px solid #000",
-    paddingTop: 20,
+    paddingTop: 10,
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -373,16 +372,6 @@ const EventReceiptPDF = ({ event }) => {
               Thank you for your business
             </Text>
           </View>
-        </View>
-
-        {/* Footer with legal info */}
-        <View style={styles.footer}>
-          <Text>DJ Rise Legal Information:</Text>
-          <Text>Legal Name: Andrii Kukhar</Text>
-          <Text>Address: 3410-128 West Cordova Street</Text>
-          <Text>Phone: +1 (236) 995 - 1120</Text>
-          <Text>Contact Email: andrewrisedj@gmail.com</Text>
-          <Text>E-Transfer Email: andriikukharv@gmail.com</Text>
         </View>
       </Page>
     </Document>
