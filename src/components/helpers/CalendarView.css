@@ -164,6 +164,34 @@
   color: #fff !important;
   font-family: inherit !important;
   letter-spacing: 0.02em;
+  text-align: left !important;
+  padding-left: 0 !important;
+}
+
+/* Ensure agenda event content aligns properly */
+.rbc-agenda-event-cell > div {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  width: 100% !important;
+}
+
+/* Override any default agenda event styling */
+.rbc-agenda-view .rbc-agenda-event-cell {
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+/* Ensure all agenda event rows have consistent alignment */
+.rbc-agenda-view tbody tr td:last-child {
+  text-align: left !important;
+  padding-left: 0.5rem !important;
+}
+
+/* Force agenda event content to align left */
+.rbc-agenda-view .rbc-agenda-event-cell * {
+  text-align: left !important;
 }
 
 /* Agenda view: match all borders to calendar-border-grey */

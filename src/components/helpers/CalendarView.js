@@ -135,79 +135,6 @@ const CustomToolbar = (toolbar) => (
   </div>
 );
 
-const CustomAgendaEvent = ({ event }) => {
-  const today = dayjs().startOf("day");
-  const eventDate = dayjs(event.start).startOf("day");
-
-  // Check if this is today's event
-  const isToday = eventDate.isSame(today);
-
-  // Check if this is the next upcoming event (future event closest to today)
-  const isUpcoming = eventDate.isAfter(today);
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "0.5rem 0",
-        position: "relative",
-        backgroundColor: isToday
-          ? "rgba(86, 199, 176, 0.2)"
-          : isUpcoming
-          ? "rgba(68, 160, 141, 0.15)"
-          : "transparent",
-        borderRadius: isToday || isUpcoming ? "4px" : "0",
-        borderLeft: isToday
-          ? "4px solid rgba(86, 199, 176, 0.9)"
-          : isUpcoming
-          ? "3px solid rgba(68, 160, 141, 0.7)"
-          : "none",
-        transition: "all 0.2s ease",
-      }}
-    >
-      <Avatar
-        src={event?.image}
-        alt={event?.title}
-        sx={{
-          width: 40,
-          height: 40,
-          border: isToday
-            ? "2px solid rgba(86, 199, 176, 0.8)"
-            : "1px solid #093637",
-          borderRadius: 0,
-          mr: 2,
-          flexShrink: 0,
-          boxShadow: isToday ? "0 0 8px rgba(86, 199, 176, 0.4)" : "none",
-        }}
-      />
-      <span
-        style={{
-          fontWeight: isToday ? 700 : 600,
-          color: isToday ? "rgba(86, 199, 176, 1)" : "#fff",
-          fontSize: "1rem",
-          textShadow: isToday ? "0 1px 3px rgba(0, 0, 0, 0.3)" : "none",
-        }}
-      >
-        {isToday && "🎵 "}
-        {event?.title}
-      </span>
-      <Divider
-        sx={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bgcolor: isToday
-            ? "rgba(86, 199, 176, 0.3)"
-            : "var(--calendar-border-grey)",
-        }}
-      />
-    </div>
-  );
-};
-
 const CalendarView = ({
   viewMode = "month",
   allowedViews = ["month", "agenda"],
@@ -391,6 +318,8 @@ const CalendarView = ({
               : "none",
             transition: "all 0.2s ease",
             transform: isToday || isNextUpcoming ? "translateX(2px)" : "none",
+            width: "100%",
+            justifyContent: "flex-start",
           }}
         >
           <Avatar
@@ -405,7 +334,6 @@ const CalendarView = ({
                 ? "2px solid rgba(68, 160, 141, 0.8)"
                 : "1px solid #093637",
               borderRadius: 0,
-              mr: 2,
               flexShrink: 0,
               boxShadow: isToday
                 ? "0 0 12px rgba(86, 199, 176, 0.5)"
@@ -427,6 +355,8 @@ const CalendarView = ({
                 isToday || isNextUpcoming
                   ? "0 1px 3px rgba(0, 0, 0, 0.3)"
                   : "none",
+              flex: 1,
+              textAlign: "left",
             }}
           >
             {isToday && "🎵 "}
