@@ -10,7 +10,6 @@ import {
   useTogglePublicMutation,
   useLazyGetFinalQuery,
   useLazyGetReceiptQuery,
-  useGetEventImageUrlQuery,
 } from "../../../services/event";
 import { useSendEventEmailWithAttachmentsMutation } from "../../../services/emails";
 import {

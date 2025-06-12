@@ -24,7 +24,7 @@ function HomePage() {
     { text: "instagram.com", href: "https://www.instagram.com/vandjrise" },
     {
       text: "mixcloud.com / dj mixes",
-      href: "https://www.mixcloud.com/andrewrisedj",
+      href: "https://www.mixcloud.com/vandjrise",
     },
     {
       text: "youtube channel / dj mixes",
