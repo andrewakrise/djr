@@ -176,6 +176,27 @@ function AudioVideoPage() {
                 height: "100%",
                 maxHeight: "7.5rem",
               }}
+              src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-wedding-reception-june-20th-2025%2F"
+            />
+          </Box>
+          <Box
+            sx={{
+              position: "relative",
+              overflow: "hidden",
+              width: "100%",
+              mb: 2,
+            }}
+          >
+            <iframe
+              allow="autoplay"
+              style={{
+                minWidth: "18rem",
+                width: "100%",
+                maxWidth: "45rem",
+                minHeight: "4rem",
+                height: "100%",
+                maxHeight: "7.5rem",
+              }}
               src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&light=1&feed=%2Fvandjrise%2Fdj-rise-ucc-birthday-party-old-school-hip-hop-rnb%2F"
             />
           </Box>
@@ -289,7 +310,7 @@ function AudioVideoPage() {
           ) : (
             renderVideoIframes(sortedVideoLinks.slice(0, 2))
           )}
-          {sortedVideoLinks.length > 2 && (
+          {sortedVideoLinks?.length > 2 && (
             <Button onClick={toggleShowMore}>
               {showMoreVideos ? "Hide Older Videos" : "Show More Videos"}
             </Button>
